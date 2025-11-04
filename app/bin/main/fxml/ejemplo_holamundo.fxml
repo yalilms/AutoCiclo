@@ -6,7 +6,7 @@
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
 prefHeight="115.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" 
-fx:controller="com.javafx.A_holamundofxml.miControlador">
+fx:controller="com.javafx.Controllers.miControlador">
    <children>
       <Button mnemonicParsing="false" onAction="#botonPulsado" text="Púlsame!" />
       <Label fx:id="miEtiqueta" text="Label" />

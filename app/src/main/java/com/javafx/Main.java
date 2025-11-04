@@ -1,4 +1,4 @@
-package com.javafx.A_holamundofxml;
+package com.javafx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +18,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primeraEscena) throws Exception { //puede lanzar excep'
-        Parent root = FXMLLoader.load(getClass().getResource("/ejemplo_holamundo.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/ejemplo_holamundo.fxml"));
 
         Scene scene = new Scene(root);
         primeraEscena.setScene(scene);

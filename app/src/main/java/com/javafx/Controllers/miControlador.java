@@ -1,4 +1,4 @@
-package com.javafx.A_holamundofxml;
+package com.javafx.Controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
