@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="btnAsignarPieza" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.autociclo.controllers.ListadoInventarioController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.autociclo.controllers.ListadoInventarioController">
    <top>
       <VBox prefHeight="170.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
          <children>
@@ -55,7 +55,7 @@
             </ToolBar>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #ecf0f1;">
                <children>
-                  <Button fx:id="btnvehiculos" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;" text="🚗  Vehículos" />
+                  <Button fx:id="btnNavVehiculos" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;" text="🚗  Vehículos" />
                   <Button fx:id="btnNavPiezas" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;" text="🔩  Piezas" />
                   <Button fx:id="btnNavInventario" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;" text="📋  Inventario" />
                </children>
