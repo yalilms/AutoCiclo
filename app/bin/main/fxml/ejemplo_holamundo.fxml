@@ -4,11 +4,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
-prefHeight="115.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" 
-fx:controller="com.javafx.Controllers.miControlador">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+prefHeight="115.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button mnemonicParsing="false" onAction="#botonPulsado" text="Púlsame!" />
+      <Button mnemonicParsing="false" text="Púlsame!" />
       <Label fx:id="miEtiqueta" text="Label" />
    </children>
 </VBox>
