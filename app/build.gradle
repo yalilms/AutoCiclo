@@ -13,7 +13,8 @@ javafx {
 }
 
 dependencies {
-    //No es necesario incluir las dependencias porque ya lo hace el plugin por nosotros
+  // Driver MySQL - AÑADIDO
+    implementation 'com.mysql:mysql-connector-j:8.2.0'
 }
 
 java { //Se indica la versión de JDK que ha de utilizar
