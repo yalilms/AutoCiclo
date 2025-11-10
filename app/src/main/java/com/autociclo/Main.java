@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
  * @author Yalil Musa Talhaoui
  */
 public class Main extends Application {
@@ -22,6 +21,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primeraEscena) throws Exception {
+        
         // PRUEBA DE CONEXIÓN - BORRAR DESPUÉS
         System.out.println("Probando conexion a la base de datos...");
         try (Connection conn = ConexionBD.getConexion()) {
@@ -33,12 +33,12 @@ public class Main extends Application {
         }
         // FIN DE LA PRUEBA
 
-        //puede lanzar excep'
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/ejemplo_holamundo.fxml"));
+        //Cargar pantalla principal
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Principal.fxml"));
 
         Scene scene = new Scene(root);
         primeraEscena.setScene(scene);
-        primeraEscena.setTitle("Primer Ejemplo JavaFX - Hola Mundo");
+        primeraEscena.setTitle("AutoCiclo - Gestión de Desguace");
         primeraEscena.show();
 
     }
