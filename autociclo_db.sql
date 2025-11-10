@@ -5,8 +5,8 @@ SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 
 -- Base de datos
-CREATE DATABASE IF NOT EXISTS `autociclo_database` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `autociclo_database`;
+CREATE DATABASE IF NOT EXISTS `autociclo_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `autociclo_db`;
 
 -- Estructura tabla INVENTARIO_PIEZAS
 CREATE TABLE `INVENTARIO_PIEZAS` (
