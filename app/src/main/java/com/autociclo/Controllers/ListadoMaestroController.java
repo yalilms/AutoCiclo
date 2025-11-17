@@ -72,8 +72,8 @@ public class ListadoMaestroController implements Initializable {
     @FXML private TableColumn<Pieza, String> colUbicacion;
 
     // Columnas TableView Inventario
-    @FXML private TableColumn<InventarioPieza, Integer> colInventarioId;
-    @FXML private TableColumn<InventarioPieza, Integer> colProducto;
+    @FXML private TableColumn<InventarioPieza, String> colInventarioId;
+    @FXML private TableColumn<InventarioPieza, String> colProducto;
     @FXML private TableColumn<InventarioPieza, Integer> colCantidad;
     @FXML private TableColumn<InventarioPieza, String> colFechaIngreso;
     @FXML private TableColumn<InventarioPieza, String> colAlmacen;
@@ -107,8 +107,8 @@ public class ListadoMaestroController implements Initializable {
         colUbicacion.setCellValueFactory(new PropertyValueFactory<>("ubicacionAlmacen"));
 
         // Configurar columnas de TableView Inventario
-        colInventarioId.setCellValueFactory(new PropertyValueFactory<>("idVehiculo"));
-        colProducto.setCellValueFactory(new PropertyValueFactory<>("idPieza"));
+        colInventarioId.setCellValueFactory(new PropertyValueFactory<>("vehiculoInfo"));
+        colProducto.setCellValueFactory(new PropertyValueFactory<>("piezaNombre"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colFechaIngreso.setCellValueFactory(new PropertyValueFactory<>("fechaExtraccion"));
         colAlmacen.setCellValueFactory(new PropertyValueFactory<>("estadoPieza"));
@@ -165,7 +165,10 @@ public class ListadoMaestroController implements Initializable {
 
     private void cargarPiezas() {
         listaPiezas.clear();
-        String sql = "SELECT * FROM PIEZAS";
+        String sql = "SELECT p.*, COALESCE(SUM(ip.cantidad), 0) as stock_real " +
+                     "FROM PIEZAS p " +
+                     "LEFT JOIN INVENTARIO_PIEZAS ip ON p.id_pieza = ip.id_pieza " +
+                     "GROUP BY p.id_pieza";
 
         try (Connection conn = ConexionBD.getConexion();
              Statement stmt = conn.createStatement();
@@ -178,7 +181,7 @@ public class ListadoMaestroController implements Initializable {
                     rs.getString("nombre"),
                     rs.getString("categoria"),
                     rs.getDouble("precio_venta"),
-                    rs.getInt("stock_disponible"),
+                    rs.getInt("stock_real"),
                     rs.getInt("stock_minimo"),
                     rs.getString("ubicacion_almacen"),
                     rs.getString("compatible_marcas"),
@@ -196,7 +199,12 @@ public class ListadoMaestroController implements Initializable {
 
     private void cargarInventario() {
         listaInventario.clear();
-        String sql = "SELECT * FROM INVENTARIO_PIEZAS";
+        String sql = "SELECT ip.*, " +
+                     "CONCAT(v.marca, ' ', v.modelo, ' (', v.anio, ')') as vehiculo_info, " +
+                     "p.nombre as pieza_nombre " +
+                     "FROM INVENTARIO_PIEZAS ip " +
+                     "INNER JOIN VEHICULOS v ON ip.id_vehiculo = v.id_vehiculo " +
+                     "INNER JOIN PIEZAS p ON ip.id_pieza = p.id_pieza";
 
         try (Connection conn = ConexionBD.getConexion();
              Statement stmt = conn.createStatement();
@@ -206,6 +214,8 @@ public class ListadoMaestroController implements Initializable {
                 InventarioPieza inv = new InventarioPieza(
                     rs.getInt("id_vehiculo"),
                     rs.getInt("id_pieza"),
+                    rs.getString("vehiculo_info"),
+                    rs.getString("pieza_nombre"),
                     rs.getInt("cantidad"),
                     rs.getString("estado_pieza"),
                     rs.getString("fecha_extraccion"),
@@ -280,8 +290,8 @@ public class ListadoMaestroController implements Initializable {
                 fxmlFile = "/fxml/FormularioPieza.fxml";
                 titulo = "Nueva Pieza";
             } else if (tableInventario.isVisible()) {
-                fxmlFile = "/fxml/FormularioInventario.fxml";
-                titulo = "Nuevo Inventario";
+                fxmlFile = "/fxml/AsignarPiezaVehiculo.fxml";
+                titulo = "Asignar Pieza a Vehículo";
             }
 
             // Cargar el FXML del formulario

@@ -98,11 +98,11 @@
             
             <TableView fx:id="tableInventario" prefHeight="370.0" prefWidth="900.0" visible="false">
               <columns>
-                  <TableColumn fx:id="colInventarioId" prefWidth="60.0" text="ID" />
-                <TableColumn fx:id="colProducto" prefWidth="150.0" text="Producto" />
-                <TableColumn fx:id="colCantidad" prefWidth="150.0" text="Cantidad" />
-                  <TableColumn fx:id="colFechaIngreso" prefWidth="120.0" text="Fecha Ingreso" />
-                  <TableColumn fx:id="colAlmacen" prefWidth="100.0" text="Almacén" />
+                  <TableColumn fx:id="colInventarioId" prefWidth="200.0" text="Vehículo" />
+                <TableColumn fx:id="colProducto" prefWidth="200.0" text="Pieza" />
+                <TableColumn fx:id="colCantidad" prefWidth="80.0" text="Cantidad" />
+                  <TableColumn fx:id="colFechaIngreso" prefWidth="120.0" text="Fecha Extracción" />
+                  <TableColumn fx:id="colAlmacen" prefWidth="100.0" text="Estado" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -26,38 +26,38 @@
    <center>
       <GridPane alignment="CENTER" hgap="30.0" vgap="30.0" BorderPane.alignment="CENTER">
         <children>
-            <Button fx:id="btnVehiculos" contentDisplay="TOP" mnemonicParsing="false" prefHeight="150.0" prefWidth="220.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand;" text="VEHÍCULOS" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Button fx:id="btnVehiculos" contentDisplay="TOP" mnemonicParsing="false" prefHeight="150.0" prefWidth="220.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand; -fx-font-size: 24px;" text="VEHÍCULOS" GridPane.columnIndex="0" GridPane.rowIndex="0">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
                <graphic>
-                  <Label style="-fx-text-fill: white;" text="🚗">
+                  <Label style="-fx-text-fill: white; -fx-font-size: 64px;" text="🚗">
                      <font>
                         <Font size="64.0" />
                      </font>
                   </Label>
                </graphic>
             </Button>
-            
-            <Button fx:id="btnPiezas" contentDisplay="TOP" mnemonicParsing="false" prefHeight="150.0" prefWidth="220.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand;" text="PIEZAS" GridPane.columnIndex="1" GridPane.rowIndex="0">
+
+            <Button fx:id="btnPiezas" contentDisplay="TOP" mnemonicParsing="false" prefHeight="150.0" prefWidth="220.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand; -fx-font-size: 24px;" text="PIEZAS" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
                <graphic>
-                  <Label style="-fx-text-fill: white;" text="🔩">
+                  <Label style="-fx-text-fill: white; -fx-font-size: 64px;" text="🔩">
                      <font>
                         <Font size="64.0" />
                      </font>
                   </Label>
                </graphic>
             </Button>
-            
-            <Button fx:id="btnInventario" contentDisplay="TOP" mnemonicParsing="false" prefHeight="150.0" prefWidth="220.0" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand;" text="INVENTARIO" GridPane.columnIndex="2" GridPane.rowIndex="0">
+
+            <Button fx:id="btnInventario" contentDisplay="TOP" mnemonicParsing="false" prefHeight="150.0" prefWidth="220.0" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand; -fx-font-size: 24px;" text="INVENTARIO" GridPane.columnIndex="2" GridPane.rowIndex="0">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
                <graphic>
-                  <Label style="-fx-text-fill: white;" text="📋">
+                  <Label style="-fx-text-fill: white; -fx-font-size: 64px;" text="📋">
                      <font>
                         <Font size="64.0" />
                      </font>

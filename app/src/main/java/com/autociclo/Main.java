@@ -22,7 +22,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primeraEscena) throws Exception {
         
-        // PRUEBA DE CONEXIÓN - BORRAR DESPUÉS
+        // PRUEBA DE CONEXIÓN
         System.out.println("Probando conexion a la base de datos...");
         try (Connection conn = ConexionBD.getConexion()) {
             if (conn != null && !conn.isClosed()) {

@@ -1,14 +1,35 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: mysql-lamp:3306
+-- Tiempo de generación: 17-11-2025 a las 13:06:35
+-- Versión del servidor: 8.0.44
+-- Versión de PHP: 8.3.26
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-SET NAMES utf8mb4;
-SET CHARACTER SET utf8mb4;
 
--- Base de datos
-CREATE DATABASE IF NOT EXISTS `autociclo_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `autociclo_db`
+--
+CREATE DATABASE IF NOT EXISTS `autociclo_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `autociclo_db`;
 
--- Estructura tabla INVENTARIO_PIEZAS
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `INVENTARIO_PIEZAS`
+--
+
+DROP TABLE IF EXISTS `INVENTARIO_PIEZAS`;
 CREATE TABLE `INVENTARIO_PIEZAS` (
   `id_vehiculo` int NOT NULL,
   `id_pieza` int NOT NULL,
@@ -19,7 +40,10 @@ CREATE TABLE `INVENTARIO_PIEZAS` (
   `notas` varchar(255) DEFAULT NULL
 ) ;
 
--- Datos tabla INVENTARIO_PIEZAS
+--
+-- Volcado de datos para la tabla `INVENTARIO_PIEZAS`
+--
+
 INSERT INTO `INVENTARIO_PIEZAS` (`id_vehiculo`, `id_pieza`, `cantidad`, `estado_pieza`, `fecha_extraccion`, `precio_unitario`, `notas`) VALUES
 (1, 4, 1, 'usada', '2024-01-20', 150.00, 'Capó sin golpes'),
 (1, 7, 2, 'usada', '2024-01-20', 120.00, 'Asientos en perfecto estado'),
@@ -35,7 +59,13 @@ INSERT INTO `INVENTARIO_PIEZAS` (`id_vehiculo`, `id_pieza`, `cantidad`, `estado_
 (6, 12, 1, 'usada', '2024-04-15', 350.00, 'Escape original completo'),
 (7, 11, 4, 'nueva', '2024-04-22', 85.00, 'Neumáticos seminuevos');
 
--- Estructura tabla PIEZAS
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `PIEZAS`
+--
+
+DROP TABLE IF EXISTS `PIEZAS`;
 CREATE TABLE `PIEZAS` (
   `id_pieza` int NOT NULL,
   `codigo_pieza` varchar(20) NOT NULL,
@@ -50,7 +80,10 @@ CREATE TABLE `PIEZAS` (
   `descripcion` text
 ) ;
 
--- Datos tabla PIEZAS
+--
+-- Volcado de datos para la tabla `PIEZAS`
+--
+
 INSERT INTO `PIEZAS` (`id_pieza`, `codigo_pieza`, `nombre`, `categoria`, `precio_venta`, `stock_disponible`, `stock_minimo`, `ubicacion_almacen`, `compatible_marcas`, `imagen`, `descripcion`) VALUES
 (1, 'MOT-001', 'Motor 1.6 TDI', 'motor', 2500.00, 0, 1, 'Estantería A, nivel 2', 'Volkswagen Golf 2015-2020, Audi A3 2014-2019', '/imagenes/piezas/motor123.png', 'Motor diésel en perfecto estado, 80.000 km reales, completo con accesorios'),
 (2, 'MOT-002', 'Motor 2.0 HDI', 'motor', 1800.00, 0, 1, 'Zona motores, pasillo 3', 'Peugeot 308 2012-2018, Citroën C4', NULL, 'Motor diésel 120CV, revisado y garantizado'),
@@ -66,7 +99,13 @@ INSERT INTO `PIEZAS` (`id_pieza`, `codigo_pieza`, `nombre`, `categoria`, `precio
 (12, 'OTR-700', 'Turbocompresor', 'otros', 800.00, 0, 1, 'Caja fuerte, estante especial', 'Honda CBR 600-1000', NULL, 'Turbo reparado y certificado, garantía 6 meses'),
 (13, 'OTR-701', 'Sistema de escape completo', 'otros', 350.00, 0, 1, 'Almacén exterior', 'Toyota Corolla 2015-2020', NULL, 'Escape original Toyota en buen estado');
 
--- Estructura tabla VEHICULOS
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `VEHICULOS`
+--
+
+DROP TABLE IF EXISTS `VEHICULOS`;
 CREATE TABLE `VEHICULOS` (
   `id_vehiculo` int NOT NULL,
   `matricula` varchar(10) NOT NULL,
@@ -82,7 +121,10 @@ CREATE TABLE `VEHICULOS` (
   `observaciones` text
 ) ;
 
--- Datos tabla VEHICULOS
+--
+-- Volcado de datos para la tabla `VEHICULOS`
+--
+
 INSERT INTO `VEHICULOS` (`id_vehiculo`, `matricula`, `marca`, `modelo`, `anio`, `color`, `fecha_entrada`, `estado`, `precio_compra`, `kilometraje`, `ubicacion_gps`, `observaciones`) VALUES
 (1, '1234ABC', 'Seat', 'Ibiza', 2015, 'Rojo', '2024-01-15', 'desguazado', 1500.00, 180000, 'Patio trasero, zona A', 'Motor averiado, carrocería en buen estado'),
 (2, '5678DEF', 'Volkswagen', 'Golf', 2018, 'Blanco', '2024-02-20', 'completo', 8500.00, 95000, '37.1773,-3.5985', 'Buen estado general'),
@@ -92,29 +134,59 @@ INSERT INTO `VEHICULOS` (`id_vehiculo`, `matricula`, `marca`, `modelo`, `anio`, 
 (6, '2345PQR', 'Toyota', 'Corolla', 2017, 'Gris', '2024-04-12', 'desguazando', 7500.00, 120000, 'Patio principal', 'Motor funcional'),
 (7, '6789STU', 'Peugeot', '308', 2014, 'Azul', '2024-04-20', 'completo', 4500.00, 160000, NULL, 'Falta rueda delantera');
 
--- Índices y claves
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `INVENTARIO_PIEZAS`
+--
 ALTER TABLE `INVENTARIO_PIEZAS`
   ADD PRIMARY KEY (`id_vehiculo`,`id_pieza`),
   ADD KEY `id_pieza` (`id_pieza`);
 
+--
+-- Indices de la tabla `PIEZAS`
+--
 ALTER TABLE `PIEZAS`
   ADD PRIMARY KEY (`id_pieza`),
   ADD UNIQUE KEY `codigo_pieza` (`codigo_pieza`);
 
+--
+-- Indices de la tabla `VEHICULOS`
+--
 ALTER TABLE `VEHICULOS`
   ADD PRIMARY KEY (`id_vehiculo`),
   ADD UNIQUE KEY `matricula` (`matricula`);
 
--- Auto increment
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `PIEZAS`
+--
 ALTER TABLE `PIEZAS`
-  MODIFY `id_pieza` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_pieza` int NOT NULL AUTO_INCREMENT;
 
+--
+-- AUTO_INCREMENT de la tabla `VEHICULOS`
+--
 ALTER TABLE `VEHICULOS`
-  MODIFY `id_vehiculo` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_vehiculo` int NOT NULL AUTO_INCREMENT;
 
--- Relaciones entre tablas
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `INVENTARIO_PIEZAS`
+--
 ALTER TABLE `INVENTARIO_PIEZAS`
   ADD CONSTRAINT `INVENTARIO_PIEZAS_ibfk_1` FOREIGN KEY (`id_vehiculo`) REFERENCES `VEHICULOS` (`id_vehiculo`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `INVENTARIO_PIEZAS_ibfk_2` FOREIGN KEY (`id_pieza`) REFERENCES `PIEZAS` (`id_pieza`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
