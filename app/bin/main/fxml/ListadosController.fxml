@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.autociclo.controllers.ListadoMaestroController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.autociclo.controllers.ListadoMaestroController">
    <top>
-      <VBox prefHeight="170.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="150.0" prefWidth="900.0" BorderPane.alignment="CENTER">
          <children>
             <MenuBar>
               <menus>
@@ -49,7 +49,7 @@
                   <Button fx:id="btnEliminar" mnemonicParsing="false" text="🗑 Eliminar" />
                   <Button fx:id="btnActualizar" mnemonicParsing="false" text="🔄 Actualizar" />
                   <Separator orientation="VERTICAL" prefHeight="40.0" prefWidth="10.0" />
-                  <Region prefHeight="0.0" prefWidth="369.0" />
+                  <Region prefHeight="0.0" prefWidth="250.0" />
                   <TextField fx:id="txtBuscar" alignment="TOP_LEFT" prefWidth="200.0" promptText="Buscar..." />
                   <Button fx:id="btnBuscar" mnemonicParsing="false" text="🔍" />
               </items>
@@ -67,7 +67,7 @@
    <center>
       <StackPane fx:id="stackPaneContenido" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="tableVehiculos" prefHeight="469.0" prefWidth="1024.0" visible="true">
+            <TableView fx:id="tableVehiculos" prefHeight="370.0" prefWidth="900.0" visible="true">
               <columns>
                   <TableColumn fx:id="colVehiculoId" prefWidth="60.0" text="ID" />
                 <TableColumn fx:id="colMarca" prefWidth="150.0" text="Marca" />
@@ -81,7 +81,7 @@
                </columnResizePolicy>
             </TableView>
             
-            <TableView fx:id="tablePiezas" prefHeight="469.0" prefWidth="1024.0" visible="false">
+            <TableView fx:id="tablePiezas" prefHeight="370.0" prefWidth="900.0" visible="false">
               <columns>
                   <TableColumn fx:id="colPiezaId" prefWidth="60.0" text="ID" />
                 <TableColumn fx:id="colCodigo" prefWidth="150.0" text="Código" />
@@ -96,7 +96,7 @@
                </columnResizePolicy>
             </TableView>
             
-            <TableView fx:id="tableInventario" prefHeight="469.0" prefWidth="1024.0" visible="false">
+            <TableView fx:id="tableInventario" prefHeight="370.0" prefWidth="900.0" visible="false">
               <columns>
                   <TableColumn fx:id="colInventarioId" prefWidth="60.0" text="ID" />
                 <TableColumn fx:id="colProducto" prefWidth="150.0" text="Producto" />
@@ -112,7 +112,7 @@
       </StackPane>
    </center>
    <bottom>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" spacing="20.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
