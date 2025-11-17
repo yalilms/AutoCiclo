@@ -22,16 +22,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primeraEscena) throws Exception {
         
-        // PRUEBA DE CONEXIÓN
-        System.out.println("Probando conexion a la base de datos...");
-        try (Connection conn = ConexionBD.getConexion()) {
-            if (conn != null && !conn.isClosed()) {
-                System.out.println("Conexion exitosa!");
-            }
-        } catch (Exception e) {
-            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
-        }
-        // FIN DE LA PRUEBA
 
         //Cargar pantalla principal
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Principal.fxml"));
