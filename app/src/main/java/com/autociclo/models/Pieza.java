@@ -75,4 +75,9 @@ public class Pieza {
     public void setCompatibleMarcas(String value) { compatibleMarcas.set(value); }
     public void setImagen(String value) { imagen.set(value); }
     public void setDescripcion(String value) { descripcion.set(value); }
+
+    @Override
+    public String toString() {
+        return nombre.get() + " (" + codigoPieza.get() + ") - " + categoria.get();
+    }
 }

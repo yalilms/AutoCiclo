@@ -33,23 +33,23 @@
    <center>
       <GridPane alignment="TOP_CENTER" hgap="15.0" vgap="8.0" BorderPane.alignment="CENTER">
         <children>
-            <Label style="-fx-text-fill: #333333;" text="Código" GridPane.rowIndex="0">
+            <Label style="-fx-text-fill: #333333;" text="Código *" GridPane.rowIndex="0">
                <font>
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtCodigo" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="1">
+            <TextField fx:id="txtCodigo" prefHeight="28.0" prefWidth="250.0" promptText="Ej: MOT-001, CAR-025..." style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="1">
                <font>
                   <Font size="12.0" />
                </font>
             </TextField>
             
-            <Label style="-fx-text-fill: #333333;" text="Categoría" GridPane.rowIndex="2">
+            <Label style="-fx-text-fill: #333333;" text="Categoría *" GridPane.rowIndex="2">
                <font>
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtCategoria" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="3">
+            <TextField fx:id="txtCategoria" prefHeight="28.0" prefWidth="250.0" promptText="motor, carroceria, interior, electronica, ruedas, otros" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="3">
                <font>
                   <Font size="12.0" />
                </font>
@@ -60,18 +60,18 @@
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtStockDisponible" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="5">
+            <TextField fx:id="txtStockDisponible" prefHeight="28.0" prefWidth="250.0" promptText="Ej: 5" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="5">
                <font>
                   <Font size="12.0" />
                </font>
             </TextField>
             
-            <Label style="-fx-text-fill: #333333;" text="Ubicación Almacén" GridPane.rowIndex="6">
+            <Label style="-fx-text-fill: #333333;" text="Ubicación Almacén *" GridPane.rowIndex="6">
                <font>
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtUbicacionAlmacen" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="7">
+            <TextField fx:id="txtUbicacionAlmacen" prefHeight="28.0" prefWidth="250.0" promptText="Ej: Estantería A, nivel 2" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="7">
                <font>
                   <Font size="12.0" />
                </font>
@@ -82,29 +82,29 @@
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtMaterialesCompatibles" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="9">
+            <TextField fx:id="txtMaterialesCompatibles" prefHeight="28.0" prefWidth="250.0" promptText="Marcas compatibles (opcional)" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="9">
                <font>
                   <Font size="12.0" />
                </font>
             </TextField>
             
-            <Label style="-fx-text-fill: #333333;" text="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label style="-fx-text-fill: #333333;" text="Nombre *" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <font>
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtNombre" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="txtNombre" prefHeight="28.0" prefWidth="250.0" promptText="Ej: Motor 1.6 TDI" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <font>
                   <Font size="12.0" />
                </font>
             </TextField>
             
-            <Label style="-fx-text-fill: #333333;" text="Precio de compra" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label style="-fx-text-fill: #333333;" text="Precio de compra *" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtPrecioCompra" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="txtPrecioCompra" prefHeight="28.0" prefWidth="250.0" promptText="Ej: 2500.00" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <font>
                   <Font size="12.0" />
                </font>
@@ -115,7 +115,7 @@
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="txtStockMinimo" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <TextField fx:id="txtStockMinimo" prefHeight="28.0" prefWidth="250.0" promptText="Ej: 1" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <font>
                   <Font size="12.0" />
                </font>
@@ -126,7 +126,7 @@
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextArea fx:id="txtDescripcion" prefHeight="70.0" prefWidth="515.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="11">
+            <TextArea fx:id="txtDescripcion" prefHeight="70.0" prefWidth="515.0" promptText="Descripción de la pieza (opcional)..." style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="11">
                <font>
                   <Font size="12.0" />
                </font>

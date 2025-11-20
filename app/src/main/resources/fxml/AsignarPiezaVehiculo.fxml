@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
@@ -39,29 +40,26 @@
          <children>
             <GridPane hgap="15.0" vgap="8.0">
               <children>
-                  <Label style="-fx-text-fill: #333333;" text="Vehículo Seleccionado" GridPane.rowIndex="0">
+                  <Label style="-fx-text-fill: #333333;" text="Vehículo Seleccionado *" GridPane.rowIndex="0">
                      <font>
                         <Font size="12.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtVehiculoSeleccionado" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="1">
+                  <ComboBox fx:id="cmbVehiculo" prefHeight="28.0" prefWidth="250.0" promptText="Seleccione un vehículo" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="1">
+                  </ComboBox>
+                  
+                  <Label style="-fx-text-fill: #333333;" text="Cantidad *" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtCantidad" prefHeight="28.0" prefWidth="250.0" promptText="Cantidad (número entero)" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="3">
                      <font>
                         <Font size="12.0" />
                      </font>
                   </TextField>
                   
-                  <Label style="-fx-text-fill: #333333;" text="Cantidad" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtCantidad" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                  </TextField>
-                  
-                  <Label style="-fx-text-fill: #333333;" text="Contenedor" GridPane.rowIndex="4">
+                  <Label style="-fx-text-fill: #333333;" text="Contenedor *" GridPane.rowIndex="4">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -89,29 +87,26 @@
                      </children>
                   </VBox>
                   
-                  <Label style="-fx-text-fill: #333333;" text="Pieza" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <Label style="-fx-text-fill: #333333;" text="Pieza *" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <font>
                         <Font size="12.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="txtPieza" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <ComboBox fx:id="cmbPieza" prefHeight="28.0" prefWidth="250.0" promptText="Seleccione una pieza" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  </ComboBox>
+                  
+                  <Label style="-fx-text-fill: #333333;" text="Precio Mecánico *" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="txtPrecioMecanico" prefHeight="28.0" prefWidth="250.0" promptText="Ej: 150.50" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font size="12.0" />
                      </font>
                   </TextField>
                   
-                  <Label style="-fx-text-fill: #333333;" text="Precio Mecánico" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtPrecioMecanico" prefHeight="28.0" prefWidth="250.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                  </TextField>
-                  
-                  <Label style="-fx-text-fill: #333333;" text="Fecha de Asignación" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <Label style="-fx-text-fill: #333333;" text="Fecha de Asignación *" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -150,7 +145,7 @@
                   <Font size="12.0" />
                </font>
             </Label>
-            <TextArea fx:id="txtNotas" prefHeight="80.0" prefWidth="561.0" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" wrapText="true">
+            <TextArea fx:id="txtNotas" prefHeight="80.0" prefWidth="561.0" promptText="Notas adicionales sobre la asignación (opcional)..." style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" wrapText="true">
                <font>
                   <Font size="12.0" />
                </font>

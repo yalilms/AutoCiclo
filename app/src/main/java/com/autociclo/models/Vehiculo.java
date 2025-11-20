@@ -80,4 +80,9 @@ public class Vehiculo {
     public void setKilometraje(int value) { kilometraje.set(value); }
     public void setUbicacionGps(String value) { ubicacionGps.set(value); }
     public void setObservaciones(String value) { observaciones.set(value); }
+
+    @Override
+    public String toString() {
+        return marca.get() + " " + modelo.get() + " (" + anio.get() + ") - " + matricula.get();
+    }
 }
