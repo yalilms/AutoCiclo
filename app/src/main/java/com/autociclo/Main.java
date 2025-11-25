@@ -19,6 +19,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primeraEscena) throws Exception {
+        // Establecer icono de la aplicación
+        javafx.scene.image.Image icon = new javafx.scene.image.Image(
+            getClass().getResourceAsStream("/fxml/Logo_autociclo.png")
+        );
+        primeraEscena.getIcons().add(icon);
+
         // Cargar pantalla de carga
         Parent pantallaCarga = FXMLLoader.load(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
 
