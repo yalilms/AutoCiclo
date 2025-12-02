@@ -45,8 +45,16 @@
                         <Font size="12.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="cmbVehiculo" prefHeight="28.0" prefWidth="250.0" promptText="Seleccione un vehículo" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.rowIndex="1">
-                  </ComboBox>
+                  <VBox spacing="3.0" GridPane.rowIndex="1">
+                     <children>
+                        <TextField fx:id="txtFiltroVehiculo" prefHeight="25.0" prefWidth="250.0" promptText="Filtrar por matrícula..." style="-fx-background-radius: 3; -fx-border-color: #3498db; -fx-border-width: 1; -fx-border-radius: 3; -fx-background-color: #e8f4f8;">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </TextField>
+                        <ComboBox fx:id="cmbVehiculo" prefHeight="28.0" prefWidth="250.0" promptText="Seleccione un vehículo" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" />
+                     </children>
+                  </VBox>
                   
                   <Label style="-fx-text-fill: #333333;" text="Cantidad *" GridPane.rowIndex="2">
                      <font>
@@ -92,8 +100,16 @@
                         <Font size="12.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="cmbPieza" prefHeight="28.0" prefWidth="250.0" promptText="Seleccione una pieza" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                  </ComboBox>
+                  <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <TextField fx:id="txtFiltroPieza" prefHeight="25.0" prefWidth="250.0" promptText="Filtrar por código de pieza..." style="-fx-background-radius: 3; -fx-border-color: #3498db; -fx-border-width: 1; -fx-border-radius: 3; -fx-background-color: #e8f4f8;">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </TextField>
+                        <ComboBox fx:id="cmbPieza" prefHeight="28.0" prefWidth="250.0" promptText="Seleccione una pieza" style="-fx-background-radius: 3; -fx-border-color: #cccccc; -fx-border-width: 1; -fx-border-radius: 3;" />
+                     </children>
+                  </VBox>
                   
                   <Label style="-fx-text-fill: #333333;" text="Precio Mecánico *" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>

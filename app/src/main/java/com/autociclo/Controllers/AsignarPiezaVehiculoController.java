@@ -7,6 +7,7 @@ import com.autociclo.models.Pieza;
 import com.autociclo.utils.ValidationUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -24,7 +25,9 @@ import java.util.ResourceBundle;
 public class AsignarPiezaVehiculoController implements Initializable {
 
     @FXML private ComboBox<Vehiculo> cmbVehiculo;
+    @FXML private TextField txtFiltroVehiculo;
     @FXML private ComboBox<Pieza> cmbPieza;
+    @FXML private TextField txtFiltroPieza;
     @FXML private TextField txtCantidad;
     @FXML private RadioButton rbNuevo;
     @FXML private RadioButton rbUsado;
@@ -45,6 +48,10 @@ public class AsignarPiezaVehiculoController implements Initializable {
     // Listas para ComboBoxes
     private ObservableList<Vehiculo> listaVehiculos = FXCollections.observableArrayList();
     private ObservableList<Pieza> listaPiezas = FXCollections.observableArrayList();
+
+    // Listas filtradas para búsqueda en tiempo real
+    private FilteredList<Vehiculo> vehiculosFiltrados;
+    private FilteredList<Pieza> piezasFiltradas;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -68,6 +75,76 @@ public class AsignarPiezaVehiculoController implements Initializable {
         // Cargar listas de vehículos y piezas
         cargarVehiculos();
         cargarPiezas();
+
+        // Configurar filtrado en tiempo real
+        configurarFiltradoVehiculos();
+        configurarFiltradoPiezas();
+    }
+
+    /**
+     * Configura el filtrado en tiempo real para vehículos
+     */
+    private void configurarFiltradoVehiculos() {
+        // Crear lista filtrada basada en la lista original
+        vehiculosFiltrados = new FilteredList<>(listaVehiculos, p -> true);
+
+        // Vincular el ComboBox a la lista filtrada
+        cmbVehiculo.setItems(vehiculosFiltrados);
+
+        // Listener para el campo de filtro
+        txtFiltroVehiculo.textProperty().addListener((observable, oldValue, newValue) -> {
+            vehiculosFiltrados.setPredicate(vehiculo -> {
+                // Si el filtro está vacío, mostrar todos
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Comparar matrícula (ignorar mayúsculas/minúsculas)
+                String filtroMinusculas = newValue.toLowerCase();
+                String matricula = vehiculo.getMatricula().toLowerCase();
+
+                // Filtrar por matrícula
+                return matricula.contains(filtroMinusculas);
+            });
+
+            // Si solo queda un elemento tras filtrar, seleccionarlo automáticamente
+            if (vehiculosFiltrados.size() == 1) {
+                cmbVehiculo.setValue(vehiculosFiltrados.get(0));
+            }
+        });
+    }
+
+    /**
+     * Configura el filtrado en tiempo real para piezas
+     */
+    private void configurarFiltradoPiezas() {
+        // Crear lista filtrada basada en la lista original
+        piezasFiltradas = new FilteredList<>(listaPiezas, p -> true);
+
+        // Vincular el ComboBox a la lista filtrada
+        cmbPieza.setItems(piezasFiltradas);
+
+        // Listener para el campo de filtro
+        txtFiltroPieza.textProperty().addListener((observable, oldValue, newValue) -> {
+            piezasFiltradas.setPredicate(pieza -> {
+                // Si el filtro está vacío, mostrar todos
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+
+                // Comparar código de pieza (ignorar mayúsculas/minúsculas)
+                String filtroMinusculas = newValue.toLowerCase();
+                String codigoPieza = pieza.getCodigoPieza().toLowerCase();
+
+                // Filtrar por código de pieza
+                return codigoPieza.contains(filtroMinusculas);
+            });
+
+            // Si solo queda un elemento tras filtrar, seleccionarlo automáticamente
+            if (piezasFiltradas.size() == 1) {
+                cmbPieza.setValue(piezasFiltradas.get(0));
+            }
+        });
     }
 
     /**
@@ -91,7 +168,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
      */
     private void cargarVehiculos() {
         listaVehiculos.clear();
-        String sql = "SELECT * FROM VEHICULOS ORDER BY marca, modelo";
+        String sql = "SELECT * FROM VEHICULOS ORDER BY matricula";
 
         try (Connection conn = ConexionBD.getConexion();
              Statement stmt = conn.createStatement();
@@ -115,7 +192,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
                 listaVehiculos.add(v);
             }
 
-            cmbVehiculo.setItems(listaVehiculos);
+            // No establecer items aquí, se hace en configurarFiltradoVehiculos()
 
         } catch (Exception e) {
             System.err.println("Error al cargar vehículos: " + e.getMessage());
@@ -128,7 +205,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
      */
     private void cargarPiezas() {
         listaPiezas.clear();
-        String sql = "SELECT * FROM PIEZAS ORDER BY nombre";
+        String sql = "SELECT * FROM PIEZAS ORDER BY codigo_pieza";
 
         try (Connection conn = ConexionBD.getConexion();
              Statement stmt = conn.createStatement();
@@ -151,7 +228,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
                 listaPiezas.add(p);
             }
 
-            cmbPieza.setItems(listaPiezas);
+            // No establecer items aquí, se hace en configurarFiltradoPiezas()
 
         } catch (Exception e) {
             System.err.println("Error al cargar piezas: " + e.getMessage());
@@ -186,11 +263,11 @@ public class AsignarPiezaVehiculoController implements Initializable {
 
             // Seleccionar el estado correspondiente
             String estado = inventarioEditar.getEstadoPieza();
-            if ("Nuevo".equalsIgnoreCase(estado)) {
+            if ("nueva".equalsIgnoreCase(estado)) {
                 rbNuevo.setSelected(true);
-            } else if ("Usado".equalsIgnoreCase(estado)) {
+            } else if ("usada".equalsIgnoreCase(estado)) {
                 rbUsado.setSelected(true);
-            } else if ("Reparado".equalsIgnoreCase(estado)) {
+            } else if ("reparada".equalsIgnoreCase(estado)) {
                 rbReparado.setSelected(true);
             }
 
@@ -279,9 +356,9 @@ public class AsignarPiezaVehiculoController implements Initializable {
         int cantidad = Integer.parseInt(txtCantidad.getText().trim());
 
         String estado = "";
-        if (rbNuevo.isSelected()) estado = "Nuevo";
-        else if (rbUsado.isSelected()) estado = "Usado";
-        else if (rbReparado.isSelected()) estado = "Reparado";
+        if (rbNuevo.isSelected()) estado = "nueva";
+        else if (rbUsado.isSelected()) estado = "usada";
+        else if (rbReparado.isSelected()) estado = "reparada";
 
         double precioUnitario = Double.parseDouble(txtPrecioMecanico.getText().trim().replace(",", "."));
         LocalDate fechaExtraccion = dpFechaAsignacion.getValue();

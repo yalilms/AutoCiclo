@@ -1,11 +1,14 @@
 package com.autociclo;
 
+import com.autociclo.controllers.PantallaDeCargaController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
 import javafx.util.Duration;
 
 /**
@@ -26,18 +29,28 @@ public class Main extends Application {
         primeraEscena.getIcons().add(icon);
 
         // Cargar pantalla de carga
-        Parent pantallaCarga = FXMLLoader.load(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
+        Parent pantallaCarga = loader.load();
+        PantallaDeCargaController controller = loader.getController();
 
         Scene sceneCarga = new Scene(pantallaCarga);
         primeraEscena.setScene(sceneCarga);
         primeraEscena.setTitle("AutoCiclo - Gestión de Desguace");
         primeraEscena.show();
 
-        // Crear una pausa de 2 segundos antes de cambiar a ListadosController
-        PauseTransition delay = new PauseTransition(Duration.seconds(2));
-        delay.setOnFinished(event -> {
+        // Animar la barra de progreso de 0 a 100% en 2 segundos
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(20), event -> {
+            double currentProgress = controller.getProgressBar().getProgress();
+            if (currentProgress < 1.0) {
+                controller.getProgressBar().setProgress(currentProgress + 0.01);
+            }
+        });
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(100); // 100 ciclos * 0.01 = 1.0 (100%)
+        timeline.setOnFinished(event -> {
+            // Cuando la animación termine, cargar la siguiente pantalla
             try {
-                // Cargar ListadosController después de 2 segundos
                 Parent listado = FXMLLoader.load(getClass().getResource("/fxml/ListadosController.fxml"));
                 Scene sceneListado = new Scene(listado);
                 primeraEscena.setScene(sceneListado);
@@ -47,6 +60,8 @@ public class Main extends Application {
                 e.printStackTrace();
             }
         });
-        delay.play();
+
+        // Iniciar la animación
+        timeline.play();
     }
 }
