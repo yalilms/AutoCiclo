@@ -9,9 +9,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
+import javafx.util.Duration;
 
 import com.autociclo.database.ConexionBD;
 import com.autociclo.models.Vehiculo;
@@ -87,6 +93,10 @@ public class ListadoMaestroController implements Initializable {
     private ObservableList<Pieza> listaPiezas = FXCollections.observableArrayList();
     private ObservableList<InventarioPieza> listaInventario = FXCollections.observableArrayList();
 
+    // Variables de paginación
+    private int paginaActual = 0;
+    private static final int ELEMENTOS_POR_PAGINA = 10;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Configurar columnas de TableView Vehículos
@@ -118,19 +128,27 @@ public class ListadoMaestroController implements Initializable {
         cargarPiezas();
         cargarInventario();
 
-        // Asignar listas a los TableViews
-        tableVehiculos.setItems(listaVehiculos);
-        tablePiezas.setItems(listaPiezas);
-        tableInventario.setItems(listaInventario);
-
         // Mostrar vehículos por defecto al iniciar
         mostrarVehiculos();
+
+        // Configurar botones de paginación
+        btnAnterior.setOnAction(event -> paginaAnterior());
+        btnSiguiente.setOnAction(event -> paginaSiguiente());
+        actualizarBotonesPaginacion();
 
         // Conectar eventos de botones del toolbar
         btnNuevo.setOnAction(event -> abrirFormularioNuevo());
         btnEditar.setOnAction(event -> editarRegistro());
         btnEliminar.setOnAction(event -> eliminarRegistro());
-        btnActualizar.setOnAction(event -> actualizarListado());
+        btnActualizar.setOnAction(event -> {
+            animarBotonActualizar();
+            actualizarListado();
+        });
+
+        // ENTREGA 3: Configurar eventos de teclado y ratón
+        configurarEventosTeclado();
+        configurarEventosRaton();
+        configurarMenusContextuales();
     }
 
     private void cargarVehiculos() {
@@ -231,51 +249,6 @@ public class ListadoMaestroController implements Initializable {
             System.err.println("Error al cargar inventario: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    @FXML
-    public void mostrarVehiculos() {
-        tableVehiculos.setVisible(true);
-        tablePiezas.setVisible(false);
-        tableInventario.setVisible(false);
-
-        // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().remove("nav-button-inactive");
-        btnNavVehiculos.getStyleClass().add("nav-button-active");
-        btnNavPiezas.getStyleClass().remove("nav-button-active");
-        btnNavPiezas.getStyleClass().add("nav-button-inactive");
-        btnNavInventario.getStyleClass().remove("nav-button-active");
-        btnNavInventario.getStyleClass().add("nav-button-inactive");
-    }
-
-    @FXML
-    public void mostrarPiezas() {
-        tableVehiculos.setVisible(false);
-        tablePiezas.setVisible(true);
-        tableInventario.setVisible(false);
-
-        // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().remove("nav-button-active");
-        btnNavVehiculos.getStyleClass().add("nav-button-inactive");
-        btnNavPiezas.getStyleClass().remove("nav-button-inactive");
-        btnNavPiezas.getStyleClass().add("nav-button-active");
-        btnNavInventario.getStyleClass().remove("nav-button-active");
-        btnNavInventario.getStyleClass().add("nav-button-inactive");
-    }
-
-    @FXML
-    public void mostrarInventario() {
-        tableVehiculos.setVisible(false);
-        tablePiezas.setVisible(false);
-        tableInventario.setVisible(true);
-
-        // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().remove("nav-button-active");
-        btnNavVehiculos.getStyleClass().add("nav-button-inactive");
-        btnNavPiezas.getStyleClass().remove("nav-button-active");
-        btnNavPiezas.getStyleClass().add("nav-button-inactive");
-        btnNavInventario.getStyleClass().remove("nav-button-inactive");
-        btnNavInventario.getStyleClass().add("nav-button-active");
     }
 
     // Métodos para abrir formularios como ventanas modales
@@ -606,5 +579,519 @@ public class ListadoMaestroController implements Initializable {
         } else if (tableInventario.isVisible()) {
             cargarInventario();
         }
+
+        // Actualizar tabla paginada después de recargar datos
+        actualizarTablaPaginada();
+        actualizarBotonesPaginacion();
+    }
+
+    // ==================================================================================
+    // ENTREGA 3: ANIMACIONES
+    // ==================================================================================
+
+    /**
+     * Anima el botón actualizar con rotación de 360 grados
+     */
+    private void animarBotonActualizar() {
+        RotateTransition rotate = new RotateTransition(Duration.millis(500), btnActualizar);
+        rotate.setByAngle(360);
+        rotate.setCycleCount(1);
+        rotate.play();
+    }
+
+    /**
+     * Aplica animación FadeTransition al mostrar vehículos
+     */
+    @FXML
+    public void mostrarVehiculos() {
+        // Hacer visible la tabla antes de animar
+        tableVehiculos.setVisible(true);
+        tablePiezas.setVisible(false);
+        tableInventario.setVisible(false);
+
+        // Reiniciar paginación
+        reiniciarPaginacion();
+
+        // Animación de entrada
+        aplicarFadeTransition(tableVehiculos);
+
+        // Cambiar estilos de botones de navegación
+        btnNavVehiculos.getStyleClass().remove("nav-button-inactive");
+        btnNavVehiculos.getStyleClass().add("nav-button-active");
+        btnNavPiezas.getStyleClass().remove("nav-button-active");
+        btnNavPiezas.getStyleClass().add("nav-button-inactive");
+        btnNavInventario.getStyleClass().remove("nav-button-active");
+        btnNavInventario.getStyleClass().add("nav-button-inactive");
+    }
+
+    /**
+     * Aplica animación FadeTransition al mostrar piezas
+     */
+    @FXML
+    public void mostrarPiezas() {
+        tableVehiculos.setVisible(false);
+        tablePiezas.setVisible(true);
+        tableInventario.setVisible(false);
+
+        // Reiniciar paginación
+        reiniciarPaginacion();
+
+        // Animación de entrada
+        aplicarFadeTransition(tablePiezas);
+
+        // Cambiar estilos de botones de navegación
+        btnNavVehiculos.getStyleClass().remove("nav-button-active");
+        btnNavVehiculos.getStyleClass().add("nav-button-inactive");
+        btnNavPiezas.getStyleClass().remove("nav-button-inactive");
+        btnNavPiezas.getStyleClass().add("nav-button-active");
+        btnNavInventario.getStyleClass().remove("nav-button-active");
+        btnNavInventario.getStyleClass().add("nav-button-inactive");
+    }
+
+    /**
+     * Aplica animación FadeTransition al mostrar inventario
+     */
+    @FXML
+    public void mostrarInventario() {
+        tableVehiculos.setVisible(false);
+        tablePiezas.setVisible(false);
+        tableInventario.setVisible(true);
+
+        // Reiniciar paginación
+        reiniciarPaginacion();
+
+        // Animación de entrada
+        aplicarFadeTransition(tableInventario);
+
+        // Cambiar estilos de botones de navegación
+        btnNavVehiculos.getStyleClass().remove("nav-button-active");
+        btnNavVehiculos.getStyleClass().add("nav-button-inactive");
+        btnNavPiezas.getStyleClass().remove("nav-button-active");
+        btnNavPiezas.getStyleClass().add("nav-button-inactive");
+        btnNavInventario.getStyleClass().remove("nav-button-inactive");
+        btnNavInventario.getStyleClass().add("nav-button-active");
+    }
+
+    /**
+     * Método auxiliar para aplicar FadeTransition a cualquier nodo
+     */
+    private void aplicarFadeTransition(javafx.scene.Node nodo) {
+        FadeTransition fade = new FadeTransition(Duration.millis(400), nodo);
+        fade.setFromValue(0.0);
+        fade.setToValue(1.0);
+        fade.play();
+    }
+
+    /**
+     * Aplica animación de escala al hacer hover en botones (complemento a CSS)
+     */
+    private void aplicarAnimacionBotonHover(Button boton) {
+        ScaleTransition scaleUp = new ScaleTransition(Duration.millis(100), boton);
+        scaleUp.setToX(1.1);
+        scaleUp.setToY(1.1);
+
+        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(100), boton);
+        scaleDown.setToX(1.0);
+        scaleDown.setToY(1.0);
+
+        boton.setOnMouseEntered(e -> scaleUp.playFromStart());
+        boton.setOnMouseExited(e -> scaleDown.playFromStart());
+    }
+
+    // ==================================================================================
+    // ENTREGA 3: EVENTOS DE TECLADO
+    // ==================================================================================
+
+    /**
+     * Configura eventos de teclado para las tres tablas
+     */
+    private void configurarEventosTeclado() {
+        // Eventos para TableView Vehículos
+        tableVehiculos.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.E) {
+                editarRegistro();
+            } else if (event.getCode() == KeyCode.DELETE) {
+                eliminarRegistro();
+            } else if (event.getCode() == KeyCode.F5) {
+                animarBotonActualizar();
+                actualizarListado();
+            } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
+                abrirFormularioNuevo();
+            }
+        });
+
+        // Eventos para TableView Piezas
+        tablePiezas.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.E) {
+                editarRegistro();
+            } else if (event.getCode() == KeyCode.DELETE) {
+                eliminarRegistro();
+            } else if (event.getCode() == KeyCode.F5) {
+                animarBotonActualizar();
+                actualizarListado();
+            } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
+                abrirFormularioNuevo();
+            }
+        });
+
+        // Eventos para TableView Inventario
+        tableInventario.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.E) {
+                editarRegistro();
+            } else if (event.getCode() == KeyCode.DELETE) {
+                eliminarRegistro();
+            } else if (event.getCode() == KeyCode.F5) {
+                animarBotonActualizar();
+                actualizarListado();
+            } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
+                abrirFormularioNuevo();
+            }
+        });
+
+        // Evento Enter en campo de búsqueda
+        txtBuscar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                realizarBusqueda();
+            }
+        });
+    }
+
+    /**
+     * Realiza búsqueda en la tabla visible
+     */
+    private void realizarBusqueda() {
+        String textoBusqueda = txtBuscar.getText().toLowerCase().trim();
+
+        if (textoBusqueda.isEmpty()) {
+            // Si está vacío, mostrar todos
+            actualizarListado();
+            return;
+        }
+
+        if (tableVehiculos.isVisible()) {
+            ObservableList<Vehiculo> filtrados = FXCollections.observableArrayList();
+            for (Vehiculo v : listaVehiculos) {
+                if (v.getMatricula().toLowerCase().contains(textoBusqueda) ||
+                    v.getMarca().toLowerCase().contains(textoBusqueda) ||
+                    v.getModelo().toLowerCase().contains(textoBusqueda)) {
+                    filtrados.add(v);
+                }
+            }
+            tableVehiculos.setItems(filtrados);
+        } else if (tablePiezas.isVisible()) {
+            ObservableList<Pieza> filtrados = FXCollections.observableArrayList();
+            for (Pieza p : listaPiezas) {
+                if (p.getCodigoPieza().toLowerCase().contains(textoBusqueda) ||
+                    p.getNombre().toLowerCase().contains(textoBusqueda) ||
+                    p.getCategoria().toLowerCase().contains(textoBusqueda)) {
+                    filtrados.add(p);
+                }
+            }
+            tablePiezas.setItems(filtrados);
+        } else if (tableInventario.isVisible()) {
+            ObservableList<InventarioPieza> filtrados = FXCollections.observableArrayList();
+            for (InventarioPieza inv : listaInventario) {
+                if (inv.getVehiculoInfo().toLowerCase().contains(textoBusqueda) ||
+                    inv.getPiezaNombre().toLowerCase().contains(textoBusqueda)) {
+                    filtrados.add(inv);
+                }
+            }
+            tableInventario.setItems(filtrados);
+        }
+    }
+
+    // ==================================================================================
+    // ENTREGA 3: EVENTOS DE RATÓN (DOBLE CLIC)
+    // ==================================================================================
+
+    /**
+     * Configura eventos de doble clic para editar
+     */
+    private void configurarEventosRaton() {
+        // Doble clic en TableView Vehículos
+        tableVehiculos.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                if (tableVehiculos.getSelectionModel().getSelectedItem() != null) {
+                    editarRegistro();
+                }
+            }
+        });
+
+        // Doble clic en TableView Piezas
+        tablePiezas.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                if (tablePiezas.getSelectionModel().getSelectedItem() != null) {
+                    editarRegistro();
+                }
+            }
+        });
+
+        // Doble clic en TableView Inventario
+        tableInventario.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                if (tableInventario.getSelectionModel().getSelectedItem() != null) {
+                    editarRegistro();
+                }
+            }
+        });
+    }
+
+    // ==================================================================================
+    // ENTREGA 3: MENÚS CONTEXTUALES
+    // ==================================================================================
+
+    /**
+     * Configura menús contextuales para las tres tablas
+     */
+    private void configurarMenusContextuales() {
+        // Menú contextual para Vehículos
+        ContextMenu menuVehiculos = crearMenuContextual();
+        tableVehiculos.setContextMenu(menuVehiculos);
+
+        // Menú contextual para Piezas
+        ContextMenu menuPiezas = crearMenuContextual();
+        tablePiezas.setContextMenu(menuPiezas);
+
+        // Menú contextual para Inventario
+        ContextMenu menuInventario = crearMenuContextual();
+        tableInventario.setContextMenu(menuInventario);
+
+        // Menú contextual para campos de texto
+        ContextMenu menuTexto = crearMenuContextualTexto();
+        txtBuscar.setContextMenu(menuTexto);
+    }
+
+    /**
+     * Crea un menú contextual genérico para las tablas
+     */
+    private ContextMenu crearMenuContextual() {
+        ContextMenu contextMenu = new ContextMenu();
+
+        // Opción: Nuevo
+        MenuItem itemNuevo = new MenuItem("➕ Nuevo");
+        itemNuevo.setOnAction(e -> abrirFormularioNuevo());
+
+        // Opción: Editar
+        MenuItem itemEditar = new MenuItem("✏ Editar");
+        itemEditar.setOnAction(e -> editarRegistro());
+
+        // Opción: Eliminar
+        MenuItem itemEliminar = new MenuItem("🗑 Eliminar");
+        itemEliminar.setOnAction(e -> eliminarRegistro());
+
+        // Separador
+        SeparatorMenuItem separador = new SeparatorMenuItem();
+
+        // Opción: Actualizar
+        MenuItem itemActualizar = new MenuItem("🔄 Actualizar");
+        itemActualizar.setOnAction(e -> {
+            animarBotonActualizar();
+            actualizarListado();
+        });
+
+        contextMenu.getItems().addAll(itemNuevo, itemEditar, itemEliminar, separador, itemActualizar);
+        return contextMenu;
+    }
+
+    /**
+     * Crea un menú contextual para campos de texto
+     */
+    private ContextMenu crearMenuContextualTexto() {
+        ContextMenu contextMenu = new ContextMenu();
+
+        // Opción: Copiar
+        MenuItem itemCopiar = new MenuItem("📋 Copiar");
+        itemCopiar.setOnAction(e -> txtBuscar.copy());
+
+        // Opción: Pegar
+        MenuItem itemPegar = new MenuItem("📌 Pegar");
+        itemPegar.setOnAction(e -> txtBuscar.paste());
+
+        // Opción: Cortar
+        MenuItem itemCortar = new MenuItem("✂ Cortar");
+        itemCortar.setOnAction(e -> txtBuscar.cut());
+
+        // Separador
+        SeparatorMenuItem separador = new SeparatorMenuItem();
+
+        // Opción: Seleccionar todo
+        MenuItem itemSeleccionar = new MenuItem("🔘 Seleccionar todo");
+        itemSeleccionar.setOnAction(e -> txtBuscar.selectAll());
+
+        // Opción: Limpiar
+        MenuItem itemLimpiar = new MenuItem("🧹 Limpiar");
+        itemLimpiar.setOnAction(e -> {
+            txtBuscar.clear();
+            actualizarListado();
+        });
+
+        contextMenu.getItems().addAll(itemCopiar, itemPegar, itemCortar, separador, itemSeleccionar, itemLimpiar);
+        return contextMenu;
+    }
+
+    // ==================================================================================
+    // PAGINACIÓN CON ANIMACIONES
+    // ==================================================================================
+
+    /**
+     * Avanza a la página siguiente con animación
+     */
+    private void paginaSiguiente() {
+        int totalPaginas = calcularTotalPaginas();
+
+        if (paginaActual < totalPaginas - 1) {
+            paginaActual++;
+            aplicarAnimacionCambioPagina(true);
+            actualizarTablaPaginada();
+            actualizarBotonesPaginacion();
+        }
+    }
+
+    /**
+     * Retrocede a la página anterior con animación
+     */
+    private void paginaAnterior() {
+        if (paginaActual > 0) {
+            paginaActual--;
+            aplicarAnimacionCambioPagina(false);
+            actualizarTablaPaginada();
+            actualizarBotonesPaginacion();
+        }
+    }
+
+    /**
+     * Calcula el número total de páginas según la tabla visible
+     */
+    private int calcularTotalPaginas() {
+        int totalElementos = 0;
+
+        if (tableVehiculos.isVisible()) {
+            totalElementos = listaVehiculos.size();
+        } else if (tablePiezas.isVisible()) {
+            totalElementos = listaPiezas.size();
+        } else if (tableInventario.isVisible()) {
+            totalElementos = listaInventario.size();
+        }
+
+        return (int) Math.ceil((double) totalElementos / ELEMENTOS_POR_PAGINA);
+    }
+
+    /**
+     * Actualiza la tabla visible con los elementos de la página actual
+     */
+    private void actualizarTablaPaginada() {
+        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
+        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, obtenerTotalElementosActual());
+
+        if (tableVehiculos.isVisible()) {
+            ObservableList<Vehiculo> paginaActualLista = FXCollections.observableArrayList(
+                listaVehiculos.subList(inicio, fin)
+            );
+            tableVehiculos.setItems(paginaActualLista);
+        } else if (tablePiezas.isVisible()) {
+            ObservableList<Pieza> paginaActualLista = FXCollections.observableArrayList(
+                listaPiezas.subList(inicio, fin)
+            );
+            tablePiezas.setItems(paginaActualLista);
+        } else if (tableInventario.isVisible()) {
+            ObservableList<InventarioPieza> paginaActualLista = FXCollections.observableArrayList(
+                listaInventario.subList(inicio, fin)
+            );
+            tableInventario.setItems(paginaActualLista);
+        }
+    }
+
+    /**
+     * Obtiene el total de elementos de la lista visible
+     */
+    private int obtenerTotalElementosActual() {
+        if (tableVehiculos.isVisible()) {
+            return listaVehiculos.size();
+        } else if (tablePiezas.isVisible()) {
+            return listaPiezas.size();
+        } else if (tableInventario.isVisible()) {
+            return listaInventario.size();
+        }
+        return 0;
+    }
+
+    /**
+     * Actualiza el estado de los botones de paginación (habilitado/deshabilitado)
+     */
+    private void actualizarBotonesPaginacion() {
+        int totalPaginas = calcularTotalPaginas();
+
+        // Deshabilitar botón Anterior si estamos en la primera página
+        btnAnterior.setDisable(paginaActual == 0);
+
+        // Deshabilitar botón Siguiente si estamos en la última página
+        btnSiguiente.setDisable(paginaActual >= totalPaginas - 1 || totalPaginas == 0);
+    }
+
+    /**
+     * Aplica animación de transición al cambiar de página
+     * @param adelante true si avanza, false si retrocede
+     */
+    private void aplicarAnimacionCambioPagina(boolean adelante) {
+        TableView<?> tablaVisible = obtenerTablaVisible();
+
+        if (tablaVisible == null) return;
+
+        // Animación de fade out y slide
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(150), tablaVisible);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.3);
+
+        // Animación de fade in y slide
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(150), tablaVisible);
+        fadeIn.setFromValue(0.3);
+        fadeIn.setToValue(1.0);
+
+        // Animación de escala
+        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(150), tablaVisible);
+        scaleOut.setFromX(1.0);
+        scaleOut.setFromY(1.0);
+        scaleOut.setToX(0.95);
+        scaleOut.setToY(0.95);
+
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(150), tablaVisible);
+        scaleIn.setFromX(0.95);
+        scaleIn.setFromY(0.95);
+        scaleIn.setToX(1.0);
+        scaleIn.setToY(1.0);
+
+        // Ejecutar animaciones en secuencia
+        fadeOut.setOnFinished(e -> {
+            fadeIn.play();
+        });
+        scaleOut.setOnFinished(e -> {
+            scaleIn.play();
+        });
+
+        fadeOut.play();
+        scaleOut.play();
+    }
+
+    /**
+     * Obtiene la tabla actualmente visible
+     */
+    private TableView<?> obtenerTablaVisible() {
+        if (tableVehiculos.isVisible()) {
+            return tableVehiculos;
+        } else if (tablePiezas.isVisible()) {
+            return tablePiezas;
+        } else if (tableInventario.isVisible()) {
+            return tableInventario;
+        }
+        return null;
+    }
+
+    /**
+     * Reinicia la paginación al cambiar de tabla
+     */
+    private void reiniciarPaginacion() {
+        paginaActual = 0;
+        actualizarTablaPaginada();
+        actualizarBotonesPaginacion();
     }
 }

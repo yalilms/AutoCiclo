@@ -1,0 +1,40 @@
+/* =================================================================
+   ESTILOS PARA LA PANTALLA DE CARGA - EFECTO CRISTAL/GLASS
+   ================================================================= */
+
+/* Barra de progreso con efecto cristal/glass y gradiente azul a naranja */
+.progress-bar {
+    -fx-pref-height: 28px;
+    -fx-background-color: transparent;
+}
+
+/* Track (fondo de la barra) - fondo oscuro semi-transparente */
+.progress-bar .track {
+    -fx-background-color: rgba(40, 45, 55, 0.6);
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+    -fx-border-width: 1px;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0.3, 0, 2);
+}
+
+/* Barra de progreso con gradiente azul cian a naranja */
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right,
+        rgb(0, 150, 255),
+        rgb(0, 180, 255),
+        rgb(255, 165, 0),
+        rgb(255, 140, 0));
+    -fx-background-radius: 13px;
+    -fx-background-insets: 1px;
+    -fx-border-radius: 13px;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 0.5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 150, 255, 0.6), 12, 0.5, 0, 0);
+    -fx-padding: 0;
+}
+
+/* Animación suave cuando la barra crece */
+.progress-bar .bar {
+    -fx-transition: -fx-background-color 0.3s ease;
+}

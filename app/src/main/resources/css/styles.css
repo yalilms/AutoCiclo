@@ -1,593 +1,363 @@
 /* =================================================================
-   AUTOCICLO - HOJA DE ESTILOS PRINCIPAL
-   Desarrollo de Interfaces - 2º DAM
-   Entrega 3: CSS con todos los tipos de aplicación
+   AUTOCICLO - PREMIUM GLASSMORPHISM THEME
    ================================================================= */
 
-/* =================================================================
-   1. ESTILOS GENERALES (ROOT)
-   ================================================================= */
-
+/* 1. VARIABLES & ROOT */
 .root {
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    /* Colores Principales */
+    -color-bg: #0f172a;
+    /* Slate 900 */
+    -color-bg-overlay: rgba(15, 23, 42, 0.8);
+    -color-primary: #3b82f6;
+    /* Blue 500 */
+    -color-primary-hover: #2563eb;
+    /* Blue 600 */
+    -color-secondary: #10b981;
+    /* Emerald 500 */
+    -color-accent: #8b5cf6;
+    /* Violet 500 */
+    -color-danger: #ef4444;
+    /* Red 500 */
+    -color-text-light: #f8fafc;
+    /* Slate 50 */
+    -color-text-dim: #94a3b8;
+    /* Slate 400 */
+
+    /* Glass Effect */
+    -glass-bg: rgba(30, 41, 59, 0.7);
+    /* Slate 800 with opacity */
+    -glass-border: rgba(255, 255, 255, 0.1);
+    -glass-shadow: rgba(0, 0, 0, 0.5);
+
+    /* Fuentes */
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
     -fx-font-size: 14px;
-    -fx-base: #ecf0f1;
-    -fx-background: #ecf0f1;
+    -fx-base: -color-bg;
+    -fx-background: -color-bg;
+    -fx-text-fill: -color-text-light;
 }
 
-/* =================================================================
-   2. CLASES - LABELS (Aplicación automática a todos los labels)
-   ================================================================= */
+/* 2. GENERAL COMPONENTS */
 
 .label {
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 5px;
+    -fx-text-fill: -color-text-light;
 }
 
-/* =================================================================
-   3. CLASES - BUTTONS (Aplicación automática a todos los botones)
-   ================================================================= */
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0, 0, 2);
+}
+
+.subtitle-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: -color-text-dim;
+}
+
+/* 3. BUTTONS */
 
 .button {
-    -fx-background-color: #3498db;
+    -fx-background-color: linear-gradient(to bottom right, #334155, #1e293b);
     -fx-text-fill: white;
-    -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-padding: 8px 15px;
-    -fx-background-radius: 5px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 1px;
+    -fx-padding: 10px 20px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+    -fx-transition: all 0.3s;
 }
 
 .button:hover {
-    -fx-background-color: #2980b9;
+    -fx-background-color: linear-gradient(to bottom right, #475569, #334155);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 10, 0, 0, 0);
+    /* Blue glow */
 }
 
 .button:pressed {
-    -fx-background-color: #21618c;
+    -fx-background-color: #0f172a;
     -fx-scale-x: 0.98;
     -fx-scale-y: 0.98;
 }
 
-.button:focused {
-    -fx-border-color: #2980b9;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
+/* Primary Action Button */
+.button-primary {
+    -fx-background-color: linear-gradient(to bottom right, -color-primary, -color-primary-hover);
 }
 
-/* =================================================================
-   4. SUBCLASES - BOTONES DE NAVEGACIÓN
-   ================================================================= */
-
-.nav-button-active {
-    -fx-background-color: #2ecc71;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 10px 20px;
-    -fx-background-radius: 8px;
-    -fx-border-color: #27ae60;
-    -fx-border-width: 2px;
-    -fx-border-radius: 8px;
-    -fx-effect: dropshadow(gaussian, rgba(46, 204, 113, 0.4), 10, 0, 0, 2);
+.button-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #60a5fa, -color-primary);
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.6), 15, 0, 0, 0);
 }
 
-.nav-button-active:hover {
-    -fx-background-color: #27ae60;
-    -fx-effect: dropshadow(gaussian, rgba(46, 204, 113, 0.6), 12, 0, 0, 3);
-}
-
-.nav-button-inactive {
-    -fx-background-color: #95a5a6;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: normal;
-    -fx-padding: 10px 20px;
-    -fx-background-radius: 8px;
-    -fx-border-color: #7f8c8d;
-    -fx-border-width: 1px;
-    -fx-border-radius: 8px;
-}
-
-.nav-button-inactive:hover {
-    -fx-background-color: #7f8c8d;
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
-}
-
-/* =================================================================
-   5. SUBCLASES - BOTONES ESPECIALIZADOS
-   ================================================================= */
-
+/* Success Action Button */
 .button-success {
-    -fx-background-color: #27ae60;
+    -fx-background-color: linear-gradient(to bottom right, -color-secondary, #059669);
 }
 
 .button-success:hover {
-    -fx-background-color: #229954;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.6), 15, 0, 0, 0);
 }
 
+/* Danger Action Button */
 .button-danger {
-    -fx-background-color: #e74c3c;
+    -fx-background-color: linear-gradient(to bottom right, -color-danger, #dc2626);
 }
 
 .button-danger:hover {
-    -fx-background-color: #c0392b;
+    -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.6), 15, 0, 0, 0);
 }
 
-.button-warning {
-    -fx-background-color: #f39c12;
-}
+/* 4. TEXT FIELDS & INPUTS */
 
-.button-warning:hover {
-    -fx-background-color: #d68910;
-}
-
-.button-info {
-    -fx-background-color: #3498db;
-}
-
-.button-info:hover {
-    -fx-background-color: #2980b9;
-}
-
-/* =================================================================
-   6. CLASES - TEXT FIELDS
-   ================================================================= */
-
-.text-field {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-    -fx-padding: 8px;
-    -fx-font-size: 13px;
-}
-
-.text-field:focused {
-    -fx-border-color: #3498db;
-    -fx-border-width: 2px;
-    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 5, 0, 0, 0);
-}
-
-/* =================================================================
-   7. SUBCLASES - VALIDACIÓN DE CAMPOS
-   ================================================================= */
-
-.text-field-error {
-    -fx-border-color: #e74c3c;
-    -fx-border-width: 2px;
-    -fx-background-color: #fadbd8;
-    -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.4), 8, 0, 0, 0);
-}
-
-.text-field-success {
-    -fx-border-color: #27ae60;
-    -fx-border-width: 2px;
-    -fx-background-color: #d5f4e6;
-    -fx-effect: dropshadow(gaussian, rgba(39, 174, 96, 0.3), 5, 0, 0, 0);
-}
-
-.text-field-warning {
-    -fx-border-color: #f39c12;
-    -fx-border-width: 2px;
-    -fx-background-color: #fdebd0;
-}
-
-/* =================================================================
-   8. CLASES - TEXT AREA
-   ================================================================= */
-
+.text-field,
+.password-field,
 .text-area {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-    -fx-padding: 8px;
-    -fx-font-size: 13px;
+    -fx-background-color: rgba(30, 41, 59, 0.5);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: -color-text-dim;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 1px;
+    -fx-padding: 10px;
 }
 
+.text-field:focused,
+.password-field:focused,
 .text-area:focused {
-    -fx-border-color: #3498db;
-    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 5, 0, 0, 0);
+    -fx-border-color: -color-primary;
+    -fx-background-color: rgba(30, 41, 59, 0.8);
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 8, 0, 0, 0);
 }
 
-.text-area .content {
-    -fx-background-color: white;
-}
-
-/* =================================================================
-   9. CLASES - COMBO BOX
-   ================================================================= */
-
-.combo-box {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
-}
-
-.combo-box:focused {
-    -fx-border-color: #3498db;
-}
-
-.combo-box .list-cell {
-    -fx-background-color: white;
-    -fx-text-fill: #2c3e50;
-}
-
-.combo-box .list-cell:hover {
-    -fx-background-color: #ecf0f1;
-}
-
-/* =================================================================
-   10. CLASES - DATE PICKER
-   ================================================================= */
-
-.date-picker {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-}
-
-.date-picker:focused {
-    -fx-border-color: #3498db;
-}
-
-.date-picker .arrow-button {
-    -fx-background-color: #3498db;
-}
-
-.date-picker .arrow-button:hover {
-    -fx-background-color: #2980b9;
-}
-
-/* =================================================================
-   11. CLASES - RADIO BUTTON
-   ================================================================= */
-
-.radio-button {
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 13px;
-}
-
-.radio-button .radio {
-    -fx-background-color: white;
-    -fx-border-color: #3498db;
-    -fx-border-width: 2px;
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-}
-
-.radio-button:selected .radio .dot {
-    -fx-background-color: #3498db;
-    -fx-background-radius: 5px;
-}
-
-.radio-button:hover {
-    -fx-cursor: hand;
-}
-
-/* =================================================================
-   12. CLASES - CHECK BOX
-   ================================================================= */
-
-.check-box {
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 13px;
-}
-
-.check-box .box {
-    -fx-background-color: white;
-    -fx-border-color: #3498db;
-    -fx-border-width: 2px;
-    -fx-background-radius: 3px;
-    -fx-border-radius: 3px;
-}
-
-.check-box:selected .box .mark {
-    -fx-background-color: #3498db;
-}
-
-.check-box:hover {
-    -fx-cursor: hand;
-}
-
-/* =================================================================
-   13. CLASES - TABLE VIEW
-   ================================================================= */
+/* 5. TABLE VIEW (GLASS STYLE) */
 
 .table-view {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 1px;
-    -fx-table-cell-border-color: #ecf0f1;
+    -fx-background-color: transparent;
+    /* Transparent to show background */
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 10px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(30, 41, 59, 0.9);
+    -fx-background-radius: 8px 8px 0 0;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 0 0 1px 0;
 }
 
 .table-view .column-header {
-    -fx-background-color: #34495e;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 13px;
-    -fx-padding: 10px;
+    -fx-background-color: transparent;
+    -fx-size: 45px;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: white;
-}
-
-.table-view .table-row-cell {
-    -fx-background-color: white;
-    -fx-border-color: transparent;
-}
-
-.table-view .table-row-cell:odd {
-    -fx-background-color: #f8f9fa;
-}
-
-.table-view .table-row-cell:selected {
-    -fx-background-color: #3498db;
-    -fx-text-fill: white;
-}
-
-.table-view .table-row-cell:hover {
-    -fx-background-color: #d6eaf8;
-    -fx-cursor: hand;
-}
-
-.table-view .table-cell {
-    -fx-padding: 8px;
+    -fx-text-fill: -color-text-light;
+    -fx-font-weight: bold;
     -fx-alignment: CENTER_LEFT;
 }
 
-/* =================================================================
-   14. CLASES - MENU BAR
-   ================================================================= */
-
-.menu-bar {
-    -fx-background-color: #34495e;
-    -fx-padding: 5px;
-}
-
-.menu-bar .label {
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-}
-
-.menu {
-    -fx-background-color: #34495e;
-}
-
-.menu:hover {
-    -fx-background-color: #2c3e50;
-}
-
-.menu .label {
-    -fx-text-fill: white;
-}
-
-.menu-item {
-    -fx-background-color: white;
-    -fx-padding: 8px 15px;
-}
-
-.menu-item:hover {
-    -fx-background-color: #ecf0f1;
-}
-
-.menu-item .label {
-    -fx-text-fill: #2c3e50;
-    -fx-font-weight: normal;
-}
-
-.context-menu {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 3);
-}
-
-/* =================================================================
-   15. CLASES - TOOLBAR
-   ================================================================= */
-
-.tool-bar {
-    -fx-background-color: #ecf0f1;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 0 0 1px 0;
+.table-view .table-cell {
+    -fx-text-fill: -color-text-dim;
+    -fx-alignment: CENTER_LEFT;
     -fx-padding: 10px;
-    -fx-spacing: 10px;
 }
 
-/* =================================================================
-   16. CLASES - SCROLL BAR
-   ================================================================= */
+.table-row-cell {
+    -fx-background-color: rgba(30, 41, 59, 0.4);
+    -fx-background-insets: 0, 0 0 1 0;
+}
 
-.scroll-bar {
-    -fx-background-color: #ecf0f1;
+.table-row-cell:odd {
+    -fx-background-color: rgba(30, 41, 59, 0.6);
+}
+
+.table-row-cell:hover {
+    -fx-background-color: rgba(59, 130, 246, 0.2);
+    /* Subtle blue hover */
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(59, 130, 246, 0.4);
+    -fx-table-cell-border-color: transparent;
+}
+
+/* 6. CONTAINERS & PANELS */
+
+.glass-pane {
+    -fx-background-color: -glass-bg;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, -glass-shadow, 20, 0.5, 0, 5);
+}
+
+.sidebar {
+    -fx-background-color: rgba(15, 23, 42, 0.95);
+    -fx-border-color: -glass-border;
+    -fx-border-width: 0 1px 0 0;
+}
+
+/* 7. SCROLL BAR */
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #95a5a6;
-    -fx-background-radius: 5px;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 10px;
 }
 
 .scroll-bar .thumb:hover {
-    -fx-background-color: #7f8c8d;
+    -fx-background-color: rgba(255, 255, 255, 0.4);
 }
 
-.scroll-bar .increment-button, .scroll-bar .decrement-button {
-    -fx-background-color: #bdc3c7;
-    -fx-padding: 5px;
+/* 8. MENU BAR & TOOL BAR */
+
+.menu-bar {
+    -fx-background-color: rgba(15, 23, 42, 0.9);
+    -fx-border-color: -glass-border;
+    -fx-border-width: 0 0 1px 0;
 }
 
-/* =================================================================
-   17. IDENTIFICADORES - ELEMENTOS ESPECÍFICOS
-   ================================================================= */
-
-#titulo-principal {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-    -fx-padding: 15px;
-    -fx-background-color: linear-gradient(to bottom, #ecf0f1, #bdc3c7);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2);
+.menu-item:hover {
+    -fx-background-color: -color-primary;
 }
 
-#panel-busqueda {
-    -fx-background-color: white;
-    -fx-padding: 15px;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 1px;
-    -fx-border-radius: 5px;
-    -fx-background-radius: 5px;
+.context-menu {
+    -fx-background-color: #1e293b;
+    -fx-border-color: -glass-border;
 }
 
-#btn-guardar {
-    -fx-background-color: #27ae60;
-}
-
-#btn-guardar:hover {
-    -fx-background-color: #229954;
-}
-
-#btn-cancelar {
-    -fx-background-color: #e74c3c;
-}
-
-#btn-cancelar:hover {
-    -fx-background-color: #c0392b;
-}
-
-#btn-eliminar {
-    -fx-background-color: #e74c3c;
-}
-
-#btn-eliminar:hover {
-    -fx-background-color: #c0392b;
-}
-
-#btn-actualizar {
-    -fx-background-color: #3498db;
-}
-
-#btn-actualizar:hover {
-    -fx-background-color: #2980b9;
-}
-
-/* =================================================================
-   18. PSEUDOCLASES - DISABLED
-   ================================================================= */
-
-.button:disabled {
-    -fx-background-color: #95a5a6;
-    -fx-text-fill: #7f8c8d;
-    -fx-opacity: 0.6;
-    -fx-cursor: default;
-}
-
-.text-field:disabled {
-    -fx-background-color: #ecf0f1;
-    -fx-text-fill: #7f8c8d;
-    -fx-opacity: 0.7;
-}
-
-/* =================================================================
-   19. EFECTOS ESPECIALES
-   ================================================================= */
-
-.card-effect {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 3);
-    -fx-background-color: white;
-    -fx-padding: 15px;
-    -fx-background-radius: 8px;
-}
-
-.card-effect:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 15, 0, 0, 5);
-}
-
-.glow-effect {
-    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.6), 15, 0, 0, 0);
-}
-
-/* =================================================================
-   20. SEPARADORES
-   ================================================================= */
-
-.separator {
-    -fx-background-color: #bdc3c7;
-}
-
-.separator .line {
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 1px;
-}
-
-/* =================================================================
-   21. PROGRESS BAR
-   ================================================================= */
-
-.progress-bar {
-    -fx-background-color: #ecf0f1;
+/* 9. PROGRESS BAR */
+.progress-bar .track {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-radius: 10px;
 }
 
 .progress-bar .bar {
-    -fx-background-color: #3498db;
+    -fx-background-color: linear-gradient(to right, -color-primary, -color-accent);
     -fx-background-radius: 10px;
-    -fx-background-insets: 2px;
+    -fx-effect: dropshadow(gaussian, -color-primary, 10, 0, 0, 0);
 }
 
-.progress-bar:indeterminate .bar {
-    -fx-background-color: linear-gradient(to left, #3498db, #2ecc71);
+/* --- Loading Screen Specifics --- */
+
+.loading-glass-pane {
+    -fx-background-color: rgba(15, 23, 42, 0.65);
+    /* Darker, more opaque background */
+    -fx-background-radius: 25;
+    -fx-border-color: rgba(255, 255, 255, 0.15);
+    -fx-border-radius: 25;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 30, 0, 0, 15);
 }
 
-/* =================================================================
-   22. TOOLTIPS
-   ================================================================= */
+.metallic-text {
+    -fx-font-family: "System";
+    /* Or a specific font if available */
+    -fx-font-weight: bold;
+    -fx-font-size: 48px;
+    -fx-fill: linear-gradient(to bottom, #ffffff 0%, #dcdcdc 50%, #a0a0a0 51%, #ffffff 100%);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.8), 2, 0.0, 1, 1);
+    -fx-stroke: #444444;
+    -fx-stroke-width: 1;
+}
 
-.tooltip {
-    -fx-background-color: #34495e;
+.loading-status-label {
     -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.5), 5, 0.0, 0, 1);
+}
+
+.loading-sub-status-label {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 14px;
+}
+
+.loading-footer-label {
+    -fx-text-fill: #aaaaaa;
     -fx-font-size: 12px;
-    -fx-padding: 8px;
-    -fx-background-radius: 5px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0, 0, 2);
+}
+
+/* Custom Progress Bar for Loading Screen */
+.loading-progress-bar .track {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 10;
+}
+
+.loading-progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #007bff, #00d2ff);
+    -fx-background-radius: 10;
+    -fx-background-insets: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 255, 0.6), 10, 0, 0, 0);
 }
 
 /* =================================================================
-   23. SPINNER
+   10. FORM DESIGN SYSTEM
    ================================================================= */
 
-.spinner {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
+.form-container {
+    -fx-background-color: -glass-bg;
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, -glass-shadow, 20, 0.5, 0, 5);
+    -fx-padding: 30px;
 }
 
-.spinner .text-field {
-    -fx-background-color: white;
+.form-header {
+    -fx-border-color: -glass-border;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 0 0 20px 0;
+    -fx-margin: 0 0 20px 0;
+    -fx-alignment: CENTER;
 }
 
-.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
-    -fx-background-color: #3498db;
+.form-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 3, 0, 0, 1);
 }
 
-.spinner .increment-arrow-button:hover, .spinner .decrement-arrow-button:hover {
-    -fx-background-color: #2980b9;
+.form-section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-primary;
+    -fx-padding: 10px 0 5px 0;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 0 0 1px 0;
 }
 
-/* =================================================================
-   FIN DE LA HOJA DE ESTILOS
-   ================================================================= */
+.form-label {
+    -fx-text-fill: -color-text-dim;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.form-input {
+    -fx-pref-height: 35px;
+    -fx-font-size: 14px;
+}
+
+.form-actions {
+    -fx-padding: 20px 0 0 0;
+    -fx-border-color: -glass-border;
+    -fx-border-width: 1px 0 0 0;
+    -fx-alignment: CENTER_RIGHT;
+    -fx-spacing: 15px;
+}

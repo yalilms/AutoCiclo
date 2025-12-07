@@ -23,17 +23,24 @@ public class Main extends Application {
     public void start(Stage primeraEscena) throws Exception {
         // Establecer icono de la aplicación
         javafx.scene.image.Image icon = new javafx.scene.image.Image(
-            getClass().getResourceAsStream("/fxml/Logo_autociclo.png")
-        );
+                getClass().getResourceAsStream("/fxml/Logo_autociclo.png"));
         primeraEscena.getIcons().add(icon);
 
-        // Cargar pantalla de carga
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
-        Parent pantallaCarga = loader.load();
-        PantallaDeCargaController controller = loader.getController();
+        // Cargar AMBAS pantallas desde el inicio
+        FXMLLoader loaderCarga = new FXMLLoader(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
+        Parent pantallaCarga = loaderCarga.load();
+        PantallaDeCargaController controller = loaderCarga.getController();
 
-        Scene sceneCarga = new Scene(pantallaCarga);
-        primeraEscena.setScene(sceneCarga);
+        FXMLLoader listadoLoader = new FXMLLoader(getClass().getResource("/fxml/ListadosController.fxml"));
+        Parent listado = listadoLoader.load();
+        listado.setOpacity(0.0); // Inicialmente invisible
+
+        // Usar StackPane para superponer las dos pantallas
+        javafx.scene.layout.StackPane contenedor = new javafx.scene.layout.StackPane();
+        contenedor.getChildren().addAll(listado, pantallaCarga);
+
+        Scene escena = new Scene(contenedor, 900, 600);
+        primeraEscena.setScene(escena);
         primeraEscena.setTitle("AutoCiclo - Gestión de Desguace");
         primeraEscena.show();
 
@@ -48,16 +55,26 @@ public class Main extends Application {
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(100); // 100 ciclos * 0.01 = 1.0 (100%)
         timeline.setOnFinished(event -> {
-            // Cuando la animación termine, cargar la siguiente pantalla
-            try {
-                Parent listado = FXMLLoader.load(getClass().getResource("/fxml/ListadosController.fxml"));
-                Scene sceneListado = new Scene(listado);
-                primeraEscena.setScene(sceneListado);
+            // Transición: Fade out de pantalla de carga y fade in de listado al mismo tiempo
+            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(Duration.millis(500),
+                    pantallaCarga);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+
+            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(Duration.millis(500),
+                    listado);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+
+            // Ejecutar ambas transiciones al mismo tiempo
+            fadeOut.play();
+            fadeIn.play();
+
+            // Cuando terminen las transiciones, remover la pantalla de carga del contenedor
+            fadeOut.setOnFinished(e -> {
+                contenedor.getChildren().remove(pantallaCarga);
                 primeraEscena.centerOnScreen();
-            } catch (Exception e) {
-                System.err.println("Error al cargar ListadosController: " + e.getMessage());
-                e.printStackTrace();
-            }
+            });
         });
 
         // Iniciar la animación
