@@ -15,6 +15,13 @@ javafx {
 dependencies {
   // Driver MySQL - AÑADIDO
     implementation 'com.mysql:mysql-connector-j:8.2.0'
+    
+    // AnimateFX removed due to build issues
+    // implementation 'io.github.typhon0:AnimateFX:1.3.0'
+    
+    // Ikonli for icons
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1'
 }
 
 java { //Se indica la versión de JDK que ha de utilizar
@@ -31,7 +38,7 @@ sourceSets {
   main {
     resources {
         srcDirs = ["src/main/resources"]
-        includes = ["**/*.fxml","**/*.png","**/*.properties"]  //Importante para poder abrir una extensión no reconocida
+        includes = ["**/*.fxml","**/*.png","**/*.properties","**/*.css","**/*.jpg","**/*.jpeg"]  //Importante para poder abrir una extensión no reconocida
     }
   }
 }
