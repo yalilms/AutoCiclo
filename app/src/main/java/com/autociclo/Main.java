@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
@@ -21,10 +23,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primeraEscena) throws Exception {
-        // Establecer icono de la aplicación
-        javafx.scene.image.Image icon = new javafx.scene.image.Image(
-                getClass().getResourceAsStream("/fxml/Logo_autociclo.png"));
-        primeraEscena.getIcons().add(icon);
+        // Establecer icono de la aplicación (comentado temporalmente - añadir Logo_autociclo.png en resources/images)
+        // javafx.scene.image.Image icon = new javafx.scene.image.Image(
+        //         getClass().getResourceAsStream("/images/Logo_autociclo.png"));
+        // primeraEscena.getIcons().add(icon);
 
         // Cargar AMBAS pantallas desde el inicio
         FXMLLoader loaderCarga = new FXMLLoader(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
@@ -39,10 +41,44 @@ public class Main extends Application {
         javafx.scene.layout.StackPane contenedor = new javafx.scene.layout.StackPane();
         contenedor.getChildren().addAll(listado, pantallaCarga);
 
-        Scene escena = new Scene(contenedor, 900, 600);
+        Scene escena = new Scene(contenedor, 1150, 750);
         primeraEscena.setScene(escena);
         primeraEscena.setTitle("AutoCiclo - Gestión de Desguace");
+
+        // Hacer la ventana redimensionable y establecer tamaños mínimos
+        primeraEscena.setResizable(true);
+        primeraEscena.setMinWidth(900);
+        primeraEscena.setMinHeight(600);
+
         primeraEscena.show();
+        primeraEscena.centerOnScreen();
+
+        // Configurar confirmación al cerrar la ventana
+        primeraEscena.setOnCloseRequest(event -> {
+            event.consume(); // Prevenir el cierre automático
+
+            // Crear alerta de confirmación
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Salir de AutoCiclo");
+            alert.setHeaderText("¿Está seguro que desea salir?");
+            alert.setContentText("Se cerrará la aplicación AutoCiclo - Gestión de Desguace");
+
+            // Aplicar estilos personalizados
+            alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/styles.css").toExternalForm()
+            );
+            alert.getDialogPane().getStyleClass().add("glass-pane");
+
+            // Mostrar y esperar respuesta
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    // Usuario confirmó, cerrar la aplicación
+                    primeraEscena.close();
+                    System.exit(0);
+                }
+                // Si cancela, no hacer nada (la ventana permanece abierta)
+            });
+        });
 
         // Animar la barra de progreso de 0 a 100% en 2 segundos
         Timeline timeline = new Timeline();

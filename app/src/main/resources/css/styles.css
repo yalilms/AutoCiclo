@@ -361,3 +361,9 @@
     -fx-alignment: CENTER_RIGHT;
     -fx-spacing: 15px;
 }
+.form-value {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-padding: 5px;
+}

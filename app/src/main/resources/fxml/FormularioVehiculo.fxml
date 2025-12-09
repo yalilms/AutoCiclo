@@ -12,8 +12,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
-            prefHeight="600.0" prefWidth="700.0" 
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="750.0" prefWidth="850.0" 
             styleClass="root" stylesheets="@../css/styles.css" 
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
             fx:controller="com.autociclo.controllers.FormularioVehiculoController">
@@ -23,7 +23,7 @@
          <children>
             <!-- Form Header -->
             <VBox styleClass="form-header">
-               <Label text="NUEVO VEHÍCULO" styleClass="form-title"/>
+               <Label fx:id="lblTitulo" text="VEHÍCULO" styleClass="form-title"/>
             </VBox>
 
             <!-- Form Fields -->

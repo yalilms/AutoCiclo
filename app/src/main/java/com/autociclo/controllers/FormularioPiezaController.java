@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
  */
 public class FormularioPiezaController implements Initializable {
 
+    @FXML private Label lblTitulo;
     @FXML private TextField txtCodigo;
     @FXML private TextField txtCategoria;
     @FXML private TextField txtStockDisponible;
@@ -37,6 +38,9 @@ public class FormularioPiezaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Configurar título por defecto (modo nuevo)
+        lblTitulo.setText("NUEVA PIEZA");
+
         // Configurar eventos de los botones
         btnGuardar.setOnAction(event -> guardarPieza());
         btnCancelar.setOnAction(event -> cerrarVentana());
@@ -55,6 +59,7 @@ public class FormularioPiezaController implements Initializable {
     public void setPiezaEditar(Pieza pieza) {
         this.piezaEditar = pieza;
         this.modoEdicion = true;
+        lblTitulo.setText("EDITAR PIEZA");
         cargarDatosPieza();
     }
 
