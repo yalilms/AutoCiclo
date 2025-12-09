@@ -69,12 +69,7 @@
                   <TextField fx:id="txtPrecioMecanico" promptText="Ej: 150.50" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="form-input"/>
                   
                   <Label text="Fecha de Asignación *" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="form-label"/>
-                  <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                     <children>
-                        <DatePicker fx:id="dpFechaAsignacion" styleClass="form-input"/>
-                        <Button fx:id="btnCalendario" mnemonicParsing="false" styleClass="button" text="📅" />
-                     </children>
-                  </HBox>
+                  <DatePicker fx:id="dpFechaAsignacion" styleClass="form-input" GridPane.columnIndex="1" GridPane.rowIndex="5" prefWidth="250.0"/>
               </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" />

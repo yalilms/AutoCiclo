@@ -5,6 +5,7 @@ import com.autociclo.models.InventarioPieza;
 import com.autociclo.models.Vehiculo;
 import com.autociclo.models.Pieza;
 import com.autociclo.utils.ValidationUtils;
+import com.autociclo.utils.LoggerUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -35,7 +36,6 @@ public class AsignarPiezaVehiculoController implements Initializable {
     @FXML private ToggleGroup grupoContenedor;
     @FXML private TextField txtPrecioMecanico;
     @FXML private DatePicker dpFechaAsignacion;
-    @FXML private Button btnCalendario;
     @FXML private TextArea txtNotas;
     @FXML private Button btnCancelar;
     @FXML private Button btnAsignar;
@@ -70,7 +70,6 @@ public class AsignarPiezaVehiculoController implements Initializable {
         // Conectar eventos de los botones
         btnAsignar.setOnAction(event -> guardarInventario());
         btnCancelar.setOnAction(event -> cerrarVentana());
-        btnCalendario.setOnAction(event -> dpFechaAsignacion.show());
 
         // Cargar listas de vehículos y piezas
         cargarVehiculos();
@@ -195,8 +194,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
             // No establecer items aquí, se hace en configurarFiltradoVehiculos()
 
         } catch (Exception e) {
-            System.err.println("Error al cargar vehículos: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al cargar vehículos para asignación", e);
         }
     }
 
@@ -231,8 +229,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
             // No establecer items aquí, se hace en configurarFiltradoPiezas()
 
         } catch (Exception e) {
-            System.err.println("Error al cargar piezas: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al cargar piezas para asignación", e);
         }
     }
 
@@ -428,10 +425,11 @@ public class AsignarPiezaVehiculoController implements Initializable {
             }
 
         } catch (SQLException e) {
+            LoggerUtil.error("Error al guardar asignación de pieza a vehículo", e);
             ValidationUtils.showError("Error de base de datos",
                 "No se pudo guardar la asignación: " + e.getMessage());
-            e.printStackTrace();
         } catch (NumberFormatException e) {
+            LoggerUtil.warning("Error de formato en campos numéricos de asignación");
             ValidationUtils.showError("Error de formato",
                 "Verifique que los campos numéricos tengan el formato correcto");
         }
@@ -452,7 +450,7 @@ public class AsignarPiezaVehiculoController implements Initializable {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LoggerUtil.error("Error al verificar asignación existente", e);
         }
         return false;
     }

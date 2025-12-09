@@ -1,6 +1,5 @@
 package com.autociclo;
 
-import com.autociclo.controllers.PantallaDeCargaController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
 import javafx.util.Duration;
 
 /**
@@ -23,15 +20,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primeraEscena) throws Exception {
-        // Establecer icono de la aplicación (comentado temporalmente - añadir Logo_autociclo.png en resources/images)
-        // javafx.scene.image.Image icon = new javafx.scene.image.Image(
-        //         getClass().getResourceAsStream("/images/Logo_autociclo.png"));
-        // primeraEscena.getIcons().add(icon);
+        // Establecer icono de la aplicación
+        javafx.scene.image.Image appIcon = new javafx.scene.image.Image(
+                getClass().getResourceAsStream("/imagenes/logo_autociclo.png"));
+        primeraEscena.getIcons().add(appIcon);
 
         // Cargar AMBAS pantallas desde el inicio
         FXMLLoader loaderCarga = new FXMLLoader(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
         Parent pantallaCarga = loaderCarga.load();
-        PantallaDeCargaController controller = loaderCarga.getController();
 
         FXMLLoader listadoLoader = new FXMLLoader(getClass().getResource("/fxml/ListadosController.fxml"));
         Parent listado = listadoLoader.load();
@@ -65,8 +61,7 @@ public class Main extends Application {
 
             // Aplicar estilos personalizados
             alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/styles.css").toExternalForm()
-            );
+                    getClass().getResource("/css/styles.css").toExternalForm());
             alert.getDialogPane().getStyleClass().add("glass-pane");
 
             // Mostrar y esperar respuesta
@@ -80,18 +75,12 @@ public class Main extends Application {
             });
         });
 
-        // Animar la barra de progreso de 0 a 100% en 2 segundos
-        Timeline timeline = new Timeline();
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(20), event -> {
-            double currentProgress = controller.getProgressBar().getProgress();
-            if (currentProgress < 1.0) {
-                controller.getProgressBar().setProgress(currentProgress + 0.01);
-            }
-        });
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount(100); // 100 ciclos * 0.01 = 1.0 (100%)
-        timeline.setOnFinished(event -> {
-            // Transición: Fade out de pantalla de carga y fade in de listado al mismo tiempo
+        // Simular tiempo de carga (2.5 segundos) con el indicador girando
+        // Usamos PauseTransition en lugar de animar una propiedad de progreso
+        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2.5));
+        pause.setOnFinished(event -> {
+            // Transición: Fade out de pantalla de carga y fade in de listado al mismo
+            // tiempo
             javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(Duration.millis(500),
                     pantallaCarga);
             fadeOut.setFromValue(1.0);
@@ -113,7 +102,7 @@ public class Main extends Application {
             });
         });
 
-        // Iniciar la animación
-        timeline.play();
+        // Iniciar la espera
+        pause.play();
     }
 }

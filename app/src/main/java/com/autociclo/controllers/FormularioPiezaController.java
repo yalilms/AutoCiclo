@@ -3,38 +3,61 @@ package com.autociclo.controllers;
 import com.autociclo.database.ConexionBD;
 import com.autociclo.models.Pieza;
 import com.autociclo.utils.ValidationUtils;
+import com.autociclo.utils.LoggerUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.sql.*;
 import java.util.ResourceBundle;
 
 /**
  * Controlador para el formulario de piezas
+ * 
  * @author Yalil Musa Talhaoui
  */
 public class FormularioPiezaController implements Initializable {
 
-    @FXML private Label lblTitulo;
-    @FXML private TextField txtCodigo;
-    @FXML private TextField txtCategoria;
-    @FXML private TextField txtStockDisponible;
-    @FXML private TextField txtUbicacionAlmacen;
-    @FXML private TextField txtMaterialesCompatibles;
-    @FXML private TextField txtNombre;
-    @FXML private TextField txtPrecioCompra;
-    @FXML private TextField txtStockMinimo;
-    @FXML private TextArea txtDescripcion;
-    @FXML private Button btnCancelar;
-    @FXML private Button btnGuardar;
+    @FXML
+    private Label lblTitulo;
+    @FXML
+    private TextField txtCodigo;
+    @FXML
+    private ComboBox<String> cmbCategoria;
+    @FXML
+    private TextField txtStockDisponible;
+    @FXML
+    private ComboBox<String> cmbUbicacion;
+    @FXML
+    private TextField txtMaterialesCompatibles;
+    @FXML
+    private TextField txtNombre;
+    @FXML
+    private TextField txtPrecioCompra;
+    @FXML
+    private TextField txtStockMinimo;
+    @FXML
+    private TextField txtRutaImagen;
+    @FXML
+    private Button btnSeleccionarImagen;
+    @FXML
+    private TextArea txtDescripcion;
+    @FXML
+    private Button btnCancelar;
+    @FXML
+    private Button btnGuardar;
 
     // Variables para el modo edición
     private Pieza piezaEditar = null;
     private boolean modoEdicion = false;
     private ListadoMaestroController controladorPadre;
+    private File archivoImagenSeleccionado = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -44,6 +67,92 @@ public class FormularioPiezaController implements Initializable {
         // Configurar eventos de los botones
         btnGuardar.setOnAction(event -> guardarPieza());
         btnCancelar.setOnAction(event -> cerrarVentana());
+        btnSeleccionarImagen.setOnAction(event -> seleccionarImagen());
+
+        // Inicializar ComboBox de categoría
+        cmbCategoria.getItems().addAll("motor", "carroceria", "interior", "electronica", "ruedas", "otros");
+
+        // Cargar ubicaciones desde el JSON
+        cargarUbicaciones();
+    }
+
+    /**
+     * Carga las ubicaciones de piezas desde el archivo JSON
+     */
+    private void cargarUbicaciones() {
+        try {
+            java.io.InputStream is = getClass().getResourceAsStream("/ubicaciones.json");
+            if (is != null) {
+                com.google.gson.JsonObject json = com.google.gson.JsonParser.parseReader(
+                        new java.io.InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+
+                com.google.gson.JsonArray ubicaciones = json.getAsJsonArray("piezas");
+                for (int i = 0; i < ubicaciones.size(); i++) {
+                    cmbUbicacion.getItems().add(ubicaciones.get(i).getAsString());
+                }
+                LoggerUtil.info("Ubicaciones de piezas cargadas: " + ubicaciones.size());
+            }
+        } catch (Exception e) {
+            LoggerUtil.error("Error al cargar ubicaciones", e);
+        }
+    }
+
+    /**
+     * Abre un FileChooser para seleccionar una imagen
+     */
+    private void seleccionarImagen() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen de la Pieza");
+
+        // Filtros de extensión
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+                new FileChooser.ExtensionFilter("Todos los archivos", "*.*"));
+
+        // Mostrar el diálogo
+        Stage stage = (Stage) btnSeleccionarImagen.getScene().getWindow();
+        File archivoSeleccionado = fileChooser.showOpenDialog(stage);
+
+        if (archivoSeleccionado != null) {
+            archivoImagenSeleccionado = archivoSeleccionado;
+            txtRutaImagen.setText(archivoSeleccionado.getName());
+            LoggerUtil.info("Imagen seleccionada: " + archivoSeleccionado.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Convierte la imagen seleccionada a una cadena Base64
+     * 
+     * @return La cadena Base64 de la imagen o null si hay error
+     */
+    private String convertirImagenABase64() {
+        if (archivoImagenSeleccionado == null) {
+            return null;
+        }
+
+        try {
+            // Leer los bytes de la imagen
+            byte[] bytesImagen = Files.readAllBytes(archivoImagenSeleccionado.toPath());
+
+            // Codificar a Base64
+            String base64 = java.util.Base64.getEncoder().encodeToString(bytesImagen);
+
+            // Añadir prefijo con tipo MIME
+            String extension = archivoImagenSeleccionado.getName().substring(
+                    archivoImagenSeleccionado.getName().lastIndexOf(".") + 1).toLowerCase();
+            String mimeType = "image/" + (extension.equals("jpg") ? "jpeg" : extension);
+
+            String base64ConPrefijo = "data:" + mimeType + ";base64," + base64;
+
+            LoggerUtil.info("Imagen convertida a Base64 (" + base64ConPrefijo.length() + " caracteres)");
+
+            return base64ConPrefijo;
+
+        } catch (IOException e) {
+            LoggerUtil.error("Error al convertir imagen a Base64", e);
+            ValidationUtils.showError("Error", "No se pudo procesar la imagen: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -71,13 +180,18 @@ public class FormularioPiezaController implements Initializable {
             txtCodigo.setText(piezaEditar.getCodigoPieza());
             txtCodigo.setEditable(false); // No permitir editar el código (clave única)
             txtNombre.setText(piezaEditar.getNombre());
-            txtCategoria.setText(piezaEditar.getCategoria());
+            cmbCategoria.setValue(piezaEditar.getCategoria());
             txtPrecioCompra.setText(String.valueOf(piezaEditar.getPrecioVenta()));
             txtStockDisponible.setText(String.valueOf(piezaEditar.getStockDisponible()));
             txtStockMinimo.setText(String.valueOf(piezaEditar.getStockMinimo()));
-            txtUbicacionAlmacen.setText(piezaEditar.getUbicacionAlmacen());
+            cmbUbicacion.setValue(piezaEditar.getUbicacionAlmacen());
             txtMaterialesCompatibles.setText(piezaEditar.getCompatibleMarcas());
             txtDescripcion.setText(piezaEditar.getDescripcion());
+
+            // Cargar imagen si existe
+            if (piezaEditar.getImagen() != null && !piezaEditar.getImagen().isEmpty()) {
+                txtRutaImagen.setText(piezaEditar.getImagen());
+            }
         }
     }
 
@@ -100,20 +214,13 @@ public class FormularioPiezaController implements Initializable {
             valido = false;
         }
 
-        // Validar categoría (obligatorio y debe ser del enum)
-        String categoria = txtCategoria.getText().trim().toLowerCase();
-        if (categoria.isEmpty()) {
-            errores.append("• Categoría: Campo obligatorio\n");
-            txtCategoria.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-            valido = false;
-        } else if (!categoria.equals("motor") && !categoria.equals("carroceria") &&
-                   !categoria.equals("interior") && !categoria.equals("electronica") &&
-                   !categoria.equals("ruedas") && !categoria.equals("otros")) {
-            errores.append("• Categoría: Debe ser motor, carroceria, interior, electronica, ruedas u otros\n");
-            txtCategoria.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+        // Validar categoría (obligatorio)
+        if (cmbCategoria.getValue() == null || cmbCategoria.getValue().isEmpty()) {
+            errores.append("• Categoría: Debe seleccionar una categoría\n");
+            cmbCategoria.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
             valido = false;
         } else {
-            txtCategoria.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
+            cmbCategoria.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
         }
 
         // Validar precio de venta (decimal >= 0)
@@ -161,17 +268,21 @@ public class FormularioPiezaController implements Initializable {
         }
 
         // Validar ubicación (obligatorio)
-        if (!ValidationUtils.validateNotEmpty(txtUbicacionAlmacen, null, "Ubicación almacén")) {
-            errores.append("• Ubicación almacén: Campo obligatorio\n");
+        // Validar ubicación (obligatorio)
+        if (cmbUbicacion.getValue() == null || cmbUbicacion.getValue().isEmpty()) {
+            errores.append("• Ubicación: Debe seleccionar una ubicación\n");
+            cmbUbicacion.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
             valido = false;
+        } else {
+            cmbUbicacion.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
         }
 
         // Si hay errores, mostrarlos en el Alert
         if (!valido) {
             ValidationUtils.showAlert("Errores de validación",
-                "Por favor, corrija los siguientes errores:",
-                errores.toString(),
-                Alert.AlertType.ERROR);
+                    "Por favor, corrija los siguientes errores:",
+                    errores.toString(),
+                    Alert.AlertType.ERROR);
         }
 
         return valido;
@@ -189,9 +300,12 @@ public class FormularioPiezaController implements Initializable {
         // Comprobar si el código ya existe (solo en modo inserción)
         if (!modoEdicion && existeCodigo(txtCodigo.getText().trim())) {
             ValidationUtils.showError("Código duplicado",
-                "Ya existe una pieza con ese código en el sistema");
+                    "Ya existe una pieza con ese código en el sistema");
             return;
         }
+
+        // Convertir imagen a Base64 si se seleccionó una
+        String imagenBase64 = convertirImagenABase64();
 
         try (Connection conn = ConexionBD.getConexion()) {
             String sql;
@@ -199,13 +313,13 @@ public class FormularioPiezaController implements Initializable {
             if (modoEdicion) {
                 // UPDATE con PreparedStatement (antiinyección SQL)
                 sql = "UPDATE PIEZAS SET nombre=?, categoria=?, precio_venta=?, stock_disponible=?, " +
-                      "stock_minimo=?, ubicacion_almacen=?, compatible_marcas=?, descripcion=? " +
-                      "WHERE codigo_pieza=?";
+                        "stock_minimo=?, ubicacion_almacen=?, compatible_marcas=?, imagen=?, descripcion=? " +
+                        "WHERE codigo_pieza=?";
             } else {
                 // INSERT con PreparedStatement (antiinyección SQL)
                 sql = "INSERT INTO PIEZAS (codigo_pieza, nombre, categoria, precio_venta, stock_disponible, " +
-                      "stock_minimo, ubicacion_almacen, compatible_marcas, imagen, descripcion) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        "stock_minimo, ubicacion_almacen, compatible_marcas, imagen, descripcion) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             }
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -213,34 +327,41 @@ public class FormularioPiezaController implements Initializable {
             if (modoEdicion) {
                 // UPDATE: asignar parámetros
                 pstmt.setString(1, txtNombre.getText().trim());
-                pstmt.setString(2, txtCategoria.getText().trim());
+                pstmt.setString(2, cmbCategoria.getValue());
                 pstmt.setDouble(3, Double.parseDouble(txtPrecioCompra.getText().trim().replace(",", ".")));
-                pstmt.setInt(4, txtStockDisponible.getText().trim().isEmpty() ? 0 : Integer.parseInt(txtStockDisponible.getText().trim()));
-                pstmt.setInt(5, txtStockMinimo.getText().trim().isEmpty() ? 1 : Integer.parseInt(txtStockMinimo.getText().trim()));
-                pstmt.setString(6, txtUbicacionAlmacen.getText().trim());
+                pstmt.setInt(4, txtStockDisponible.getText().trim().isEmpty() ? 0
+                        : Integer.parseInt(txtStockDisponible.getText().trim()));
+                pstmt.setInt(5, txtStockMinimo.getText().trim().isEmpty() ? 1
+                        : Integer.parseInt(txtStockMinimo.getText().trim()));
+                pstmt.setString(6, cmbUbicacion.getValue() != null ? cmbUbicacion.getValue() : "");
                 pstmt.setString(7, txtMaterialesCompatibles.getText().trim());
-                pstmt.setString(8, txtDescripcion.getText().trim());
-                pstmt.setString(9, txtCodigo.getText().trim()); // WHERE codigo_pieza
+                // Si se seleccionó nueva imagen (Base64), actualizarla; si no, mantener la
+                // existente
+                pstmt.setString(8,
+                        imagenBase64 != null ? imagenBase64 : (piezaEditar != null ? piezaEditar.getImagen() : null));
+                pstmt.setString(9, txtDescripcion.getText().trim());
+                pstmt.setString(10, txtCodigo.getText().trim()); // WHERE codigo_pieza
             } else {
                 // INSERT: asignar parámetros
                 pstmt.setString(1, txtCodigo.getText().trim().toUpperCase());
                 pstmt.setString(2, txtNombre.getText().trim());
-                pstmt.setString(3, txtCategoria.getText().trim());
+                pstmt.setString(3, cmbCategoria.getValue());
                 pstmt.setDouble(4, Double.parseDouble(txtPrecioCompra.getText().trim().replace(",", ".")));
-                pstmt.setInt(5, txtStockDisponible.getText().trim().isEmpty() ? 0 : Integer.parseInt(txtStockDisponible.getText().trim()));
-                pstmt.setInt(6, txtStockMinimo.getText().trim().isEmpty() ? 1 : Integer.parseInt(txtStockMinimo.getText().trim()));
-                pstmt.setString(7, txtUbicacionAlmacen.getText().trim());
+                pstmt.setInt(5, txtStockDisponible.getText().trim().isEmpty() ? 0
+                        : Integer.parseInt(txtStockDisponible.getText().trim()));
+                pstmt.setInt(6, txtStockMinimo.getText().trim().isEmpty() ? 1
+                        : Integer.parseInt(txtStockMinimo.getText().trim()));
+                pstmt.setString(7, cmbUbicacion.getValue() != null ? cmbUbicacion.getValue() : "");
                 pstmt.setString(8, txtMaterialesCompatibles.getText().trim());
-                pstmt.setString(9, null); // imagen (por ahora null)
+                pstmt.setString(9, imagenBase64); // imagen en Base64
                 pstmt.setString(10, txtDescripcion.getText().trim());
             }
 
             int filasAfectadas = pstmt.executeUpdate();
 
             if (filasAfectadas > 0) {
-                String mensaje = modoEdicion ?
-                    "Pieza actualizada correctamente" :
-                    "Pieza registrada correctamente con código: " + txtCodigo.getText().trim().toUpperCase();
+                String mensaje = modoEdicion ? "Pieza actualizada correctamente"
+                        : "Pieza registrada correctamente con código: " + txtCodigo.getText().trim().toUpperCase();
 
                 ValidationUtils.showSuccess("Operación exitosa", mensaje);
 
@@ -254,12 +375,13 @@ public class FormularioPiezaController implements Initializable {
             }
 
         } catch (SQLException e) {
+            LoggerUtil.error("Error al guardar pieza en BD", e);
             ValidationUtils.showError("Error de base de datos",
-                "No se pudo guardar la pieza: " + e.getMessage());
-            e.printStackTrace();
+                    "No se pudo guardar la pieza: " + e.getMessage());
         } catch (NumberFormatException e) {
+            LoggerUtil.warning("Error de formato en campos numéricos del formulario de pieza");
             ValidationUtils.showError("Error de formato",
-                "Verifique que los campos numéricos tengan el formato correcto");
+                    "Verifique que los campos numéricos tengan el formato correcto");
         }
     }
 
@@ -277,7 +399,7 @@ public class FormularioPiezaController implements Initializable {
                 return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LoggerUtil.error("Error al verificar existencia de código de pieza", e);
         }
         return false;
     }

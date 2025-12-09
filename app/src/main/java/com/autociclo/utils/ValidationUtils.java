@@ -76,8 +76,8 @@ public class ValidationUtils {
         }
 
         // matches() con expresión regular - permitido en PDF página 3
-        if (!value.matches("^\\d{4}-[A-Z]{3}$")) {
-            showError(field, errorLabel, "Formato inválido. Use: 1234-ABC");
+        if (!value.matches("^\\d{4}[A-Z]{3}$")) {
+            showError(field, errorLabel, "Formato inválido. Use: 1234ABC");
             return false;
         }
 

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -19,7 +20,7 @@
             fx:controller="com.autociclo.controllers.FormularioPiezaController">
    
    <center>
-      <VBox styleClass="form-container" maxWidth="600" maxHeight="550" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+      <VBox styleClass="form-container" maxWidth="600" maxHeight="650" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <!-- Form Header -->
             <VBox styleClass="form-header">
@@ -33,13 +34,13 @@
                   <TextField fx:id="txtCodigo" promptText="Ej: MOT-001, CAR-025..." GridPane.rowIndex="1" styleClass="form-input"/>
                   
                   <Label text="Categoría *" GridPane.rowIndex="2" styleClass="form-label"/>
-                  <TextField fx:id="txtCategoria" promptText="motor, carroceria, interior..." GridPane.rowIndex="3" styleClass="form-input"/>
+                  <ComboBox fx:id="cmbCategoria" promptText="Seleccione categoría" GridPane.rowIndex="3" styleClass="form-combo" prefWidth="250.0"/>
                   
                   <Label text="Stock Disponible" GridPane.rowIndex="4" styleClass="form-label"/>
                   <TextField fx:id="txtStockDisponible" promptText="Ej: 5" GridPane.rowIndex="5" styleClass="form-input"/>
                   
                   <Label text="Ubicación Almacén *" GridPane.rowIndex="6" styleClass="form-label"/>
-                  <TextField fx:id="txtUbicacionAlmacen" promptText="Ej: Estantería A, nivel 2" GridPane.rowIndex="7" styleClass="form-input"/>
+                  <ComboBox fx:id="cmbUbicacion" promptText="Seleccione ubicación" GridPane.rowIndex="7" styleClass="form-combo" prefWidth="250.0"/>
                   
                   <Label text="Materiales Compatibles" GridPane.rowIndex="8" styleClass="form-label"/>
                   <TextField fx:id="txtMaterialesCompatibles" promptText="Marcas compatibles (opcional)" GridPane.rowIndex="9" styleClass="form-input"/>
@@ -53,14 +54,24 @@
                   <Label text="Stock Mínimo" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="form-label"/>
                   <TextField fx:id="txtStockMinimo" promptText="Ej: 1" GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="form-input"/>
                   
-                  <Label text="Descripción" GridPane.columnSpan="2" GridPane.rowIndex="10" styleClass="form-label"/>
-                  <TextArea fx:id="txtDescripcion" prefHeight="80.0" promptText="Descripción de la pieza (opcional)..." wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="11" styleClass="form-input"/>
+                  <Label text="Imagen" GridPane.columnSpan="2" GridPane.rowIndex="10" styleClass="form-label"/>
+                  <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnSpan="2" GridPane.rowIndex="11">
+                     <children>
+                        <TextField fx:id="txtRutaImagen" promptText="Ruta de la imagen (opcional)..." styleClass="form-input" HBox.hgrow="ALWAYS" editable="false"/>
+                        <Button fx:id="btnSeleccionarImagen" text="Seleccionar Imagen" styleClass="button" mnemonicParsing="false"/>
+                     </children>
+                  </HBox>
+
+                  <Label text="Descripción" GridPane.columnSpan="2" GridPane.rowIndex="12" styleClass="form-label"/>
+                  <TextArea fx:id="txtDescripcion" prefHeight="80.0" promptText="Descripción de la pieza (opcional)..." wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="13" styleClass="form-input"/>
               </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" />
                   <ColumnConstraints hgrow="ALWAYS" />
                </columnConstraints>
                <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
                   <RowConstraints />
                   <RowConstraints />
                   <RowConstraints />
