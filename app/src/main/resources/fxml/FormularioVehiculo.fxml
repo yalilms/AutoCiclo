@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -30,22 +31,27 @@
             <GridPane alignment="TOP_CENTER" hgap="20.0" vgap="15.0">
               <children>
                   <Label text="Marca *" GridPane.rowIndex="0" styleClass="form-label"/>
-                  <TextField fx:id="txtMarca" promptText="Ej: Toyota, Ford, BMW..." GridPane.rowIndex="1" styleClass="form-input"/>
-                  
+                  <VBox spacing="5.0" GridPane.rowIndex="1">
+                     <children>
+                        <TextField fx:id="txtFiltroMarca" promptText="Filtrar por marca..." styleClass="form-input"/>
+                        <ComboBox fx:id="cmbMarca" prefWidth="250.0" promptText="Seleccione marca" styleClass="form-input"/>
+                     </children>
+                  </VBox>
+
                   <Label text="Matrícula *" GridPane.rowIndex="2" styleClass="form-label"/>
-                  <TextField fx:id="txtMatricula" promptText="Formato: 1234-ABC" GridPane.rowIndex="3" styleClass="form-input"/>
-                  
+                  <TextField fx:id="txtMatricula" promptText="Formato: 1234ABC" GridPane.rowIndex="3" styleClass="form-input"/>
+
                   <Label text="Color *" GridPane.rowIndex="4" styleClass="form-label"/>
                   <TextField fx:id="txtColor" promptText="Ej: Rojo, Azul, Negro..." GridPane.rowIndex="5" styleClass="form-input"/>
-                  
+
                   <Label text="Estado *" GridPane.rowIndex="6" styleClass="form-label"/>
-                  <TextField fx:id="txtEstado" promptText="completo, desguazando o desguazado" GridPane.rowIndex="7" styleClass="form-input"/>
-                  
-                  <Label text="Ubicación KM" GridPane.rowIndex="8" styleClass="form-label"/>
-                  <TextField fx:id="txtUbicacionKm" promptText="Ubicación GPS o física (opcional)" GridPane.rowIndex="9" styleClass="form-input"/>
-                  
+                  <ComboBox fx:id="cmbEstado" promptText="Seleccione estado" GridPane.rowIndex="7" styleClass="form-combo" prefWidth="250.0"/>
+
+                  <Label text="Ubicación" GridPane.rowIndex="8" styleClass="form-label"/>
+                  <ComboBox fx:id="cmbUbicacion" promptText="Seleccione ubicación" GridPane.rowIndex="9" styleClass="form-combo" prefWidth="250.0"/>
+
                   <Label text="Modelo *" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="form-label"/>
-                  <TextField fx:id="txtModelo" promptText="Ej: Corolla, Focus, Serie 3..." GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-input"/>
+                  <ComboBox fx:id="cmbModelo" promptText="Seleccione modelo" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="form-combo" prefWidth="250.0" editable="true"/>
                   
                   <Label text="Año *" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="form-label"/>
                   <TextField fx:id="txtAnio" promptText="Año (1900-2025)" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="form-input"/>

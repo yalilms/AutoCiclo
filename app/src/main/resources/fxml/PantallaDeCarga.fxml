@@ -2,7 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
@@ -61,7 +61,7 @@
       </Label>
 
       <!-- Barra de progreso con gradiente azul a naranja -->
-      <ProgressBar fx:id="progressBar" prefWidth="450" prefHeight="28" progress="0.0" />
+      <ProgressIndicator fx:id="progressIndicator" prefWidth="60" prefHeight="60" progress="-1.0" />
 
       <!-- Inicializando sistema... -->
       <Label text="Inicializando sistema..."

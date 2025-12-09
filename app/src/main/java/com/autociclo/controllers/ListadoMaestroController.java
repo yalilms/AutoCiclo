@@ -15,8 +15,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.animation.FadeTransition;
-import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 import com.autociclo.database.ConexionBD;
@@ -25,15 +25,15 @@ import com.autociclo.models.Pieza;
 import com.autociclo.models.InventarioPieza;
 
 import com.autociclo.utils.ValidationUtils;
+import com.autociclo.utils.LoggerUtil;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignD;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignE;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
-import org.kordamp.ikonli.materialdesign2.MaterialDesignM;
 
+import org.kordamp.ikonli.materialdesign2.MaterialDesignM;
 
 import java.net.URL;
 import java.sql.*;
@@ -41,61 +41,117 @@ import java.util.ResourceBundle;
 
 public class ListadoMaestroController implements Initializable {
 
+    // Icono de la aplicación para las ventanas modales
+    private final Image appIcon = new Image(getClass().getResourceAsStream("/imagenes/logo_autociclo.png"));
+
     // MenuBar
-    @FXML private MenuItem menuSalir;
-    @FXML private Menu Menu;
-    @FXML private MenuItem menuvehiculos;
-    @FXML private MenuItem menupiezas;
-    @FXML private MenuItem MenuInventario;
-    @FXML private MenuItem menuAcercaDe;
+    @FXML
+    private MenuItem menuSalir;
+    @FXML
+    private Menu Menu;
+    @FXML
+    private MenuItem menuvehiculos;
+    @FXML
+    private MenuItem menupiezas;
+    @FXML
+    private MenuItem MenuInventario;
+    @FXML
+    private MenuItem menuEstadisticas;
+    @FXML
+    private MenuItem menuAcercaDe;
 
     // ToolBar
-    @FXML private Button btnNuevo;
-    @FXML private Button btnVer;
-    @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnActualizar;
-    @FXML private TextField txtBuscar;
-    @FXML private Button btnBuscar;
+    @FXML
+    private Button btnNuevo;
+    @FXML
+    private Button btnVer;
+    @FXML
+    private Button btnEditar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private TextField txtBuscar;
+    @FXML
+    private Button btnBuscar;
 
     // Navegación
-    @FXML private Button btnNavVehiculos;
-    @FXML private Button btnNavPiezas;
-    @FXML private Button btnNavInventario;
+    @FXML
+    private Button btnNavVehiculos;
+    @FXML
+    private Button btnNavPiezas;
+    @FXML
+    private Button btnNavInventario;
+    @FXML
+    private Button btnNavEstadisticas;
 
     // StackPane y TableViews
-    @FXML private StackPane stackPaneContenido;
-    @FXML private TableView<Vehiculo> tableVehiculos;
-    @FXML private TableView<Pieza> tablePiezas;
-    @FXML private TableView<InventarioPieza> tableInventario;
+    @FXML
+    private StackPane stackPaneContenido;
+    @FXML
+    private TableView<Vehiculo> tableVehiculos;
+    @FXML
+    private TableView<Pieza> tablePiezas;
+    @FXML
+    private TableView<InventarioPieza> tableInventario;
+
+    // Vista de estadísticas
+    private Parent vistaEstadisticas;
+    private EstadisticasController controllerEstadisticas;
 
     // Columnas TableView Vehiculos
-    @FXML private TableColumn<Vehiculo, Integer> colVehiculoId;
-    @FXML private TableColumn<Vehiculo, String> colMarca;
-    @FXML private TableColumn<Vehiculo, String> colModelo;
-    @FXML private TableColumn<Vehiculo, Integer> colAnio;
-    @FXML private TableColumn<Vehiculo, Integer> colKm;
-    @FXML private TableColumn<Vehiculo, String> colEstado;
+    @FXML
+    private TableColumn<Vehiculo, Integer> colVehiculoId;
+    @FXML
+    private TableColumn<Vehiculo, String> colMarca;
+    @FXML
+    private TableColumn<Vehiculo, String> colModelo;
+    @FXML
+    private TableColumn<Vehiculo, Integer> colAnio;
+    @FXML
+    private TableColumn<Vehiculo, Integer> colKm;
+    @FXML
+    private TableColumn<Vehiculo, String> colEstado;
 
     // Columnas TableView Piezas
-    @FXML private TableColumn<Pieza, Integer> colPiezaId;
-    @FXML private TableColumn<Pieza, String> colCodigo;
-    @FXML private TableColumn<Pieza, String> colNombre;
-    @FXML private TableColumn<Pieza, String> colCategoria;
-    @FXML private TableColumn<Pieza, Double> colPrecio;
-    @FXML private TableColumn<Pieza, Integer> colStock;
-    @FXML private TableColumn<Pieza, String> colUbicacion;
+    @FXML
+    private TableColumn<Pieza, Integer> colPiezaId;
+    @FXML
+    private TableColumn<Pieza, String> colCodigo;
+    @FXML
+    private TableColumn<Pieza, String> colNombre;
+    @FXML
+    private TableColumn<Pieza, String> colCategoria;
+    @FXML
+    private TableColumn<Pieza, Double> colPrecio;
+    @FXML
+    private TableColumn<Pieza, Integer> colStock;
+    @FXML
+    private TableColumn<Pieza, String> colUbicacion;
 
     // Columnas TableView Inventario
-    @FXML private TableColumn<InventarioPieza, String> colInventarioId;
-    @FXML private TableColumn<InventarioPieza, String> colProducto;
-    @FXML private TableColumn<InventarioPieza, Integer> colCantidad;
-    @FXML private TableColumn<InventarioPieza, String> colFechaIngreso;
-    @FXML private TableColumn<InventarioPieza, String> colAlmacen;
+    @FXML
+    private TableColumn<InventarioPieza, String> colInventarioId;
+    @FXML
+    private TableColumn<InventarioPieza, String> colProducto;
+    @FXML
+    private TableColumn<InventarioPieza, Integer> colCantidad;
+    @FXML
+    private TableColumn<InventarioPieza, String> colFechaIngreso;
+    @FXML
+    private TableColumn<InventarioPieza, String> colAlmacen;
 
     // Botones inferior
-    @FXML private Button btnAnterior;
-    @FXML private Button btnSiguiente;
+    @FXML
+    private Button btnAnterior;
+    @FXML
+    private Button btnSiguiente;
+
+    // Label de error de conexión
+    @FXML
+    private Label lblErrorConexion;
+
+    // Variable para rastrear si hay error de conexión
+    private boolean hayErrorConexion = false;
 
     // Listas observables
     private ObservableList<Vehiculo> listaVehiculos = FXCollections.observableArrayList();
@@ -155,10 +211,6 @@ public class ListadoMaestroController implements Initializable {
         btnVer.setOnAction(event -> verDetallesRegistro());
         btnEditar.setOnAction(event -> editarRegistro());
         btnEliminar.setOnAction(event -> eliminarRegistro());
-        btnActualizar.setOnAction(event -> {
-            animarBotonActualizar();
-            actualizarListado();
-        });
 
         // Configurar menús
         menuSalir.setOnAction(event -> salirAplicacion());
@@ -181,98 +233,122 @@ public class ListadoMaestroController implements Initializable {
         String sql = "SELECT * FROM VEHICULOS";
 
         try (Connection conn = ConexionBD.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Vehiculo v = new Vehiculo(
-                    rs.getInt("id_vehiculo"),
-                    rs.getString("matricula"),
-                    rs.getString("marca"),
-                    rs.getString("modelo"),
-                    rs.getInt("anio"),
-                    rs.getString("color"),
-                    rs.getString("fecha_entrada"),
-                    rs.getString("estado"),
-                    rs.getDouble("precio_compra"),
-                    rs.getInt("kilometraje"),
-                    rs.getString("ubicacion_gps"),
-                    rs.getString("observaciones")
-                );
+                        rs.getInt("id_vehiculo"),
+                        rs.getString("matricula"),
+                        rs.getString("marca"),
+                        rs.getString("modelo"),
+                        rs.getInt("anio"),
+                        rs.getString("color"),
+                        rs.getString("fecha_entrada"),
+                        rs.getString("estado"),
+                        rs.getDouble("precio_compra"),
+                        rs.getInt("kilometraje"),
+                        rs.getString("ubicacion_gps"),
+                        rs.getString("observaciones"));
                 listaVehiculos.add(v);
             }
-            System.out.println("Vehículos cargados: " + listaVehiculos.size());
+            LoggerUtil.logDatosCargados("Vehículos", listaVehiculos.size());
+            // Ocultar el label de error si la conexión fue exitosa
+            hayErrorConexion = false;
+            if (lblErrorConexion != null) {
+                lblErrorConexion.setVisible(false);
+            }
         } catch (Exception e) {
-            System.err.println("Error al cargar vehículos: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al cargar vehículos", e);
+            // Mostrar el label de error de conexión
+            hayErrorConexion = true;
+            if (lblErrorConexion != null) {
+                lblErrorConexion.setVisible(true);
+            }
         }
     }
 
     private void cargarPiezas() {
         listaPiezas.clear();
         String sql = "SELECT p.*, COALESCE(SUM(ip.cantidad), 0) as stock_real " +
-                     "FROM PIEZAS p " +
-                     "LEFT JOIN INVENTARIO_PIEZAS ip ON p.id_pieza = ip.id_pieza " +
-                     "GROUP BY p.id_pieza";
+                "FROM PIEZAS p " +
+                "LEFT JOIN INVENTARIO_PIEZAS ip ON p.id_pieza = ip.id_pieza " +
+                "GROUP BY p.id_pieza";
 
         try (Connection conn = ConexionBD.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Pieza p = new Pieza(
-                    rs.getInt("id_pieza"),
-                    rs.getString("codigo_pieza"),
-                    rs.getString("nombre"),
-                    rs.getString("categoria"),
-                    rs.getDouble("precio_venta"),
-                    rs.getInt("stock_real"),
-                    rs.getInt("stock_minimo"),
-                    rs.getString("ubicacion_almacen"),
-                    rs.getString("compatible_marcas"),
-                    rs.getString("imagen"),
-                    rs.getString("descripcion")
-                );
+                        rs.getInt("id_pieza"),
+                        rs.getString("codigo_pieza"),
+                        rs.getString("nombre"),
+                        rs.getString("categoria"),
+                        rs.getDouble("precio_venta"),
+                        rs.getInt("stock_real"),
+                        rs.getInt("stock_minimo"),
+                        rs.getString("ubicacion_almacen"),
+                        rs.getString("compatible_marcas"),
+                        rs.getString("imagen"),
+                        rs.getString("descripcion"));
                 listaPiezas.add(p);
             }
-            System.out.println("Piezas cargadas: " + listaPiezas.size());
+            LoggerUtil.logDatosCargados("Piezas", listaPiezas.size());
+            // Ocultar el label de error si la conexión fue exitosa
+            hayErrorConexion = false;
+            if (lblErrorConexion != null) {
+                lblErrorConexion.setVisible(false);
+            }
         } catch (Exception e) {
-            System.err.println("Error al cargar piezas: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al cargar piezas", e);
+            // Mostrar el label de error de conexión
+            hayErrorConexion = true;
+            if (lblErrorConexion != null) {
+                lblErrorConexion.setVisible(true);
+            }
         }
     }
 
     private void cargarInventario() {
         listaInventario.clear();
         String sql = "SELECT ip.*, " +
-                     "CONCAT(v.marca, ' ', v.modelo, ' (', v.anio, ')') as vehiculo_info, " +
-                     "p.nombre as pieza_nombre " +
-                     "FROM INVENTARIO_PIEZAS ip " +
-                     "INNER JOIN VEHICULOS v ON ip.id_vehiculo = v.id_vehiculo " +
-                     "INNER JOIN PIEZAS p ON ip.id_pieza = p.id_pieza";
+                "CONCAT(v.marca, ' ', v.modelo, ' (', v.anio, ')') as vehiculo_info, " +
+                "p.nombre as pieza_nombre " +
+                "FROM INVENTARIO_PIEZAS ip " +
+                "INNER JOIN VEHICULOS v ON ip.id_vehiculo = v.id_vehiculo " +
+                "INNER JOIN PIEZAS p ON ip.id_pieza = p.id_pieza";
 
         try (Connection conn = ConexionBD.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 InventarioPieza inv = new InventarioPieza(
-                    rs.getInt("id_vehiculo"),
-                    rs.getInt("id_pieza"),
-                    rs.getString("vehiculo_info"),
-                    rs.getString("pieza_nombre"),
-                    rs.getInt("cantidad"),
-                    rs.getString("estado_pieza"),
-                    rs.getString("fecha_extraccion"),
-                    rs.getDouble("precio_unitario"),
-                    rs.getString("notas")
-                );
+                        rs.getInt("id_vehiculo"),
+                        rs.getInt("id_pieza"),
+                        rs.getString("vehiculo_info"),
+                        rs.getString("pieza_nombre"),
+                        rs.getInt("cantidad"),
+                        rs.getString("estado_pieza"),
+                        rs.getString("fecha_extraccion"),
+                        rs.getDouble("precio_unitario"),
+                        rs.getString("notas"));
                 listaInventario.add(inv);
             }
-            System.out.println("Inventario cargado: " + listaInventario.size());
+            LoggerUtil.logDatosCargados("Inventario", listaInventario.size());
+            // Ocultar el label de error si la conexión fue exitosa
+            hayErrorConexion = false;
+            if (lblErrorConexion != null) {
+                lblErrorConexion.setVisible(false);
+            }
         } catch (Exception e) {
-            System.err.println("Error al cargar inventario: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al cargar inventario", e);
+            // Mostrar el label de error de conexión
+            hayErrorConexion = true;
+            if (lblErrorConexion != null) {
+                lblErrorConexion.setVisible(true);
+            }
         }
     }
 
@@ -303,7 +379,8 @@ public class ListadoMaestroController implements Initializable {
      * Configura los iconos de Ikonli para los botones de la aplicación
      */
     private void configurarIconos() {
-        // Iconos para botones del toolbar (colores blancos para mejor contraste con los fondos de botón)
+        // Iconos para botones del toolbar (colores blancos para mejor contraste con los
+        // fondos de botón)
         FontIcon iconNuevo = new FontIcon(MaterialDesignP.PLUS_CIRCLE);
         iconNuevo.setIconSize(16);
         iconNuevo.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo verde
@@ -327,12 +404,6 @@ public class ListadoMaestroController implements Initializable {
         iconEliminar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo rojo
         btnEliminar.setGraphic(iconEliminar);
         btnEliminar.setText("Eliminar");
-
-        FontIcon iconActualizar = new FontIcon(MaterialDesignR.REFRESH);
-        iconActualizar.setIconSize(16);
-        iconActualizar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste
-        btnActualizar.setGraphic(iconActualizar);
-        btnActualizar.setText("Actualizar");
 
         FontIcon iconBuscar = new FontIcon(MaterialDesignM.MAGNIFY);
         iconBuscar.setIconSize(18);
@@ -358,6 +429,12 @@ public class ListadoMaestroController implements Initializable {
         iconInventario.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
         btnNavInventario.setGraphic(iconInventario);
         btnNavInventario.setText("Inventario");
+
+        FontIcon iconEstadisticas = new FontIcon(MaterialDesignC.CHART_BAR);
+        iconEstadisticas.setIconSize(18);
+        iconEstadisticas.setIconColor(javafx.scene.paint.Color.WHITE);
+        btnNavEstadisticas.setGraphic(iconEstadisticas);
+        btnNavEstadisticas.setText("Estadísticas");
     }
 
     /**
@@ -389,11 +466,11 @@ public class ListadoMaestroController implements Initializable {
             listaVehiculosFiltrada.clear();
             for (Vehiculo v : listaVehiculos) {
                 if (v.getMarca().toLowerCase().contains(busqueda) ||
-                    v.getModelo().toLowerCase().contains(busqueda) ||
-                    v.getMatricula().toLowerCase().contains(busqueda) ||
-                    v.getColor().toLowerCase().contains(busqueda) ||
-                    v.getEstado().toLowerCase().contains(busqueda) ||
-                    String.valueOf(v.getAnio()).contains(busqueda)) {
+                        v.getModelo().toLowerCase().contains(busqueda) ||
+                        v.getMatricula().toLowerCase().contains(busqueda) ||
+                        v.getColor().toLowerCase().contains(busqueda) ||
+                        v.getEstado().toLowerCase().contains(busqueda) ||
+                        String.valueOf(v.getAnio()).contains(busqueda)) {
                     listaVehiculosFiltrada.add(v);
                 }
             }
@@ -411,9 +488,9 @@ public class ListadoMaestroController implements Initializable {
             listaPiezasFiltrada.clear();
             for (Pieza p : listaPiezas) {
                 if (p.getNombre().toLowerCase().contains(busqueda) ||
-                    p.getCodigoPieza().toLowerCase().contains(busqueda) ||
-                    p.getCategoria().toLowerCase().contains(busqueda) ||
-                    p.getUbicacionAlmacen().toLowerCase().contains(busqueda)) {
+                        p.getCodigoPieza().toLowerCase().contains(busqueda) ||
+                        p.getCategoria().toLowerCase().contains(busqueda) ||
+                        p.getUbicacionAlmacen().toLowerCase().contains(busqueda)) {
                     listaPiezasFiltrada.add(p);
                 }
             }
@@ -431,9 +508,9 @@ public class ListadoMaestroController implements Initializable {
             listaInventarioFiltrada.clear();
             for (InventarioPieza inv : listaInventario) {
                 if (inv.getVehiculoInfo().toLowerCase().contains(busqueda) ||
-                    inv.getPiezaNombre().toLowerCase().contains(busqueda) ||
-                    inv.getEstadoPieza().toLowerCase().contains(busqueda) ||
-                    inv.getFechaExtraccion().toLowerCase().contains(busqueda)) {
+                        inv.getPiezaNombre().toLowerCase().contains(busqueda) ||
+                        inv.getEstadoPieza().toLowerCase().contains(busqueda) ||
+                        inv.getFechaExtraccion().toLowerCase().contains(busqueda)) {
                     listaInventarioFiltrada.add(inv);
                 }
             }
@@ -450,8 +527,7 @@ public class ListadoMaestroController implements Initializable {
 
         if (inicio < listaVehiculosFiltrada.size()) {
             tableVehiculos.setItems(FXCollections.observableArrayList(
-                listaVehiculosFiltrada.subList(inicio, fin)
-            ));
+                    listaVehiculosFiltrada.subList(inicio, fin)));
         } else {
             tableVehiculos.setItems(FXCollections.observableArrayList());
         }
@@ -466,8 +542,7 @@ public class ListadoMaestroController implements Initializable {
 
         if (inicio < listaPiezasFiltrada.size()) {
             tablePiezas.setItems(FXCollections.observableArrayList(
-                listaPiezasFiltrada.subList(inicio, fin)
-            ));
+                    listaPiezasFiltrada.subList(inicio, fin)));
         } else {
             tablePiezas.setItems(FXCollections.observableArrayList());
         }
@@ -482,8 +557,7 @@ public class ListadoMaestroController implements Initializable {
 
         if (inicio < listaInventarioFiltrada.size()) {
             tableInventario.setItems(FXCollections.observableArrayList(
-                listaInventarioFiltrada.subList(inicio, fin)
-            ));
+                    listaInventarioFiltrada.subList(inicio, fin)));
         } else {
             tableInventario.setItems(FXCollections.observableArrayList());
         }
@@ -525,6 +599,7 @@ public class ListadoMaestroController implements Initializable {
 
             // Crear una nueva ventana modal
             Stage modalStage = new Stage();
+            modalStage.getIcons().add(appIcon);
             modalStage.setTitle(titulo);
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(btnNuevo.getScene().getWindow());
@@ -532,15 +607,16 @@ public class ListadoMaestroController implements Initializable {
             Scene scene = new Scene(root);
             modalStage.setScene(scene);
             modalStage.setResizable(true);
-            modalStage.setMinWidth(700);
-            modalStage.setMinHeight(600);
+            modalStage.setMinWidth(850);
+            modalStage.setMinHeight(750);
+            modalStage.sizeToScene();
 
             // Mostrar la ventana y esperar a que se cierre
             modalStage.showAndWait();
 
         } catch (Exception e) {
-            System.err.println("Error al abrir formulario: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al abrir formulario", e);
+            ValidationUtils.showError("Error", "No se pudo abrir el formulario: " + e.getMessage());
         }
     }
 
@@ -555,9 +631,9 @@ public class ListadoMaestroController implements Initializable {
 
                 if (vehiculoSeleccionado == null) {
                     ValidationUtils.showAlert("Selección requerida",
-                        "Por favor seleccione un vehículo",
-                        "Debe seleccionar un vehículo de la tabla para editarlo",
-                        Alert.AlertType.WARNING);
+                            "Por favor seleccione un vehículo",
+                            "Debe seleccionar un vehículo de la tabla para editarlo",
+                            Alert.AlertType.WARNING);
                     return;
                 }
 
@@ -570,6 +646,7 @@ public class ListadoMaestroController implements Initializable {
                 controller.setVehiculoEditar(vehiculoSeleccionado);
 
                 Stage modalStage = new Stage();
+                modalStage.getIcons().add(appIcon);
                 modalStage.setTitle("Editar Vehículo");
                 modalStage.initModality(Modality.APPLICATION_MODAL);
                 modalStage.initOwner(btnEditar.getScene().getWindow());
@@ -577,8 +654,9 @@ public class ListadoMaestroController implements Initializable {
                 Scene scene = new Scene(root);
                 modalStage.setScene(scene);
                 modalStage.setResizable(true);
-                modalStage.setMinWidth(700);
-                modalStage.setMinHeight(600);
+                modalStage.setMinWidth(850);
+                modalStage.setMinHeight(750);
+                modalStage.sizeToScene();
                 modalStage.showAndWait();
 
             } else if (tablePiezas.isVisible()) {
@@ -587,9 +665,9 @@ public class ListadoMaestroController implements Initializable {
 
                 if (piezaSeleccionada == null) {
                     ValidationUtils.showAlert("Selección requerida",
-                        "Por favor seleccione una pieza",
-                        "Debe seleccionar una pieza de la tabla para editarla",
-                        Alert.AlertType.WARNING);
+                            "Por favor seleccione una pieza",
+                            "Debe seleccionar una pieza de la tabla para editarla",
+                            Alert.AlertType.WARNING);
                     return;
                 }
 
@@ -602,6 +680,7 @@ public class ListadoMaestroController implements Initializable {
                 controller.setPiezaEditar(piezaSeleccionada);
 
                 Stage modalStage = new Stage();
+                modalStage.getIcons().add(appIcon);
                 modalStage.setTitle("Editar Pieza");
                 modalStage.initModality(Modality.APPLICATION_MODAL);
                 modalStage.initOwner(btnEditar.getScene().getWindow());
@@ -609,8 +688,9 @@ public class ListadoMaestroController implements Initializable {
                 Scene scene = new Scene(root);
                 modalStage.setScene(scene);
                 modalStage.setResizable(true);
-                modalStage.setMinWidth(700);
-                modalStage.setMinHeight(600);
+                modalStage.setMinWidth(850);
+                modalStage.setMinHeight(750);
+                modalStage.sizeToScene();
                 modalStage.showAndWait();
 
             } else if (tableInventario.isVisible()) {
@@ -619,9 +699,9 @@ public class ListadoMaestroController implements Initializable {
 
                 if (inventarioSeleccionado == null) {
                     ValidationUtils.showAlert("Selección requerida",
-                        "Por favor seleccione una asignación",
-                        "Debe seleccionar una asignación de la tabla para editarla",
-                        Alert.AlertType.WARNING);
+                            "Por favor seleccione una asignación",
+                            "Debe seleccionar una asignación de la tabla para editarla",
+                            Alert.AlertType.WARNING);
                     return;
                 }
 
@@ -634,6 +714,7 @@ public class ListadoMaestroController implements Initializable {
                 controller.setInventarioEditar(inventarioSeleccionado);
 
                 Stage modalStage = new Stage();
+                modalStage.getIcons().add(appIcon);
                 modalStage.setTitle("Editar Asignación");
                 modalStage.initModality(Modality.APPLICATION_MODAL);
                 modalStage.initOwner(btnEditar.getScene().getWindow());
@@ -641,15 +722,16 @@ public class ListadoMaestroController implements Initializable {
                 Scene scene = new Scene(root);
                 modalStage.setScene(scene);
                 modalStage.setResizable(true);
-                modalStage.setMinWidth(700);
-                modalStage.setMinHeight(600);
+                modalStage.setMinWidth(850);
+                modalStage.setMinHeight(750);
+                modalStage.sizeToScene();
                 modalStage.showAndWait();
             }
 
         } catch (Exception e) {
+            LoggerUtil.error("Error al editar registro", e);
             ValidationUtils.showError("Error al editar",
-                "No se pudo abrir el formulario de edición: " + e.getMessage());
-            e.printStackTrace();
+                    "No se pudo abrir el formulario de edición: " + e.getMessage());
         }
     }
 
@@ -664,20 +746,19 @@ public class ListadoMaestroController implements Initializable {
 
                 if (vehiculoSeleccionado == null) {
                     ValidationUtils.showAlert("Selección requerida",
-                        "Por favor seleccione un vehículo",
-                        "Debe seleccionar un vehículo de la tabla para eliminarlo",
-                        Alert.AlertType.WARNING);
+                            "Por favor seleccione un vehículo",
+                            "Debe seleccionar un vehículo de la tabla para eliminarlo",
+                            Alert.AlertType.WARNING);
                     return;
                 }
 
                 // Confirmar eliminación
                 boolean confirmar = ValidationUtils.showConfirmation(
-                    "Confirmar eliminación",
-                    "¿Está seguro de que desea eliminar este vehículo?",
-                    "Vehículo: " + vehiculoSeleccionado.getMarca() + " " +
-                    vehiculoSeleccionado.getModelo() + " (" + vehiculoSeleccionado.getMatricula() + ")\n" +
-                    "Esta acción no se puede deshacer y eliminará también las piezas asociadas."
-                );
+                        "Confirmar eliminación",
+                        "¿Está seguro de que desea eliminar este vehículo?",
+                        "Vehículo: " + vehiculoSeleccionado.getMarca() + " " +
+                                vehiculoSeleccionado.getModelo() + " (" + vehiculoSeleccionado.getMatricula() + ")\n" +
+                                "Esta acción no se puede deshacer y eliminará también las piezas asociadas.");
 
                 if (confirmar) {
                     eliminarVehiculo(vehiculoSeleccionado.getIdVehiculo());
@@ -689,19 +770,18 @@ public class ListadoMaestroController implements Initializable {
 
                 if (piezaSeleccionada == null) {
                     ValidationUtils.showAlert("Selección requerida",
-                        "Por favor seleccione una pieza",
-                        "Debe seleccionar una pieza de la tabla para eliminarla",
-                        Alert.AlertType.WARNING);
+                            "Por favor seleccione una pieza",
+                            "Debe seleccionar una pieza de la tabla para eliminarla",
+                            Alert.AlertType.WARNING);
                     return;
                 }
 
                 // Confirmar eliminación
                 boolean confirmar = ValidationUtils.showConfirmation(
-                    "Confirmar eliminación",
-                    "¿Está seguro de que desea eliminar esta pieza?",
-                    "Pieza: " + piezaSeleccionada.getNombre() + " (" + piezaSeleccionada.getCodigoPieza() + ")\n" +
-                    "Esta acción no se puede deshacer y eliminará también las asignaciones en inventario."
-                );
+                        "Confirmar eliminación",
+                        "¿Está seguro de que desea eliminar esta pieza?",
+                        "Pieza: " + piezaSeleccionada.getNombre() + " (" + piezaSeleccionada.getCodigoPieza() + ")\n" +
+                                "Esta acción no se puede deshacer y eliminará también las asignaciones en inventario.");
 
                 if (confirmar) {
                     eliminarPieza(piezaSeleccionada.getIdPieza());
@@ -713,20 +793,19 @@ public class ListadoMaestroController implements Initializable {
 
                 if (inventarioSeleccionado == null) {
                     ValidationUtils.showAlert("Selección requerida",
-                        "Por favor seleccione una asignación",
-                        "Debe seleccionar una asignación de la tabla para eliminarla",
-                        Alert.AlertType.WARNING);
+                            "Por favor seleccione una asignación",
+                            "Debe seleccionar una asignación de la tabla para eliminarla",
+                            Alert.AlertType.WARNING);
                     return;
                 }
 
                 // Confirmar eliminación
                 boolean confirmar = ValidationUtils.showConfirmation(
-                    "Confirmar eliminación",
-                    "¿Está seguro de que desea eliminar esta asignación?",
-                    "Pieza: " + inventarioSeleccionado.getPiezaNombre() + "\n" +
-                    "Vehículo: " + inventarioSeleccionado.getVehiculoInfo() + "\n" +
-                    "Esta acción no se puede deshacer."
-                );
+                        "Confirmar eliminación",
+                        "¿Está seguro de que desea eliminar esta asignación?",
+                        "Pieza: " + inventarioSeleccionado.getPiezaNombre() + "\n" +
+                                "Vehículo: " + inventarioSeleccionado.getVehiculoInfo() + "\n" +
+                                "Esta acción no se puede deshacer.");
 
                 if (confirmar) {
                     eliminarInventario(inventarioSeleccionado.getIdVehiculo(), inventarioSeleccionado.getIdPieza());
@@ -734,9 +813,9 @@ public class ListadoMaestroController implements Initializable {
             }
 
         } catch (Exception e) {
+            LoggerUtil.error("Error al eliminar registro", e);
             ValidationUtils.showError("Error al eliminar",
-                "No se pudo eliminar el registro: " + e.getMessage());
-            e.printStackTrace();
+                    "No se pudo eliminar el registro: " + e.getMessage());
         }
     }
 
@@ -754,14 +833,14 @@ public class ListadoMaestroController implements Initializable {
 
             if (filasAfectadas > 0) {
                 ValidationUtils.showSuccess("Vehículo eliminado",
-                    "El vehículo ha sido eliminado correctamente del sistema");
+                        "El vehículo ha sido eliminado correctamente del sistema");
                 actualizarListado();
             }
 
         } catch (SQLException e) {
+            LoggerUtil.error("Error al eliminar vehículo de BD", e);
             ValidationUtils.showError("Error de base de datos",
-                "No se pudo eliminar el vehículo: " + e.getMessage());
-            e.printStackTrace();
+                    "No se pudo eliminar el vehículo: " + e.getMessage());
         }
     }
 
@@ -779,14 +858,14 @@ public class ListadoMaestroController implements Initializable {
 
             if (filasAfectadas > 0) {
                 ValidationUtils.showSuccess("Pieza eliminada",
-                    "La pieza ha sido eliminada correctamente del sistema");
+                        "La pieza ha sido eliminada correctamente del sistema");
                 actualizarListado();
             }
 
         } catch (SQLException e) {
+            LoggerUtil.error("Error al eliminar pieza de BD", e);
             ValidationUtils.showError("Error de base de datos",
-                "No se pudo eliminar la pieza: " + e.getMessage());
-            e.printStackTrace();
+                    "No se pudo eliminar la pieza: " + e.getMessage());
         }
     }
 
@@ -805,14 +884,14 @@ public class ListadoMaestroController implements Initializable {
 
             if (filasAfectadas > 0) {
                 ValidationUtils.showSuccess("Asignación eliminada",
-                    "La asignación ha sido eliminada correctamente del inventario");
+                        "La asignación ha sido eliminada correctamente del inventario");
                 actualizarListado();
             }
 
         } catch (SQLException e) {
+            LoggerUtil.error("Error al eliminar asignación de inventario de BD", e);
             ValidationUtils.showError("Error de base de datos",
-                "No se pudo eliminar la asignación: " + e.getMessage());
-            e.printStackTrace();
+                    "No se pudo eliminar la asignación: " + e.getMessage());
         }
     }
 
@@ -820,10 +899,32 @@ public class ListadoMaestroController implements Initializable {
         // Recargar los datos según la tabla visible
         if (tableVehiculos.isVisible()) {
             cargarVehiculos();
+            // Actualizar lista filtrada con los nuevos datos
+            listaVehiculosFiltrada.setAll(listaVehiculos);
+            // Aplicar búsqueda actual si hay texto en el campo
+            if (!txtBuscar.getText().isEmpty()) {
+                filtrarVehiculos(txtBuscar.getText().toLowerCase().trim());
+            }
         } else if (tablePiezas.isVisible()) {
             cargarPiezas();
+            // Actualizar lista filtrada con los nuevos datos
+            listaPiezasFiltrada.setAll(listaPiezas);
+            // Aplicar búsqueda actual si hay texto en el campo
+            if (!txtBuscar.getText().isEmpty()) {
+                filtrarPiezas(txtBuscar.getText().toLowerCase().trim());
+            }
         } else if (tableInventario.isVisible()) {
             cargarInventario();
+            // Actualizar lista filtrada con los nuevos datos
+            listaInventarioFiltrada.setAll(listaInventario);
+            // Aplicar búsqueda actual si hay texto en el campo
+            if (!txtBuscar.getText().isEmpty()) {
+                filtrarInventario(txtBuscar.getText().toLowerCase().trim());
+            }
+        } else if (vistaEstadisticas != null && vistaEstadisticas.isVisible()) {
+            if (controllerEstadisticas != null) {
+                controllerEstadisticas.actualizarDatos();
+            }
         }
 
         // Actualizar tabla paginada después de recargar datos
@@ -836,16 +937,6 @@ public class ListadoMaestroController implements Initializable {
     // ==================================================================================
 
     /**
-     * Anima el botón actualizar con rotación de 360 grados
-     */
-    private void animarBotonActualizar() {
-        RotateTransition rotate = new RotateTransition(Duration.millis(500), btnActualizar);
-        rotate.setByAngle(360);
-        rotate.setCycleCount(1);
-        rotate.play();
-    }
-
-    /**
      * Aplica animación FadeTransition al mostrar vehículos
      */
     @FXML
@@ -854,7 +945,8 @@ public class ListadoMaestroController implements Initializable {
         tableVehiculos.setVisible(true);
         tablePiezas.setVisible(false);
         tableInventario.setVisible(false);
-
+        if (vistaEstadisticas != null)
+            vistaEstadisticas.setVisible(false);
         // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
         listaVehiculosFiltrada.setAll(listaVehiculos);
@@ -874,6 +966,11 @@ public class ListadoMaestroController implements Initializable {
 
         btnNavInventario.getStyleClass().clear();
         btnNavInventario.getStyleClass().add("button");
+
+        if (btnNavEstadisticas != null) {
+            btnNavEstadisticas.getStyleClass().clear();
+            btnNavEstadisticas.getStyleClass().add("button");
+        }
     }
 
     /**
@@ -884,6 +981,8 @@ public class ListadoMaestroController implements Initializable {
         tableVehiculos.setVisible(false);
         tablePiezas.setVisible(true);
         tableInventario.setVisible(false);
+        if (vistaEstadisticas != null)
+            vistaEstadisticas.setVisible(false);
 
         // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
@@ -914,6 +1013,8 @@ public class ListadoMaestroController implements Initializable {
         tableVehiculos.setVisible(false);
         tablePiezas.setVisible(false);
         tableInventario.setVisible(true);
+        if (vistaEstadisticas != null)
+            vistaEstadisticas.setVisible(false);
 
         // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
@@ -934,6 +1035,57 @@ public class ListadoMaestroController implements Initializable {
 
         btnNavInventario.getStyleClass().clear();
         btnNavInventario.getStyleClass().addAll("button", "button-primary");
+
+        if (btnNavEstadisticas != null) {
+            btnNavEstadisticas.getStyleClass().clear();
+            btnNavEstadisticas.getStyleClass().add("button");
+        }
+    }
+
+    /**
+     * Muestra la vista de estadísticas
+     */
+    @FXML
+    public void mostrarEstadisticas() {
+        tableVehiculos.setVisible(false);
+        tablePiezas.setVisible(false);
+        tableInventario.setVisible(false);
+
+        try {
+            // Cargar la vista si aún no existe
+            if (vistaEstadisticas == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Estadisticas.fxml"));
+                vistaEstadisticas = loader.load();
+                controllerEstadisticas = loader.getController();
+                stackPaneContenido.getChildren().add(vistaEstadisticas);
+            } else {
+                // Si ya existe, actualizar datos
+                if (controllerEstadisticas != null) {
+                    controllerEstadisticas.actualizarDatos();
+                }
+            }
+
+            vistaEstadisticas.setVisible(true);
+            aplicarFadeTransition(vistaEstadisticas);
+        } catch (Exception e) {
+            LoggerUtil.error("Error al cargar vista de estadísticas", e);
+            ValidationUtils.showError("Error", "No se pudieron cargar las estadísticas: " + e.getMessage());
+        }
+
+        // Estilos de botones
+        btnNavVehiculos.getStyleClass().clear();
+        btnNavVehiculos.getStyleClass().add("button");
+
+        btnNavPiezas.getStyleClass().clear();
+        btnNavPiezas.getStyleClass().add("button");
+
+        btnNavInventario.getStyleClass().clear();
+        btnNavInventario.getStyleClass().add("button");
+
+        if (btnNavEstadisticas != null) {
+            btnNavEstadisticas.getStyleClass().clear();
+            btnNavEstadisticas.getStyleClass().addAll("button", "button-primary");
+        }
     }
 
     /**
@@ -977,7 +1129,6 @@ public class ListadoMaestroController implements Initializable {
             } else if (event.getCode() == KeyCode.DELETE) {
                 eliminarRegistro();
             } else if (event.getCode() == KeyCode.F5) {
-                animarBotonActualizar();
                 actualizarListado();
             } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
                 abrirFormularioNuevo();
@@ -991,7 +1142,6 @@ public class ListadoMaestroController implements Initializable {
             } else if (event.getCode() == KeyCode.DELETE) {
                 eliminarRegistro();
             } else if (event.getCode() == KeyCode.F5) {
-                animarBotonActualizar();
                 actualizarListado();
             } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
                 abrirFormularioNuevo();
@@ -1005,7 +1155,6 @@ public class ListadoMaestroController implements Initializable {
             } else if (event.getCode() == KeyCode.DELETE) {
                 eliminarRegistro();
             } else if (event.getCode() == KeyCode.F5) {
-                animarBotonActualizar();
                 actualizarListado();
             } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
                 abrirFormularioNuevo();
@@ -1036,8 +1185,8 @@ public class ListadoMaestroController implements Initializable {
             ObservableList<Vehiculo> filtrados = FXCollections.observableArrayList();
             for (Vehiculo v : listaVehiculos) {
                 if (v.getMatricula().toLowerCase().contains(textoBusqueda) ||
-                    v.getMarca().toLowerCase().contains(textoBusqueda) ||
-                    v.getModelo().toLowerCase().contains(textoBusqueda)) {
+                        v.getMarca().toLowerCase().contains(textoBusqueda) ||
+                        v.getModelo().toLowerCase().contains(textoBusqueda)) {
                     filtrados.add(v);
                 }
             }
@@ -1046,8 +1195,8 @@ public class ListadoMaestroController implements Initializable {
             ObservableList<Pieza> filtrados = FXCollections.observableArrayList();
             for (Pieza p : listaPiezas) {
                 if (p.getCodigoPieza().toLowerCase().contains(textoBusqueda) ||
-                    p.getNombre().toLowerCase().contains(textoBusqueda) ||
-                    p.getCategoria().toLowerCase().contains(textoBusqueda)) {
+                        p.getNombre().toLowerCase().contains(textoBusqueda) ||
+                        p.getCategoria().toLowerCase().contains(textoBusqueda)) {
                     filtrados.add(p);
                 }
             }
@@ -1056,7 +1205,7 @@ public class ListadoMaestroController implements Initializable {
             ObservableList<InventarioPieza> filtrados = FXCollections.observableArrayList();
             for (InventarioPieza inv : listaInventario) {
                 if (inv.getVehiculoInfo().toLowerCase().contains(textoBusqueda) ||
-                    inv.getPiezaNombre().toLowerCase().contains(textoBusqueda)) {
+                        inv.getPiezaNombre().toLowerCase().contains(textoBusqueda)) {
                     filtrados.add(inv);
                 }
             }
@@ -1149,7 +1298,6 @@ public class ListadoMaestroController implements Initializable {
         // Opción: Actualizar
         MenuItem itemActualizar = new MenuItem("🔄 Actualizar");
         itemActualizar.setOnAction(e -> {
-            animarBotonActualizar();
             actualizarListado();
         });
 
@@ -1249,18 +1397,15 @@ public class ListadoMaestroController implements Initializable {
 
         if (tableVehiculos.isVisible()) {
             ObservableList<Vehiculo> paginaActualLista = FXCollections.observableArrayList(
-                listaVehiculosFiltrada.subList(inicio, fin)
-            );
+                    listaVehiculosFiltrada.subList(inicio, fin));
             tableVehiculos.setItems(paginaActualLista);
         } else if (tablePiezas.isVisible()) {
             ObservableList<Pieza> paginaActualLista = FXCollections.observableArrayList(
-                listaPiezasFiltrada.subList(inicio, fin)
-            );
+                    listaPiezasFiltrada.subList(inicio, fin));
             tablePiezas.setItems(paginaActualLista);
         } else if (tableInventario.isVisible()) {
             ObservableList<InventarioPieza> paginaActualLista = FXCollections.observableArrayList(
-                listaInventarioFiltrada.subList(inicio, fin)
-            );
+                    listaInventarioFiltrada.subList(inicio, fin));
             tableInventario.setItems(paginaActualLista);
         }
     }
@@ -1294,12 +1439,14 @@ public class ListadoMaestroController implements Initializable {
 
     /**
      * Aplica animación de transición al cambiar de página
+     * 
      * @param adelante true si avanza, false si retrocede
      */
     private void aplicarAnimacionCambioPagina(boolean adelante) {
         TableView<?> tablaVisible = obtenerTablaVisible();
 
-        if (tablaVisible == null) return;
+        if (tablaVisible == null)
+            return;
 
         // Animación de fade out y slide
         FadeTransition fadeOut = new FadeTransition(Duration.millis(150), tablaVisible);
@@ -1381,28 +1528,33 @@ public class ListadoMaestroController implements Initializable {
     }
 
     /**
-     * Muestra el diálogo "Acerca de" con información de la aplicación
+     * Muestra la ventana "Acerca de" con información de la aplicación,
+     * funcionalidades, atajos de teclado y consejos de uso
      */
     private void mostrarAcercaDe() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Acerca de AutoCiclo");
-        alert.setHeaderText("AutoCiclo - Sistema de Gestión de Desguace");
+        try {
+            // Cargar el FXML de la ventana "Acerca de"
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AcercaDe.fxml"));
+            Parent root = loader.load();
 
-        String contenido = "Versión: 1.0\n\n" +
-                          "Desarrollado por: Yalil Musa Talhaoui\n\n" +
-                          "Descripción:\n" +
-                          "Sistema integral para la gestión de vehículos,\n" +
-                          "piezas e inventario de un desguace.\n\n" +
-                          "Funcionalidades:\n" +
-                          "• Gestión de vehículos\n" +
-                          "• Gestión de piezas\n" +
-                          "• Control de inventario\n" +
-                          "• Sistema de búsqueda y paginación\n" +
-                          "• Interfaz moderna y responsive\n\n" +
-                          "© 2024 AutoCiclo - Todos los derechos reservados";
+            // Crear y mostrar la ventana modal
+            Stage modalStage = new Stage();
+            modalStage.getIcons().add(appIcon);
+            modalStage.setTitle("Acerca de AutoCiclo");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(btnNuevo.getScene().getWindow());
 
-        alert.setContentText(contenido);
-        alert.showAndWait();
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+            modalStage.setResizable(true);
+            modalStage.setMinWidth(750);
+            modalStage.setMinHeight(650);
+            modalStage.showAndWait();
+
+        } catch (Exception e) {
+            LoggerUtil.error("Error al abrir ventana Acerca de", e);
+            ValidationUtils.showError("Error", "No se pudo abrir la ventana Acerca de: " + e.getMessage());
+        }
     }
 
     /**
@@ -1426,9 +1578,9 @@ public class ListadoMaestroController implements Initializable {
 
         if (vehiculoSeleccionado == null) {
             ValidationUtils.showAlert("Selección requerida",
-                "Por favor seleccione un vehículo",
-                "Debe seleccionar un vehículo de la tabla para ver sus detalles",
-                Alert.AlertType.WARNING);
+                    "Por favor seleccione un vehículo",
+                    "Debe seleccionar un vehículo de la tabla para ver sus detalles",
+                    Alert.AlertType.WARNING);
             return;
         }
 
@@ -1443,6 +1595,7 @@ public class ListadoMaestroController implements Initializable {
 
             // Crear y mostrar la ventana modal
             Stage modalStage = new Stage();
+            modalStage.getIcons().add(appIcon);
             modalStage.setTitle("Detalles del Vehículo");
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(btnVer.getScene().getWindow());
@@ -1455,8 +1608,8 @@ public class ListadoMaestroController implements Initializable {
             modalStage.showAndWait();
 
         } catch (Exception e) {
-            System.err.println("Error al abrir detalles del vehículo: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al abrir detalles del vehículo", e);
+            ValidationUtils.showError("Error", "No se pudieron cargar los detalles del vehículo");
         }
     }
 
@@ -1468,9 +1621,9 @@ public class ListadoMaestroController implements Initializable {
 
         if (piezaSeleccionada == null) {
             ValidationUtils.showAlert("Selección requerida",
-                "Por favor seleccione una pieza",
-                "Debe seleccionar una pieza de la tabla para ver sus detalles",
-                Alert.AlertType.WARNING);
+                    "Por favor seleccione una pieza",
+                    "Debe seleccionar una pieza de la tabla para ver sus detalles",
+                    Alert.AlertType.WARNING);
             return;
         }
 
@@ -1485,6 +1638,7 @@ public class ListadoMaestroController implements Initializable {
 
             // Crear y mostrar la ventana modal
             Stage modalStage = new Stage();
+            modalStage.getIcons().add(appIcon);
             modalStage.setTitle("Detalles de la Pieza");
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(btnVer.getScene().getWindow());
@@ -1497,8 +1651,8 @@ public class ListadoMaestroController implements Initializable {
             modalStage.showAndWait();
 
         } catch (Exception e) {
-            System.err.println("Error al abrir detalles de la pieza: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al abrir detalles de la pieza", e);
+            ValidationUtils.showError("Error", "No se pudieron cargar los detalles de la pieza");
         }
     }
 
@@ -1510,9 +1664,9 @@ public class ListadoMaestroController implements Initializable {
 
         if (inventarioSeleccionado == null) {
             ValidationUtils.showAlert("Selección requerida",
-                "Por favor seleccione un registro",
-                "Debe seleccionar un registro de inventario de la tabla para ver sus detalles",
-                Alert.AlertType.WARNING);
+                    "Por favor seleccione un registro",
+                    "Debe seleccionar un registro de inventario de la tabla para ver sus detalles",
+                    Alert.AlertType.WARNING);
             return;
         }
 
@@ -1527,6 +1681,7 @@ public class ListadoMaestroController implements Initializable {
 
             // Crear y mostrar la ventana modal
             Stage modalStage = new Stage();
+            modalStage.getIcons().add(appIcon);
             modalStage.setTitle("Detalles del Inventario");
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(btnVer.getScene().getWindow());
@@ -1539,8 +1694,8 @@ public class ListadoMaestroController implements Initializable {
             modalStage.showAndWait();
 
         } catch (Exception e) {
-            System.err.println("Error al abrir detalles del inventario: " + e.getMessage());
-            e.printStackTrace();
+            LoggerUtil.error("Error al abrir detalles del inventario", e);
+            ValidationUtils.showError("Error", "No se pudieron cargar los detalles del inventario");
         }
     }
 }

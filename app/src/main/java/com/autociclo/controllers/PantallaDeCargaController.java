@@ -1,7 +1,6 @@
 package com.autociclo.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ProgressBar;
 
 /**
  * Controlador para la pantalla de carga
@@ -14,7 +13,7 @@ public class PantallaDeCargaController implements javafx.fxml.Initializable {
     private javafx.scene.layout.VBox contentPane;
 
     @FXML
-    private ProgressBar progressBar;
+    private javafx.scene.control.ProgressIndicator progressIndicator;
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
@@ -37,9 +36,9 @@ public class PantallaDeCargaController implements javafx.fxml.Initializable {
     /**
      * Obtiene el indicador de progreso
      * 
-     * @return ProgressBar
+     * @return ProgressIndicator
      */
-    public ProgressBar getProgressBar() {
-        return progressBar;
+    public javafx.scene.control.ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
     }
 }
