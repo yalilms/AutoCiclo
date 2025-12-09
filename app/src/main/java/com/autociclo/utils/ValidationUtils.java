@@ -1,6 +1,7 @@
 package com.autociclo.utils;
 
 import javafx.scene.control.*;
+import javafx.scene.control.DialogPane;
 
 /**
  * Utilidad para validación de campos según PDF DI-TEMA 2-4
@@ -243,6 +244,18 @@ public class ValidationUtils {
     }
 
     /**
+     * Aplica el estilo personalizado de AutoCiclo a un Alert
+     */
+    private static void applyCustomStyle(Alert alert) {
+        // Aplicar la hoja de estilos CSS de la aplicación
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+            ValidationUtils.class.getResource("/css/styles.css").toExternalForm()
+        );
+        dialogPane.getStyleClass().add("glass-pane");
+    }
+
+    /**
      * Muestra un mensaje de alerta de error
      * Alert permitido (es parte estándar de JavaFX)
      */
@@ -251,6 +264,7 @@ public class ValidationUtils {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        applyCustomStyle(alert);
         alert.showAndWait();
     }
 
@@ -263,6 +277,7 @@ public class ValidationUtils {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        applyCustomStyle(alert);
 
         return alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }
@@ -275,6 +290,7 @@ public class ValidationUtils {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        applyCustomStyle(alert);
         alert.showAndWait();
     }
 
@@ -286,6 +302,7 @@ public class ValidationUtils {
         alert.setTitle("Error");
         alert.setHeaderText(title);
         alert.setContentText(message);
+        applyCustomStyle(alert);
         alert.showAndWait();
     }
 

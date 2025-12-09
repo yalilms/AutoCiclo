@@ -26,6 +26,15 @@ import com.autociclo.models.InventarioPieza;
 
 import com.autociclo.utils.ValidationUtils;
 
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignD;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignE;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignM;
+
+
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
@@ -93,6 +102,11 @@ public class ListadoMaestroController implements Initializable {
     private ObservableList<Pieza> listaPiezas = FXCollections.observableArrayList();
     private ObservableList<InventarioPieza> listaInventario = FXCollections.observableArrayList();
 
+    // Listas filtradas para búsqueda
+    private ObservableList<Vehiculo> listaVehiculosFiltrada = FXCollections.observableArrayList();
+    private ObservableList<Pieza> listaPiezasFiltrada = FXCollections.observableArrayList();
+    private ObservableList<InventarioPieza> listaInventarioFiltrada = FXCollections.observableArrayList();
+
     // Variables de paginación
     private int paginaActual = 0;
     private static final int ELEMENTOS_POR_PAGINA = 10;
@@ -138,12 +152,23 @@ public class ListadoMaestroController implements Initializable {
 
         // Conectar eventos de botones del toolbar
         btnNuevo.setOnAction(event -> abrirFormularioNuevo());
+        btnVer.setOnAction(event -> verDetallesRegistro());
         btnEditar.setOnAction(event -> editarRegistro());
         btnEliminar.setOnAction(event -> eliminarRegistro());
         btnActualizar.setOnAction(event -> {
             animarBotonActualizar();
             actualizarListado();
         });
+
+        // Configurar menús
+        menuSalir.setOnAction(event -> salirAplicacion());
+        menuAcercaDe.setOnAction(event -> mostrarAcercaDe());
+
+        // Configurar búsqueda en tiempo real
+        configurarBusqueda();
+
+        // Configurar iconos de Ikonli
+        configurarIconos();
 
         // ENTREGA 3: Configurar eventos de teclado y ratón
         configurarEventosTeclado();
@@ -251,6 +276,219 @@ public class ListadoMaestroController implements Initializable {
         }
     }
 
+    /**
+     * Configura la búsqueda en tiempo real para todas las tablas
+     */
+    private void configurarBusqueda() {
+        // Listener para búsqueda en tiempo real
+        txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filtrarTablaActual(newValue);
+        });
+
+        // Botón de búsqueda también ejecuta el filtro
+        btnBuscar.setOnAction(event -> {
+            filtrarTablaActual(txtBuscar.getText());
+        });
+
+        // Limpiar búsqueda al presionar ESC
+        txtBuscar.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                txtBuscar.clear();
+                filtrarTablaActual("");
+            }
+        });
+    }
+
+    /**
+     * Configura los iconos de Ikonli para los botones de la aplicación
+     */
+    private void configurarIconos() {
+        // Iconos para botones del toolbar (colores blancos para mejor contraste con los fondos de botón)
+        FontIcon iconNuevo = new FontIcon(MaterialDesignP.PLUS_CIRCLE);
+        iconNuevo.setIconSize(16);
+        iconNuevo.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo verde
+        btnNuevo.setGraphic(iconNuevo);
+        btnNuevo.setText("Nuevo");
+
+        FontIcon iconVer = new FontIcon(MaterialDesignE.EYE);
+        iconVer.setIconSize(16);
+        iconVer.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo azul
+        btnVer.setGraphic(iconVer);
+        btnVer.setText("Ver");
+
+        FontIcon iconEditar = new FontIcon(MaterialDesignP.PENCIL);
+        iconEditar.setIconSize(16);
+        iconEditar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo azul
+        btnEditar.setGraphic(iconEditar);
+        btnEditar.setText("Editar");
+
+        FontIcon iconEliminar = new FontIcon(MaterialDesignD.DELETE);
+        iconEliminar.setIconSize(16);
+        iconEliminar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo rojo
+        btnEliminar.setGraphic(iconEliminar);
+        btnEliminar.setText("Eliminar");
+
+        FontIcon iconActualizar = new FontIcon(MaterialDesignR.REFRESH);
+        iconActualizar.setIconSize(16);
+        iconActualizar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste
+        btnActualizar.setGraphic(iconActualizar);
+        btnActualizar.setText("Actualizar");
+
+        FontIcon iconBuscar = new FontIcon(MaterialDesignM.MAGNIFY);
+        iconBuscar.setIconSize(18);
+        iconBuscar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo del botón
+        btnBuscar.setGraphic(iconBuscar);
+        btnBuscar.setText("");
+
+        // Iconos para botones de navegación
+        FontIcon iconVehiculos = new FontIcon(MaterialDesignC.CAR);
+        iconVehiculos.setIconSize(18);
+        iconVehiculos.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
+        btnNavVehiculos.setGraphic(iconVehiculos);
+        btnNavVehiculos.setText("Vehículos");
+
+        FontIcon iconPiezas = new FontIcon(MaterialDesignC.COG);
+        iconPiezas.setIconSize(18);
+        iconPiezas.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
+        btnNavPiezas.setGraphic(iconPiezas);
+        btnNavPiezas.setText("Piezas");
+
+        FontIcon iconInventario = new FontIcon(MaterialDesignC.CLIPBOARD_LIST);
+        iconInventario.setIconSize(18);
+        iconInventario.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
+        btnNavInventario.setGraphic(iconInventario);
+        btnNavInventario.setText("Inventario");
+    }
+
+    /**
+     * Filtra la tabla actualmente visible según el texto de búsqueda
+     */
+    private void filtrarTablaActual(String textoBusqueda) {
+        String busqueda = textoBusqueda.toLowerCase().trim();
+
+        if (tableVehiculos.isVisible()) {
+            filtrarVehiculos(busqueda);
+        } else if (tablePiezas.isVisible()) {
+            filtrarPiezas(busqueda);
+        } else if (tableInventario.isVisible()) {
+            filtrarInventario(busqueda);
+        }
+
+        // Resetear paginación y actualizar
+        paginaActual = 0;
+        actualizarBotonesPaginacion();
+    }
+
+    /**
+     * Filtra la lista de vehículos según el texto de búsqueda
+     */
+    private void filtrarVehiculos(String busqueda) {
+        if (busqueda.isEmpty()) {
+            listaVehiculosFiltrada.setAll(listaVehiculos);
+        } else {
+            listaVehiculosFiltrada.clear();
+            for (Vehiculo v : listaVehiculos) {
+                if (v.getMarca().toLowerCase().contains(busqueda) ||
+                    v.getModelo().toLowerCase().contains(busqueda) ||
+                    v.getMatricula().toLowerCase().contains(busqueda) ||
+                    v.getColor().toLowerCase().contains(busqueda) ||
+                    v.getEstado().toLowerCase().contains(busqueda) ||
+                    String.valueOf(v.getAnio()).contains(busqueda)) {
+                    listaVehiculosFiltrada.add(v);
+                }
+            }
+        }
+        actualizarTablaVehiculos();
+    }
+
+    /**
+     * Filtra la lista de piezas según el texto de búsqueda
+     */
+    private void filtrarPiezas(String busqueda) {
+        if (busqueda.isEmpty()) {
+            listaPiezasFiltrada.setAll(listaPiezas);
+        } else {
+            listaPiezasFiltrada.clear();
+            for (Pieza p : listaPiezas) {
+                if (p.getNombre().toLowerCase().contains(busqueda) ||
+                    p.getCodigoPieza().toLowerCase().contains(busqueda) ||
+                    p.getCategoria().toLowerCase().contains(busqueda) ||
+                    p.getUbicacionAlmacen().toLowerCase().contains(busqueda)) {
+                    listaPiezasFiltrada.add(p);
+                }
+            }
+        }
+        actualizarTablaPiezas();
+    }
+
+    /**
+     * Filtra la lista de inventario según el texto de búsqueda
+     */
+    private void filtrarInventario(String busqueda) {
+        if (busqueda.isEmpty()) {
+            listaInventarioFiltrada.setAll(listaInventario);
+        } else {
+            listaInventarioFiltrada.clear();
+            for (InventarioPieza inv : listaInventario) {
+                if (inv.getVehiculoInfo().toLowerCase().contains(busqueda) ||
+                    inv.getPiezaNombre().toLowerCase().contains(busqueda) ||
+                    inv.getEstadoPieza().toLowerCase().contains(busqueda) ||
+                    inv.getFechaExtraccion().toLowerCase().contains(busqueda)) {
+                    listaInventarioFiltrada.add(inv);
+                }
+            }
+        }
+        actualizarTablaInventario();
+    }
+
+    /**
+     * Actualiza la tabla de vehículos con la lista filtrada
+     */
+    private void actualizarTablaVehiculos() {
+        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
+        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, listaVehiculosFiltrada.size());
+
+        if (inicio < listaVehiculosFiltrada.size()) {
+            tableVehiculos.setItems(FXCollections.observableArrayList(
+                listaVehiculosFiltrada.subList(inicio, fin)
+            ));
+        } else {
+            tableVehiculos.setItems(FXCollections.observableArrayList());
+        }
+    }
+
+    /**
+     * Actualiza la tabla de piezas con la lista filtrada
+     */
+    private void actualizarTablaPiezas() {
+        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
+        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, listaPiezasFiltrada.size());
+
+        if (inicio < listaPiezasFiltrada.size()) {
+            tablePiezas.setItems(FXCollections.observableArrayList(
+                listaPiezasFiltrada.subList(inicio, fin)
+            ));
+        } else {
+            tablePiezas.setItems(FXCollections.observableArrayList());
+        }
+    }
+
+    /**
+     * Actualiza la tabla de inventario con la lista filtrada
+     */
+    private void actualizarTablaInventario() {
+        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
+        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, listaInventarioFiltrada.size());
+
+        if (inicio < listaInventarioFiltrada.size()) {
+            tableInventario.setItems(FXCollections.observableArrayList(
+                listaInventarioFiltrada.subList(inicio, fin)
+            ));
+        } else {
+            tableInventario.setItems(FXCollections.observableArrayList());
+        }
+    }
+
     // Métodos para abrir formularios como ventanas modales
     private void abrirFormularioNuevo() {
         try {
@@ -293,7 +531,9 @@ public class ListadoMaestroController implements Initializable {
 
             Scene scene = new Scene(root);
             modalStage.setScene(scene);
-            modalStage.setResizable(false);
+            modalStage.setResizable(true);
+            modalStage.setMinWidth(700);
+            modalStage.setMinHeight(600);
 
             // Mostrar la ventana y esperar a que se cierre
             modalStage.showAndWait();
@@ -336,7 +576,9 @@ public class ListadoMaestroController implements Initializable {
 
                 Scene scene = new Scene(root);
                 modalStage.setScene(scene);
-                modalStage.setResizable(false);
+                modalStage.setResizable(true);
+                modalStage.setMinWidth(700);
+                modalStage.setMinHeight(600);
                 modalStage.showAndWait();
 
             } else if (tablePiezas.isVisible()) {
@@ -366,7 +608,9 @@ public class ListadoMaestroController implements Initializable {
 
                 Scene scene = new Scene(root);
                 modalStage.setScene(scene);
-                modalStage.setResizable(false);
+                modalStage.setResizable(true);
+                modalStage.setMinWidth(700);
+                modalStage.setMinHeight(600);
                 modalStage.showAndWait();
 
             } else if (tableInventario.isVisible()) {
@@ -396,7 +640,9 @@ public class ListadoMaestroController implements Initializable {
 
                 Scene scene = new Scene(root);
                 modalStage.setScene(scene);
-                modalStage.setResizable(false);
+                modalStage.setResizable(true);
+                modalStage.setMinWidth(700);
+                modalStage.setMinHeight(600);
                 modalStage.showAndWait();
             }
 
@@ -609,6 +855,10 @@ public class ListadoMaestroController implements Initializable {
         tablePiezas.setVisible(false);
         tableInventario.setVisible(false);
 
+        // Limpiar búsqueda e inicializar lista filtrada
+        txtBuscar.clear();
+        listaVehiculosFiltrada.setAll(listaVehiculos);
+
         // Reiniciar paginación
         reiniciarPaginacion();
 
@@ -616,12 +866,14 @@ public class ListadoMaestroController implements Initializable {
         aplicarFadeTransition(tableVehiculos);
 
         // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().remove("nav-button-inactive");
-        btnNavVehiculos.getStyleClass().add("nav-button-active");
-        btnNavPiezas.getStyleClass().remove("nav-button-active");
-        btnNavPiezas.getStyleClass().add("nav-button-inactive");
-        btnNavInventario.getStyleClass().remove("nav-button-active");
-        btnNavInventario.getStyleClass().add("nav-button-inactive");
+        btnNavVehiculos.getStyleClass().clear();
+        btnNavVehiculos.getStyleClass().addAll("button", "button-primary");
+
+        btnNavPiezas.getStyleClass().clear();
+        btnNavPiezas.getStyleClass().add("button");
+
+        btnNavInventario.getStyleClass().clear();
+        btnNavInventario.getStyleClass().add("button");
     }
 
     /**
@@ -633,6 +885,10 @@ public class ListadoMaestroController implements Initializable {
         tablePiezas.setVisible(true);
         tableInventario.setVisible(false);
 
+        // Limpiar búsqueda e inicializar lista filtrada
+        txtBuscar.clear();
+        listaPiezasFiltrada.setAll(listaPiezas);
+
         // Reiniciar paginación
         reiniciarPaginacion();
 
@@ -640,12 +896,14 @@ public class ListadoMaestroController implements Initializable {
         aplicarFadeTransition(tablePiezas);
 
         // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().remove("nav-button-active");
-        btnNavVehiculos.getStyleClass().add("nav-button-inactive");
-        btnNavPiezas.getStyleClass().remove("nav-button-inactive");
-        btnNavPiezas.getStyleClass().add("nav-button-active");
-        btnNavInventario.getStyleClass().remove("nav-button-active");
-        btnNavInventario.getStyleClass().add("nav-button-inactive");
+        btnNavVehiculos.getStyleClass().clear();
+        btnNavVehiculos.getStyleClass().add("button");
+
+        btnNavPiezas.getStyleClass().clear();
+        btnNavPiezas.getStyleClass().addAll("button", "button-primary");
+
+        btnNavInventario.getStyleClass().clear();
+        btnNavInventario.getStyleClass().add("button");
     }
 
     /**
@@ -657,6 +915,10 @@ public class ListadoMaestroController implements Initializable {
         tablePiezas.setVisible(false);
         tableInventario.setVisible(true);
 
+        // Limpiar búsqueda e inicializar lista filtrada
+        txtBuscar.clear();
+        listaInventarioFiltrada.setAll(listaInventario);
+
         // Reiniciar paginación
         reiniciarPaginacion();
 
@@ -664,12 +926,14 @@ public class ListadoMaestroController implements Initializable {
         aplicarFadeTransition(tableInventario);
 
         // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().remove("nav-button-active");
-        btnNavVehiculos.getStyleClass().add("nav-button-inactive");
-        btnNavPiezas.getStyleClass().remove("nav-button-active");
-        btnNavPiezas.getStyleClass().add("nav-button-inactive");
-        btnNavInventario.getStyleClass().remove("nav-button-inactive");
-        btnNavInventario.getStyleClass().add("nav-button-active");
+        btnNavVehiculos.getStyleClass().clear();
+        btnNavVehiculos.getStyleClass().add("button");
+
+        btnNavPiezas.getStyleClass().clear();
+        btnNavPiezas.getStyleClass().add("button");
+
+        btnNavInventario.getStyleClass().clear();
+        btnNavInventario.getStyleClass().addAll("button", "button-primary");
     }
 
     /**
@@ -966,11 +1230,11 @@ public class ListadoMaestroController implements Initializable {
         int totalElementos = 0;
 
         if (tableVehiculos.isVisible()) {
-            totalElementos = listaVehiculos.size();
+            totalElementos = listaVehiculosFiltrada.size();
         } else if (tablePiezas.isVisible()) {
-            totalElementos = listaPiezas.size();
+            totalElementos = listaPiezasFiltrada.size();
         } else if (tableInventario.isVisible()) {
-            totalElementos = listaInventario.size();
+            totalElementos = listaInventarioFiltrada.size();
         }
 
         return (int) Math.ceil((double) totalElementos / ELEMENTOS_POR_PAGINA);
@@ -985,17 +1249,17 @@ public class ListadoMaestroController implements Initializable {
 
         if (tableVehiculos.isVisible()) {
             ObservableList<Vehiculo> paginaActualLista = FXCollections.observableArrayList(
-                listaVehiculos.subList(inicio, fin)
+                listaVehiculosFiltrada.subList(inicio, fin)
             );
             tableVehiculos.setItems(paginaActualLista);
         } else if (tablePiezas.isVisible()) {
             ObservableList<Pieza> paginaActualLista = FXCollections.observableArrayList(
-                listaPiezas.subList(inicio, fin)
+                listaPiezasFiltrada.subList(inicio, fin)
             );
             tablePiezas.setItems(paginaActualLista);
         } else if (tableInventario.isVisible()) {
             ObservableList<InventarioPieza> paginaActualLista = FXCollections.observableArrayList(
-                listaInventario.subList(inicio, fin)
+                listaInventarioFiltrada.subList(inicio, fin)
             );
             tableInventario.setItems(paginaActualLista);
         }
@@ -1006,11 +1270,11 @@ public class ListadoMaestroController implements Initializable {
      */
     private int obtenerTotalElementosActual() {
         if (tableVehiculos.isVisible()) {
-            return listaVehiculos.size();
+            return listaVehiculosFiltrada.size();
         } else if (tablePiezas.isVisible()) {
-            return listaPiezas.size();
+            return listaPiezasFiltrada.size();
         } else if (tableInventario.isVisible()) {
-            return listaInventario.size();
+            return listaInventarioFiltrada.size();
         }
         return 0;
     }
@@ -1093,5 +1357,190 @@ public class ListadoMaestroController implements Initializable {
         paginaActual = 0;
         actualizarTablaPaginada();
         actualizarBotonesPaginacion();
+    }
+
+    /**
+     * Cierra la aplicación después de pedir confirmación
+     */
+    private void salirAplicacion() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Salir de AutoCiclo");
+        alert.setHeaderText("¿Está seguro que desea salir?");
+        alert.setContentText("Se cerrará la aplicación AutoCiclo - Gestión de Desguace");
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                // Cerrar la ventana actual
+                Stage stage = (Stage) tableVehiculos.getScene().getWindow();
+                stage.close();
+
+                // Cerrar la aplicación completamente
+                System.exit(0);
+            }
+        });
+    }
+
+    /**
+     * Muestra el diálogo "Acerca de" con información de la aplicación
+     */
+    private void mostrarAcercaDe() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Acerca de AutoCiclo");
+        alert.setHeaderText("AutoCiclo - Sistema de Gestión de Desguace");
+
+        String contenido = "Versión: 1.0\n\n" +
+                          "Desarrollado por: Yalil Musa Talhaoui\n\n" +
+                          "Descripción:\n" +
+                          "Sistema integral para la gestión de vehículos,\n" +
+                          "piezas e inventario de un desguace.\n\n" +
+                          "Funcionalidades:\n" +
+                          "• Gestión de vehículos\n" +
+                          "• Gestión de piezas\n" +
+                          "• Control de inventario\n" +
+                          "• Sistema de búsqueda y paginación\n" +
+                          "• Interfaz moderna y responsive\n\n" +
+                          "© 2024 AutoCiclo - Todos los derechos reservados";
+
+        alert.setContentText(contenido);
+        alert.showAndWait();
+    }
+
+    /**
+     * Muestra un diálogo con los detalles del registro seleccionado
+     */
+    private void verDetallesRegistro() {
+        if (tableVehiculos.isVisible()) {
+            verDetallesVehiculo();
+        } else if (tablePiezas.isVisible()) {
+            verDetallesPieza();
+        } else if (tableInventario.isVisible()) {
+            verDetallesInventario();
+        }
+    }
+
+    /**
+     * Muestra los detalles de un vehículo seleccionado
+     */
+    private void verDetallesVehiculo() {
+        Vehiculo vehiculoSeleccionado = tableVehiculos.getSelectionModel().getSelectedItem();
+
+        if (vehiculoSeleccionado == null) {
+            ValidationUtils.showAlert("Selección requerida",
+                "Por favor seleccione un vehículo",
+                "Debe seleccionar un vehículo de la tabla para ver sus detalles",
+                Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Cargar el FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetalleVehiculo.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el controlador y pasarle los datos
+            DetalleVehiculoController controller = loader.getController();
+            controller.setVehiculo(vehiculoSeleccionado);
+
+            // Crear y mostrar la ventana modal
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Detalles del Vehículo");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(btnVer.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+            modalStage.setResizable(true);
+            modalStage.setMinWidth(850);
+            modalStage.setMinHeight(750);
+            modalStage.showAndWait();
+
+        } catch (Exception e) {
+            System.err.println("Error al abrir detalles del vehículo: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Muestra los detalles de una pieza seleccionada
+     */
+    private void verDetallesPieza() {
+        Pieza piezaSeleccionada = tablePiezas.getSelectionModel().getSelectedItem();
+
+        if (piezaSeleccionada == null) {
+            ValidationUtils.showAlert("Selección requerida",
+                "Por favor seleccione una pieza",
+                "Debe seleccionar una pieza de la tabla para ver sus detalles",
+                Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Cargar el FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetallePieza.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el controlador y pasarle los datos
+            DetallePiezaController controller = loader.getController();
+            controller.setPieza(piezaSeleccionada);
+
+            // Crear y mostrar la ventana modal
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Detalles de la Pieza");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(btnVer.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+            modalStage.setResizable(true);
+            modalStage.setMinWidth(850);
+            modalStage.setMinHeight(750);
+            modalStage.showAndWait();
+
+        } catch (Exception e) {
+            System.err.println("Error al abrir detalles de la pieza: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Muestra los detalles de un inventario seleccionado
+     */
+    private void verDetallesInventario() {
+        InventarioPieza inventarioSeleccionado = tableInventario.getSelectionModel().getSelectedItem();
+
+        if (inventarioSeleccionado == null) {
+            ValidationUtils.showAlert("Selección requerida",
+                "Por favor seleccione un registro",
+                "Debe seleccionar un registro de inventario de la tabla para ver sus detalles",
+                Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Cargar el FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetalleInventario.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el controlador y pasarle los datos
+            DetalleInventarioController controller = loader.getController();
+            controller.setInventario(inventarioSeleccionado);
+
+            // Crear y mostrar la ventana modal
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Detalles del Inventario");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(btnVer.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+            modalStage.setResizable(true);
+            modalStage.setMinWidth(850);
+            modalStage.setMinHeight(750);
+            modalStage.showAndWait();
+
+        } catch (Exception e) {
+            System.err.println("Error al abrir detalles del inventario: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

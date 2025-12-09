@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
  */
 public class FormularioVehiculoController implements Initializable {
 
+    @FXML private Label lblTitulo;
     @FXML private TextField txtMarca;
     @FXML private TextField txtMatricula;
     @FXML private TextField txtColor;
@@ -39,6 +40,9 @@ public class FormularioVehiculoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Configurar título por defecto (modo nuevo)
+        lblTitulo.setText("NUEVO VEHÍCULO");
+
         // Configurar eventos de los botones
         btnGuardar.setOnAction(event -> guardarVehiculo());
         btnCancelar.setOnAction(event -> cerrarVentana());
@@ -57,6 +61,7 @@ public class FormularioVehiculoController implements Initializable {
     public void setVehiculoEditar(Vehiculo vehiculo) {
         this.vehiculoEditar = vehiculo;
         this.modoEdicion = true;
+        lblTitulo.setText("EDITAR VEHÍCULO");
         cargarDatosVehiculo();
     }
 
