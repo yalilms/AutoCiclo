@@ -8,7 +8,7 @@
     -fx-padding: 0;
 }
 
-/* Header */
+/* Cabecera */
 .acerca-header {
     -fx-background-color: linear-gradient(to right, #0f3460, #16213e);
     -fx-padding: 30 20 30 20;
@@ -36,7 +36,7 @@
     -fx-padding: 5 0 0 0;
 }
 
-/* Scroll Content */
+/* Contenido con Scroll */
 .scroll-content {
     -fx-background-color: transparent;
     -fx-background: transparent;
@@ -60,7 +60,7 @@
     -fx-background-color: rgba(0, 212, 255, 0.6);
 }
 
-/* Content Wrapper */
+/* Contenedor de Contenido */
 .content-wrapper {
     -fx-padding: 25 30 25 30;
 }
@@ -70,17 +70,17 @@
     -fx-text-fill: #e8e8e8;
 }
 
-/* Text nodes en blanco */
+/* Nodos de texto en blanco */
 .content-wrapper .text {
     -fx-fill: #e8e8e8 !important;
 }
 
-/* HBox text nodes */
+/* Nodos de texto HBox */
 .content-wrapper .h-box .text {
     -fx-fill: #e8e8e8 !important;
 }
 
-/* Section Titles */
+/* Títulos de Sección */
 .section-title {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
@@ -99,7 +99,7 @@
     -fx-border-color: rgba(0, 212, 255, 0.3);
 }
 
-/* Text Content */
+/* Contenido de Texto */
 .text-content {
     -fx-line-spacing: 1.5;
     -fx-padding: 5 0 0 0;
@@ -110,7 +110,7 @@
     -fx-font-size: 14px;
 }
 
-/* ALL Text nodes white */
+/* TODOS los nodos de texto en blanco */
 Text {
     -fx-fill: white;
 }
@@ -119,7 +119,7 @@ TextFlow Text {
     -fx-fill: white;
 }
 
-/* Features List */
+/* Lista de Características */
 .features-list {
     -fx-padding: 10 0 0 10;
 }
@@ -144,7 +144,7 @@ TextFlow Text {
     -fx-fill: #00d4ff !important;
 }
 
-/* Shortcuts List */
+/* Lista de Atajos */
 .shortcuts-list {
     -fx-padding: 10 0 0 5;
 }
@@ -180,7 +180,7 @@ TextFlow Text {
     -fx-font-size: 14px;
 }
 
-/* Tips List */
+/* Lista de Consejos */
 .tips-list {
     -fx-padding: 10 0 0 5;
 }
@@ -196,7 +196,7 @@ TextFlow Text {
     -fx-font-size: 14px;
 }
 
-/* Developer Info */
+/* Información del Desarrollador */
 .developer-name {
     -fx-font-weight: bold;
     -fx-fill: #00d4ff !important;
@@ -209,7 +209,7 @@ TextFlow Text {
     -fx-font-style: italic;
 }
 
-/* Footer */
+/* Pie de página */
 .acerca-footer {
     -fx-background-color: rgba(15, 52, 96, 0.5);
     -fx-padding: 20;

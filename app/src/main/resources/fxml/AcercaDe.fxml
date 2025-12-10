@@ -15,7 +15,6 @@
       styleClass="acerca-container" stylesheets="@../css/acercade.css"
       prefWidth="700" prefHeight="600">
 
-    <!-- Header -->
     <VBox styleClass="acerca-header">
         <Label text="AutoCiclo" styleClass="acerca-title"/>
         <Label text="Sistema de Gestión de Desguace" styleClass="acerca-subtitle"/>
@@ -25,7 +24,6 @@
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-content">
         <VBox spacing="20" styleClass="content-wrapper">
 
-            <!-- Descripción -->
             <VBox spacing="8">
                 <Label text="Descripción" styleClass="section-title"/>
                 <Separator/>
@@ -36,7 +34,6 @@
                 </TextFlow>
             </VBox>
 
-            <!-- Funcionalidades -->
             <VBox spacing="8">
                 <Label text="Funcionalidades Principales" styleClass="section-title"/>
                 <Separator/>
@@ -86,7 +83,6 @@
                 </VBox>
             </VBox>
 
-            <!-- Atajos de Teclado -->
             <VBox spacing="8">
                 <Label text="Atajos de Teclado" styleClass="section-title"/>
                 <Separator/>
@@ -134,7 +130,6 @@
                 </VBox>
             </VBox>
 
-            <!-- Consejos de Uso -->
             <VBox spacing="8">
                 <Label text="Consejos de Uso" styleClass="section-title"/>
                 <Separator/>
@@ -158,7 +153,6 @@
                 </VBox>
             </VBox>
 
-            <!-- Información del desarrollador -->
             <VBox spacing="8">
                 <Label text="Desarrollador" styleClass="section-title"/>
                 <Separator/>
@@ -172,7 +166,6 @@
         </VBox>
     </ScrollPane>
 
-    <!-- Footer con botón cerrar -->
     <HBox styleClass="acerca-footer" alignment="CENTER">
         <Button text="Cerrar" onAction="#cerrarVentana" styleClass="btn-cerrar"/>
     </HBox>

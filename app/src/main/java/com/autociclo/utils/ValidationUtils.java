@@ -5,20 +5,22 @@ import javafx.scene.control.DialogPane;
 
 /**
  * Utilidad para validación de campos según PDF DI-TEMA 2-4
+ * 
  * @author Yalil Musa Talhaoui
  */
 public class ValidationUtils {
 
-    // Estilos CSS inline 
+    // Estilos CSS inline
     private static final String ERROR_STYLE = "-fx-border-color: #e74c3c; -fx-border-width: 2px;";
     private static final String SUCCESS_STYLE = "-fx-border-color: #27ae60; -fx-border-width: 2px;";
     private static final String NORMAL_STYLE = "-fx-border-color: #bdc3c7; -fx-border-width: 1px;";
 
     /**
      * Valida que un TextField no esté vacío (isEmpty - permitido PDF página 3)
-     * @param field TextField a validar
+     * 
+     * @param field      TextField a validar
      * @param errorLabel Label donde mostrar el mensaje de error
-     * @param fieldName Nombre del campo para el mensaje
+     * @param fieldName  Nombre del campo para el mensaje
      * @return true si es válido, false si está vacío
      */
     public static boolean validateNotEmpty(TextField field, Label errorLabel, String fieldName) {
@@ -38,7 +40,7 @@ public class ValidationUtils {
      * Valida que un ComboBox tenga una selección (valor null)
      */
     public static boolean validateComboBox(ComboBox<?> comboBox, Label errorLabel, String fieldName) {
-        // Valores nulos permitidos 
+        // Valores nulos permitidos
         if (comboBox.getValue() == null) {
             showError(comboBox, errorLabel, "Debe seleccionar " + fieldName);
             return false;
@@ -65,7 +67,6 @@ public class ValidationUtils {
 
     /**
      * Valida formato de matrícula española (expresiones regulares)
-     * Usa matches()
      */
     public static boolean validateMatricula(TextField field, Label errorLabel) {
         String value = field.getText().trim().toUpperCase();
@@ -75,7 +76,7 @@ public class ValidationUtils {
             return false;
         }
 
-        // matches() con expresión regular - permitido en PDF página 3
+        // matches() con expresión regular
         if (!value.matches("^\\d{4}[A-Z]{3}$")) {
             showError(field, errorLabel, "Formato inválido. Use: 1234ABC");
             return false;
@@ -98,7 +99,7 @@ public class ValidationUtils {
             return false;
         }
 
-        // Validación mediante Excepciones - permitido en PDF página 3
+        // Validación mediante Excepciones
         try {
             Integer.parseInt(value);
             showSuccess(field, errorLabel);
@@ -111,7 +112,6 @@ public class ValidationUtils {
 
     /**
      * Valida que un campo sea numérico entero y esté en un rango
-     * Rangos numéricos permitidos en PDF página 3
      */
     public static boolean validateIntegerRange(TextField field, Label errorLabel, String fieldName, int min, int max) {
         String value = field.getText().trim();
@@ -124,7 +124,7 @@ public class ValidationUtils {
         try {
             int numero = Integer.parseInt(value);
 
-            // Rangos numéricos - permitido en PDF página 3
+            // Rangos numéricos
             if (numero < min || numero > max) {
                 showError(field, errorLabel, fieldName + " debe estar entre " + min + " y " + max);
                 return false;
@@ -140,7 +140,7 @@ public class ValidationUtils {
 
     /**
      * Valida que un campo sea numérico decimal
-     * Usa Excepciones (permitido PDF página 3)
+     * Usa Excepciones
      */
     public static boolean validateDouble(TextField field, Label errorLabel, String fieldName) {
         String value = field.getText().trim().replace(",", ".");
@@ -163,7 +163,7 @@ public class ValidationUtils {
 
     /**
      * Valida que un campo sea numérico decimal y mayor o igual a un mínimo
-     * Rangos numéricos permitidos en PDF página 3
+     * Rangos numéricos
      */
     public static boolean validateDoubleMinimum(TextField field, Label errorLabel, String fieldName, double min) {
         String value = field.getText().trim().replace(",", ".");
@@ -191,7 +191,7 @@ public class ValidationUtils {
     }
 
     /**
-     * Valida que un Spinner tenga un valor válido (valores null - permitido PDF página 3)
+     * Valida que un Spinner tenga un valor válido (valores null)
      */
     public static boolean validateSpinner(Spinner<?> spinner, Label errorLabel, String fieldName) {
         if (spinner.getValue() == null) {
@@ -205,7 +205,7 @@ public class ValidationUtils {
 
     /**
      * Muestra error visual en el campo
-     * Usa setStyle() con CSS inline (permitido PDF página 16 - Sección 4)
+     * Usa setStyle() con CSS inline
      */
     private static void showError(Control field, Label errorLabel, String message) {
         // CSS inline permitido en Sección 4 del PDF
@@ -220,7 +220,7 @@ public class ValidationUtils {
 
     /**
      * Muestra éxito visual en el campo
-     * Usa setStyle() con CSS inline (permitido PDF página 16 - Sección 4)
+     * Usa setStyle() con CSS inline
      */
     private static void showSuccess(Control field, Label errorLabel) {
         field.setStyle(SUCCESS_STYLE);
@@ -250,8 +250,7 @@ public class ValidationUtils {
         // Aplicar la hoja de estilos CSS de la aplicación
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(
-            ValidationUtils.class.getResource("/css/styles.css").toExternalForm()
-        );
+                ValidationUtils.class.getResource("/css/styles.css").toExternalForm());
         dialogPane.getStyleClass().add("glass-pane");
     }
 
@@ -270,6 +269,7 @@ public class ValidationUtils {
 
     /**
      * Muestra un diálogo de confirmación
+     * 
      * @return true si el usuario confirma, false si cancela
      */
     public static boolean showConfirmation(String title, String header, String content) {
@@ -308,7 +308,7 @@ public class ValidationUtils {
 
     /**
      * Valida que un código de pieza no esté vacío y tenga formato alfanumérico
-     * Usa matches() con expresión regular (permitido PDF página 3)
+     * Usa matches() con expresión regular
      */
     public static boolean validateCodigoPieza(TextField field, Label errorLabel) {
         String value = field.getText().trim().toUpperCase();
@@ -318,7 +318,7 @@ public class ValidationUtils {
             return false;
         }
 
-        // matches() con expresión regular - permitido en PDF página 3
+        // matches() con expresión regular
         if (!value.matches("^[A-Z0-9\\-]+$")) {
             showError(field, errorLabel, "Solo letras, números y guión (-) permitidos");
             return false;

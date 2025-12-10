@@ -17,7 +17,7 @@ public class PantallaDeCargaController implements javafx.fxml.Initializable {
 
     @Override
     public void initialize(java.net.URL location, java.util.ResourceBundle resources) {
-        // Animación de entrada (ZoomIn simulado)
+        // Animación de entrada
         javafx.animation.ScaleTransition scaleTransition = new javafx.animation.ScaleTransition(
                 javafx.util.Duration.millis(800), contentPane);
         scaleTransition.setFromX(0.5);

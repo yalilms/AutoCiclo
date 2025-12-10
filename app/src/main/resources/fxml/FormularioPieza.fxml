@@ -20,14 +20,12 @@
             fx:controller="com.autociclo.controllers.FormularioPiezaController">
    
    <center>
-      <VBox styleClass="form-container" maxWidth="600" maxHeight="650" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+      <VBox styleClass="form-container" maxWidth="600" maxHeight="600" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <!-- Form Header -->
             <VBox styleClass="form-header">
                <Label fx:id="lblTitulo" text="PIEZA" styleClass="form-title"/>
             </VBox>
 
-            <!-- Form Fields -->
             <GridPane alignment="TOP_CENTER" hgap="20.0" vgap="15.0">
               <children>
                   <Label text="Código *" GridPane.rowIndex="0" styleClass="form-label"/>
@@ -63,7 +61,7 @@
                   </HBox>
 
                   <Label text="Descripción" GridPane.columnSpan="2" GridPane.rowIndex="12" styleClass="form-label"/>
-                  <TextArea fx:id="txtDescripcion" prefHeight="80.0" promptText="Descripción de la pieza (opcional)..." wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="13" styleClass="form-input"/>
+                  <TextArea fx:id="txtDescripcion" prefHeight="60.0" promptText="Descripción de la pieza (opcional)..." wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="13" styleClass="form-input"/>
               </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" />
@@ -87,7 +85,6 @@
                </rowConstraints>
             </GridPane>
 
-            <!-- Form Actions -->
             <HBox styleClass="form-actions">
                <children>
                   <Button fx:id="btnCancelar" mnemonicParsing="false" styleClass="button, button-danger" text="Cancelar" />

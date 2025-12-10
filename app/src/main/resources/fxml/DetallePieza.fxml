@@ -19,14 +19,12 @@
             fx:controller="com.autociclo.controllers.DetallePiezaController">
 
    <center>
-      <VBox styleClass="form-container" maxWidth="800" maxHeight="700" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+      <VBox styleClass="form-container" maxWidth="700" maxHeight="600" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <!-- Form Header -->
             <VBox styleClass="form-header">
                <Label fx:id="lblTitulo" text="DETALLES DE LA PIEZA" styleClass="form-title"/>
             </VBox>
 
-            <!-- Form Fields (Solo lectura) -->
             <GridPane alignment="TOP_CENTER" hgap="20.0" vgap="15.0">
               <children>
                   <Label text="ID:" GridPane.rowIndex="0" styleClass="form-label"/>
@@ -59,13 +57,13 @@
                   <Label text="Imagen:" GridPane.columnSpan="2" GridPane.rowIndex="10" styleClass="form-label"/>
                   <VBox alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="11" styleClass="image-container">
                      <children>
-                        <ImageView fx:id="imgPieza" fitHeight="200" fitWidth="300" preserveRatio="true" styleClass="image-preview"/>
+                        <ImageView fx:id="imgPieza" fitHeight="150" fitWidth="200" preserveRatio="true" styleClass="image-preview"/>
                         <Label fx:id="lblSinImagen" text="Sin imagen disponible" styleClass="form-label" visible="false"/>
                      </children>
                   </VBox>
 
                   <Label text="Descripción:" GridPane.columnSpan="2" GridPane.rowIndex="12" styleClass="form-label"/>
-                  <TextArea fx:id="txtDescripcion" editable="false" prefHeight="80.0" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="13" styleClass="form-input"/>
+                  <TextArea fx:id="txtDescripcion" editable="false" prefHeight="60.0" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="13" styleClass="form-input"/>
               </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="ALWAYS" />
@@ -89,7 +87,6 @@
                </rowConstraints>
             </GridPane>
 
-            <!-- Form Actions -->
             <HBox styleClass="form-actions">
                <children>
                   <Button fx:id="btnCerrar" mnemonicParsing="false" styleClass="button, button-primary" text="Cerrar" />
