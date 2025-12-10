@@ -1098,22 +1098,6 @@ public class ListadoMaestroController implements Initializable {
         fade.play();
     }
 
-    /**
-     * Aplica animación de escala al hacer hover en botones (complemento a CSS)
-     */
-    private void aplicarAnimacionBotonHover(Button boton) {
-        ScaleTransition scaleUp = new ScaleTransition(Duration.millis(100), boton);
-        scaleUp.setToX(1.1);
-        scaleUp.setToY(1.1);
-
-        ScaleTransition scaleDown = new ScaleTransition(Duration.millis(100), boton);
-        scaleDown.setToX(1.0);
-        scaleDown.setToY(1.0);
-
-        boton.setOnMouseEntered(e -> scaleUp.playFromStart());
-        boton.setOnMouseExited(e -> scaleDown.playFromStart());
-    }
-
     // ==================================================================================
     // ENTREGA 3: EVENTOS DE TECLADO
     // ==================================================================================

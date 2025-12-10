@@ -24,19 +24,16 @@
    <center>
       <VBox styleClass="form-container" maxWidth="600" maxHeight="550" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <!-- Form Header -->
             <VBox styleClass="form-header">
                <Label fx:id="lblTitulo" text="INVENTARIO" styleClass="form-title"/>
             </VBox>
 
-            <!-- Subtitle -->
             <Label text="Modifica los datos de la relación de la pieza del inventario" styleClass="subtitle-label">
                <VBox.margin>
                   <Insets bottom="20.0"/>
                </VBox.margin>
             </Label>
             
-            <!-- Form Fields -->
             <GridPane hgap="20.0" vgap="15.0">
               <children>
                   <Label text="Vehículo Seleccionado" GridPane.rowIndex="0" styleClass="form-label"/>
@@ -93,7 +90,6 @@
             </Label>
             <TextArea fx:id="txtNotas" prefHeight="80.0" wrapText="true" styleClass="form-input"/>
 
-            <!-- Form Actions -->
             <HBox styleClass="form-actions">
                <children>
                   <Button fx:id="btnCancelar" mnemonicParsing="false" styleClass="button, button-danger" text="Cancelar" />

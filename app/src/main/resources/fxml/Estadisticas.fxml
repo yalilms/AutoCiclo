@@ -37,7 +37,6 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <!-- Chart 1: Vehículos por Marca -->
                   <VBox styleClass="card-pane" GridPane.columnIndex="0" GridPane.rowIndex="0">
                      <children>
                         <Label text="Vehículos por Marca" style="-fx-font-weight: bold; -fx-font-size: 16px;">
@@ -59,7 +58,6 @@
                      </padding>
                   </VBox>
                   
-                  <!-- Chart 2: Distribución de Piezas por Categoría -->
                   <VBox styleClass="card-pane" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <children>
                         <Label text="Piezas por Categoría" style="-fx-font-weight: bold; -fx-font-size: 16px;">
@@ -74,7 +72,6 @@
                      </padding>
                   </VBox>
                   
-                  <!-- Chart 3: Valor de Inventario por Almacén (o Vehículo) -->
                    <VBox styleClass="card-pane" GridPane.columnSpan="2" GridPane.rowIndex="1">
                      <children>
                         <Label text="Top 5 Vehículos con Mayor Kilometraje" style="-fx-font-weight: bold; -fx-font-size: 16px;">

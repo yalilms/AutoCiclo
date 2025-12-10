@@ -20,12 +20,10 @@
    <center>
       <VBox styleClass="form-container" maxWidth="800" maxHeight="700" alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <!-- Form Header -->
             <VBox styleClass="form-header">
                <Label fx:id="lblTitulo" text="DETALLES DEL VEHÍCULO" styleClass="form-title"/>
             </VBox>
 
-            <!-- Form Fields (Solo lectura) -->
             <GridPane alignment="TOP_CENTER" hgap="20.0" vgap="15.0">
               <children>
                   <Label text="ID:" GridPane.rowIndex="0" styleClass="form-label"/>
@@ -86,7 +84,6 @@
                </rowConstraints>
             </GridPane>
 
-            <!-- Form Actions -->
             <HBox styleClass="form-actions">
                <children>
                   <Button fx:id="btnCerrar" mnemonicParsing="false" styleClass="button, button-primary" text="Cerrar" />
