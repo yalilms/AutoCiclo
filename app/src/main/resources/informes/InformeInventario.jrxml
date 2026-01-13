@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="InformeInventario" pageWidth="842" pageHeight="595" orientation="Landscape"
+              columnWidth="782" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+
+    <!-- Consulta SQL con JOIN de tres tablas -->
+    <queryString>
+        <![CDATA[SELECT
+            v.matricula,
+            v.marca AS marcaVehiculo,
+            v.modelo,
+            v.anio,
+            v.estado AS estadoVehiculo,
+            p.codigoPieza,
+            p.nombre AS nombrePieza,
+            p.categoria,
+            p.precioVenta,
+            ip.cantidad,
+            ip.estadoPieza,
+            (p.precioVenta * ip.cantidad) AS valorTotal
+        FROM INVENTARIO_PIEZAS ip
+        INNER JOIN VEHICULOS v ON ip.idVehiculo = v.idVehiculo
+        INNER JOIN PIEZAS p ON ip.idPieza = p.idPieza
+        ORDER BY v.matricula, p.categoria, p.nombre]]>
+    </queryString>
+
+    <!-- Campos del informe -->
+    <field name="matricula" class="java.lang.String"/>
+    <field name="marcaVehiculo" class="java.lang.String"/>
+    <field name="modelo" class="java.lang.String"/>
+    <field name="anio" class="java.lang.Integer"/>
+    <field name="estadoVehiculo" class="java.lang.String"/>
+    <field name="codigoPieza" class="java.lang.String"/>
+    <field name="nombrePieza" class="java.lang.String"/>
+    <field name="categoria" class="java.lang.String"/>
+    <field name="precioVenta" class="java.lang.Double"/>
+    <field name="cantidad" class="java.lang.Integer"/>
+    <field name="estadoPieza" class="java.lang.String"/>
+    <field name="valorTotal" class="java.lang.Double"/>
+
+    <!-- Variables para totales -->
+    <variable name="TotalPiezasVehiculo" class="java.lang.Integer" resetType="Group" resetGroup="GrupoVehiculo" calculation="Sum">
+        <variableExpression><![CDATA[$F{cantidad}]]></variableExpression>
+    </variable>
+
+    <variable name="ValorTotalVehiculo" class="java.lang.Double" resetType="Group" resetGroup="GrupoVehiculo" calculation="Sum">
+        <variableExpression><![CDATA[$F{valorTotal}]]></variableExpression>
+    </variable>
+
+    <variable name="TotalGeneral" class="java.lang.Integer" calculation="Sum">
+        <variableExpression><![CDATA[$F{cantidad}]]></variableExpression>
+    </variable>
+
+    <variable name="ValorTotalGeneral" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$F{valorTotal}]]></variableExpression>
+    </variable>
+
+    <variable name="ContadorRegistros" class="java.lang.Integer" calculation="Count">
+        <variableExpression><![CDATA[$F{matricula}]]></variableExpression>
+    </variable>
+
+    <!-- Agrupación por vehículo -->
+    <group name="GrupoVehiculo" isStartNewPage="false">
+        <groupExpression><![CDATA[$F{matricula}]]></groupExpression>
+        <groupHeader>
+            <band height="45">
+                <rectangle>
+                    <reportElement mode="Opaque" x="0" y="5" width="782" height="35" backcolor="#E3F2FD"/>
+                    <graphicElement>
+                        <pen lineWidth="1.0"/>
+                    </graphicElement>
+                </rectangle>
+                <staticText>
+                    <reportElement x="10" y="10" width="70" height="15"/>
+                    <textElement>
+                        <font size="10" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[VEHÍCULO:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="80" y="10" width="300" height="15"/>
+                    <textElement>
+                        <font size="10" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{matricula} + " - " + $F{marcaVehiculo} + " " + $F{modelo} + " (" + $F{anio} + ")"]]></textFieldExpression>
+                </textField>
+                <staticText>
+                    <reportElement x="400" y="10" width="50" height="15"/>
+                    <textElement>
+                        <font size="9" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Estado:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="450" y="10" width="100" height="15"/>
+                    <textElement>
+                        <font size="9"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{estadoVehiculo}]]></textFieldExpression>
+                </textField>
+
+                <!-- Encabezado de piezas -->
+                <staticText>
+                    <reportElement mode="Opaque" x="10" y="25" width="80" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Código]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement mode="Opaque" x="90" y="25" width="200" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Nombre de la Pieza]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement mode="Opaque" x="290" y="25" width="100" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Categoría]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement mode="Opaque" x="390" y="25" width="60" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Precio Unit.]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement mode="Opaque" x="450" y="25" width="50" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Cant.]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement mode="Opaque" x="500" y="25" width="100" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Estado Pieza]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement mode="Opaque" x="600" y="25" width="70" height="15" backcolor="#BBDEFB"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="8" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Valor Total]]></text>
+                </staticText>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="25">
+                <staticText>
+                    <reportElement mode="Opaque" x="10" y="5" width="440" height="15" backcolor="#E0E0E0"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font size="9" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[SUBTOTAL VEHÍCULO:  ]]></text>
+                </staticText>
+                <textField>
+                    <reportElement mode="Opaque" x="450" y="5" width="50" height="15" backcolor="#E0E0E0"/>
+                    <box><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font size="9" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$V{TotalPiezasVehiculo}]]></textFieldExpression>
+                </textField>
+                <textField pattern="#,##0.00 €">
+                    <reportElement mode="Opaque" x="600" y="5" width="70" height="15" backcolor="#E0E0E0"/>
+                    <box rightPadding="3"><pen lineWidth="0.5"/></box>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font size="9" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$V{ValorTotalVehiculo}]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupFooter>
+    </group>
+
+    <!-- Título del informe -->
+    <title>
+        <band height="80" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="782" height="35"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="24" isBold="true"/>
+                </textElement>
+                <text><![CDATA[INVENTARIO DE PIEZAS POR VEHÍCULO - AUTOCICLO]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="40" width="782" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Relación de piezas extraídas por vehículo con valoración económica]]></text>
+            </staticText>
+            <textField pattern="dd/MM/yyyy HH:mm">
+                <reportElement x="650" y="55" width="132" height="20"/>
+                <textElement textAlignment="Right">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="0" y="75" width="782" height="1"/>
+            </line>
+        </band>
+    </title>
+
+    <!-- Detalle -->
+    <detail>
+        <band height="20" splitType="Stretch">
+            <textField>
+                <reportElement x="10" y="0" width="80" height="20"/>
+                <box leftPadding="3"><pen lineWidth="0.5"/></box>
+                <textElement verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{codigoPieza}]]></textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="90" y="0" width="200" height="20"/>
+                <box leftPadding="3"><pen lineWidth="0.5"/></box>
+                <textElement verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{nombrePieza}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="290" y="0" width="100" height="20"/>
+                <box leftPadding="3"><pen lineWidth="0.5"/></box>
+                <textElement verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0.00">
+                <reportElement x="390" y="0" width="60" height="20"/>
+                <box rightPadding="3"><pen lineWidth="0.5"/></box>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{precioVenta}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="450" y="0" width="50" height="20"/>
+                <box><pen lineWidth="0.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="500" y="0" width="100" height="20"/>
+                <box leftPadding="3"><pen lineWidth="0.5"/></box>
+                <textElement verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{estadoPieza}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0.00 €">
+                <reportElement x="600" y="0" width="70" height="20"/>
+                <box rightPadding="3"><pen lineWidth="0.5"/></box>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{valorTotal}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <!-- Pie de página -->
+    <pageFooter>
+        <band height="30" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="5" width="782" height="1"/>
+            </line>
+            <textField>
+                <reportElement x="650" y="10" width="80" height="20"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="730" y="10" width="52" height="20"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <!-- Resumen final con gráficos -->
+    <summary>
+        <band height="400" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="10" width="782" height="40" backcolor="#F5F5F5"/>
+                <graphicElement>
+                    <pen lineWidth="2.0"/>
+                </graphicElement>
+            </rectangle>
+
+            <staticText>
+                <reportElement x="20" y="15" width="300" height="25"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[TOTAL GENERAL DEL INVENTARIO:]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="400" y="20" width="150" height="15"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total de piezas:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="550" y="20" width="100" height="15"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{TotalGeneral}]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="400" y="35" width="150" height="15"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Valor total:]]></text>
+            </staticText>
+            <textField pattern="#,##0.00 €">
+                <reportElement x="550" y="35" width="100" height="15"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{ValorTotalGeneral}]]></textFieldExpression>
+            </textField>
+
+            <!-- Gráfico de barras: Valor total por vehículo -->
+            <barChart>
+                <chart isShowLegend="true" evaluationTime="Report">
+                    <reportElement x="20" y="70" width="350" height="300"/>
+                    <chartTitle>
+                        <font size="12" isBold="true"/>
+                        <titleExpression><![CDATA["Valor de Piezas por Vehículo"]]></titleExpression>
+                    </chartTitle>
+                </chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA["Valor"]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{matricula}]]></categoryExpression>
+                        <valueExpression><![CDATA[$V{ValorTotalVehiculo}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot>
+                    <plot/>
+                    <itemLabel/>
+                    <categoryAxisFormat>
+                        <axisFormat/>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                        <axisFormat/>
+                    </valueAxisFormat>
+                </barPlot>
+            </barChart>
+
+            <!-- Gráfico circular: Distribución por categoría de pieza -->
+            <pieChart>
+                <chart isShowLegend="true" evaluationTime="Report">
+                    <reportElement x="400" y="70" width="350" height="300"/>
+                    <chartTitle>
+                        <font size="12" isBold="true"/>
+                        <titleExpression><![CDATA["Distribución por Categoría"]]></titleExpression>
+                    </chartTitle>
+                </chart>
+                <pieDataset>
+                    <pieSeries>
+                        <keyExpression><![CDATA[$F{categoria}]]></keyExpression>
+                        <valueExpression><![CDATA[$F{cantidad}]]></valueExpression>
+                    </pieSeries>
+                </pieDataset>
+                <piePlot>
+                    <plot/>
+                    <itemLabel/>
+                </piePlot>
+            </pieChart>
+        </band>
+    </summary>
+</jasperReport>
