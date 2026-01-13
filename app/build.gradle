@@ -5,11 +5,17 @@ plugins {
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"
+	}
+	maven {
+		url "https://jaspersoft.jfrog.io/jaspersoft/jr-ce-releases/"
+	}
 }
 
 javafx {
     version = "25"
-    modules = [ 'javafx.base', 'javafx.swing', 'javafx.graphics', 'javafx.controls', 'javafx.fxml', 'javafx.media']
+    modules = [ 'javafx.base', 'javafx.swing', 'javafx.graphics', 'javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.web']
 }
 
 dependencies {
@@ -23,8 +29,14 @@ dependencies {
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1'
 
-    // Gson 
+    // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // JasperReports - versión 6.20.6 (última estable LTS)
+    implementation 'net.sf.jasperreports:jasperreports:6.20.6'
+
+    // JavaFX WebView (ya incluido en javafx.web pero por si acaso)
+    implementation 'org.openjfx:javafx-web:25'
 }
 
 java { //Se indica la versión de JDK que ha de utilizar
@@ -37,11 +49,22 @@ application { //Definimos clase principal del proyecto
     mainClass = 'com.autociclo.Main'
 }
 
+// Tarea personalizada para compilar informes JasperReports
+task compilarInformes(type: JavaExec) {
+    group = 'build'
+    description = 'Compila archivos .jrxml a .jasper'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.autociclo.utils.CompiladorInformes'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(24)
+    }
+}
+
 sourceSets {
   main {
     resources {
         srcDirs = ["src/main/resources"]
-        includes = ["**/*.fxml","**/*.png","**/*.properties","**/*.css","**/*.jpg","**/*.jpeg","**/*.json"]  //Importante para poder abrir una extensión no reconocida
+        includes = ["**/*.fxml","**/*.png","**/*.properties","**/*.css","**/*.jpg","**/*.jpeg","**/*.json","**/*.jrxml","**/*.jasper"]  //Importante para poder abrir una extensión no reconocida
     }
   }
 }
