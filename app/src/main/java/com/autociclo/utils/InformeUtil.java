@@ -1,5 +1,6 @@
 package com.autociclo.utils;
 
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -71,21 +72,23 @@ public class InformeUtil {
         if (tipo == 0) {
             // Embebido en WebView actual
             if (webView != null) {
-                webView.getEngine().loadContent(htmlContent);
+                Platform.runLater(() -> webView.getEngine().loadContent(htmlContent));
             } else {
                 throw new IllegalArgumentException("WebView no puede ser null para tipo embebido");
             }
         } else {
-            // Nueva ventana
-            Stage stage = new Stage();
-            stage.setTitle("Informe AutoCiclo");
+            // Nueva ventana - debe ejecutarse en el hilo de JavaFX
+            Platform.runLater(() -> {
+                Stage stage = new Stage();
+                stage.setTitle("Informe AutoCiclo");
 
-            WebView visorWeb = new WebView();
-            visorWeb.getEngine().loadContent(htmlContent);
+                WebView visorWeb = new WebView();
+                visorWeb.getEngine().loadContent(htmlContent);
 
-            Scene scene = new Scene(visorWeb, 800, 600);
-            stage.setScene(scene);
-            stage.show();
+                Scene scene = new Scene(visorWeb, 800, 600);
+                stage.setScene(scene);
+                stage.show();
+            });
         }
 
         System.out.println("Informe generado correctamente en: " + rutaPDF);

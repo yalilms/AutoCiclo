@@ -49,6 +49,7 @@
                         <MenuItem fx:id="menupiezas" mnemonicParsing="false" onAction="#mostrarPiezas" text="Piezas" />
                         <MenuItem fx:id="MenuInventario" mnemonicParsing="false" onAction="#mostrarInventario" text="Inventario" />
                         <MenuItem fx:id="menuEstadisticas" mnemonicParsing="false" onAction="#mostrarEstadisticas" text="Estadísticas" />
+                        <MenuItem fx:id="menuInformes" mnemonicParsing="false" onAction="#mostrarInformes" text="Informes" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Ayuda">
@@ -78,6 +79,7 @@
                   <Button fx:id="btnNavPiezas" mnemonicParsing="false" onAction="#mostrarPiezas" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="🔩  Piezas" />
                   <Button fx:id="btnNavInventario" mnemonicParsing="false" onAction="#mostrarInventario" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📋  Inventario" />
                   <Button fx:id="btnNavEstadisticas" mnemonicParsing="false" onAction="#mostrarEstadisticas" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📊  Estadísticas" />
+                  <Button fx:id="btnNavInformes" mnemonicParsing="false" onAction="#mostrarInformes" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📄  Informes" />
                </children>
             </HBox>
          </children>

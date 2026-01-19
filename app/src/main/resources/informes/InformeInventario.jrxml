@@ -10,6 +10,11 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
 
+    <!-- Parámetro para filtrar por estado de pieza -->
+    <parameter name="P_ESTADO_PIEZA" class="java.lang.String">
+        <defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+    </parameter>
+
     <!-- Consulta SQL con JOIN de tres tablas -->
     <queryString>
         <![CDATA[SELECT
@@ -18,16 +23,17 @@
             v.modelo,
             v.anio,
             v.estado AS estadoVehiculo,
-            p.codigoPieza,
+            p.codigo_pieza AS codigoPieza,
             p.nombre AS nombrePieza,
             p.categoria,
-            p.precioVenta,
+            p.precio_venta AS precioVenta,
             ip.cantidad,
-            ip.estadoPieza,
-            (p.precioVenta * ip.cantidad) AS valorTotal
+            ip.estado_pieza AS estadoPieza,
+            (p.precio_venta * ip.cantidad) AS valorTotal
         FROM INVENTARIO_PIEZAS ip
-        INNER JOIN VEHICULOS v ON ip.idVehiculo = v.idVehiculo
-        INNER JOIN PIEZAS p ON ip.idPieza = p.idPieza
+        INNER JOIN VEHICULOS v ON ip.id_vehiculo = v.id_vehiculo
+        INNER JOIN PIEZAS p ON ip.id_pieza = p.id_pieza
+        WHERE ip.estado_pieza LIKE $P{P_ESTADO_PIEZA}
         ORDER BY v.matricula, p.categoria, p.nombre]]>
     </queryString>
 
@@ -316,102 +322,53 @@
         </band>
     </pageFooter>
 
-    <!-- Resumen final con gráficos -->
+    <!-- Resumen final -->
     <summary>
-        <band height="400" splitType="Stretch">
+        <band height="80" splitType="Stretch">
             <rectangle>
-                <reportElement x="0" y="10" width="782" height="40" backcolor="#F5F5F5"/>
+                <reportElement x="0" y="10" width="782" height="60" backcolor="#F5F5F5"/>
                 <graphicElement>
                     <pen lineWidth="2.0"/>
                 </graphicElement>
             </rectangle>
 
             <staticText>
-                <reportElement x="20" y="15" width="300" height="25"/>
+                <reportElement x="20" y="20" width="300" height="25"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="14" isBold="true"/>
+                    <font size="16" isBold="true"/>
                 </textElement>
-                <text><![CDATA[TOTAL GENERAL DEL INVENTARIO:]]></text>
+                <text><![CDATA[TOTAL GENERAL DEL INVENTARIO]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="400" y="20" width="150" height="15"/>
+                <reportElement x="350" y="20" width="150" height="20"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="11" isBold="true"/>
+                    <font size="12" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Total de piezas:]]></text>
             </staticText>
             <textField>
-                <reportElement x="550" y="20" width="100" height="15"/>
+                <reportElement x="510" y="20" width="100" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="11"/>
+                    <font size="12"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$V{TotalGeneral}]]></textFieldExpression>
             </textField>
 
             <staticText>
-                <reportElement x="400" y="35" width="150" height="15"/>
+                <reportElement x="350" y="42" width="150" height="20"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font size="11" isBold="true"/>
+                    <font size="12" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Valor total:]]></text>
             </staticText>
             <textField pattern="#,##0.00 €">
-                <reportElement x="550" y="35" width="100" height="15"/>
+                <reportElement x="510" y="42" width="150" height="20"/>
                 <textElement verticalAlignment="Middle">
-                    <font size="11"/>
+                    <font size="12" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$V{ValorTotalGeneral}]]></textFieldExpression>
             </textField>
-
-            <!-- Gráfico de barras: Valor total por vehículo -->
-            <barChart>
-                <chart isShowLegend="true" evaluationTime="Report">
-                    <reportElement x="20" y="70" width="350" height="300"/>
-                    <chartTitle>
-                        <font size="12" isBold="true"/>
-                        <titleExpression><![CDATA["Valor de Piezas por Vehículo"]]></titleExpression>
-                    </chartTitle>
-                </chart>
-                <categoryDataset>
-                    <categorySeries>
-                        <seriesExpression><![CDATA["Valor"]]></seriesExpression>
-                        <categoryExpression><![CDATA[$F{matricula}]]></categoryExpression>
-                        <valueExpression><![CDATA[$V{ValorTotalVehiculo}]]></valueExpression>
-                    </categorySeries>
-                </categoryDataset>
-                <barPlot>
-                    <plot/>
-                    <itemLabel/>
-                    <categoryAxisFormat>
-                        <axisFormat/>
-                    </categoryAxisFormat>
-                    <valueAxisFormat>
-                        <axisFormat/>
-                    </valueAxisFormat>
-                </barPlot>
-            </barChart>
-
-            <!-- Gráfico circular: Distribución por categoría de pieza -->
-            <pieChart>
-                <chart isShowLegend="true" evaluationTime="Report">
-                    <reportElement x="400" y="70" width="350" height="300"/>
-                    <chartTitle>
-                        <font size="12" isBold="true"/>
-                        <titleExpression><![CDATA["Distribución por Categoría"]]></titleExpression>
-                    </chartTitle>
-                </chart>
-                <pieDataset>
-                    <pieSeries>
-                        <keyExpression><![CDATA[$F{categoria}]]></keyExpression>
-                        <valueExpression><![CDATA[$F{cantidad}]]></valueExpression>
-                    </pieSeries>
-                </pieDataset>
-                <piePlot>
-                    <plot/>
-                    <itemLabel/>
-                </piePlot>
-            </pieChart>
         </band>
     </summary>
 </jasperReport>

@@ -10,22 +10,31 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
 
-    <!-- Consulta SQL -->
+    <!-- Parámetro para filtrar por categoría -->
+    <parameter name="P_CATEGORIA" class="java.lang.String">
+        <defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+    </parameter>
+
+    <!-- Consulta SQL con JOIN para obtener stock real del inventario -->
     <queryString>
         <![CDATA[SELECT
-            idPieza,
-            codigoPieza,
-            nombre,
-            categoria,
-            precioVenta,
-            stockDisponible,
-            stockMinimo,
-            ubicacionAlmacen,
-            compatibleMarcas,
-            imagen,
-            descripcion
-        FROM PIEZAS
-        ORDER BY categoria, nombre]]>
+            p.id_pieza as idPieza,
+            p.codigo_pieza as codigoPieza,
+            p.nombre,
+            p.categoria,
+            p.precio_venta as precioVenta,
+            COALESCE(SUM(ip.cantidad), 0) as stockReal,
+            p.stock_minimo as stockMinimo,
+            p.ubicacion_almacen as ubicacionAlmacen,
+            p.compatible_marcas as compatibleMarcas,
+            p.imagen,
+            p.descripcion
+        FROM PIEZAS p
+        LEFT JOIN INVENTARIO_PIEZAS ip ON p.id_pieza = ip.id_pieza
+        WHERE p.categoria LIKE $P{P_CATEGORIA}
+        GROUP BY p.id_pieza, p.codigo_pieza, p.nombre, p.categoria, p.precio_venta,
+                 p.stock_minimo, p.ubicacion_almacen, p.compatible_marcas, p.imagen, p.descripcion
+        ORDER BY p.categoria, p.nombre]]>
     </queryString>
 
     <!-- Campos del informe -->
@@ -34,7 +43,7 @@
     <field name="nombre" class="java.lang.String"/>
     <field name="categoria" class="java.lang.String"/>
     <field name="precioVenta" class="java.lang.Double"/>
-    <field name="stockDisponible" class="java.lang.Integer"/>
+    <field name="stockReal" class="java.lang.Long"/>
     <field name="stockMinimo" class="java.lang.Integer"/>
     <field name="ubicacionAlmacen" class="java.lang.String"/>
     <field name="compatibleMarcas" class="java.lang.String"/>
@@ -47,7 +56,7 @@
     </variable>
 
     <variable name="ValorTotalStock" class="java.lang.Double" calculation="Sum">
-        <variableExpression><![CDATA[$F{precioVenta} * $F{stockDisponible}]]></variableExpression>
+        <variableExpression><![CDATA[$F{precioVenta} * $F{stockReal}]]></variableExpression>
     </variable>
 
     <!-- Título del informe -->
@@ -84,7 +93,7 @@
     <columnHeader>
         <band height="30" splitType="Stretch">
             <staticText>
-                <reportElement mode="Opaque" x="0" y="0" width="60" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="0" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -94,7 +103,7 @@
                 <text><![CDATA[Código]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="60" y="0" width="50" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="60" y="0" width="50" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -104,7 +113,7 @@
                 <text><![CDATA[Imagen]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="110" y="0" width="120" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="110" y="0" width="120" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -114,7 +123,7 @@
                 <text><![CDATA[Nombre]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="230" y="0" width="80" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="230" y="0" width="80" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -124,7 +133,7 @@
                 <text><![CDATA[Categoría]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="310" y="0" width="60" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="310" y="0" width="60" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -134,7 +143,7 @@
                 <text><![CDATA[Precio (€)]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="370" y="0" width="45" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="370" y="0" width="45" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -144,7 +153,7 @@
                 <text><![CDATA[Stock]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="415" y="0" width="140" height="30" backcolor="#CCCCCC"/>
+                <reportElement mode="Opaque" x="415" y="0" width="140" height="30" forecolor="#FFFFFF" backcolor="#4A90E2"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
@@ -170,20 +179,17 @@
                 <textFieldExpression><![CDATA[$F{codigoPieza}]]></textFieldExpression>
             </textField>
 
-            <!-- Imagen decodificada desde Base64 -->
-            <image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isLazy="true">
-                <reportElement x="62" y="2" width="46" height="46">
-                    <printWhenExpression><![CDATA[$F{imagen} != null && !$F{imagen}.isEmpty()]]></printWhenExpression>
-                </reportElement>
+            <!-- Celda para imagen (placeholder visual) -->
+            <staticText>
+                <reportElement x="60" y="0" width="50" height="50"/>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
-                <imageExpression><![CDATA[new java.io.ByteArrayInputStream(
-                    java.util.Base64.getDecoder().decode(
-                        $F{imagen}.replaceAll("data:image/[^;]+;base64,", "")
-                    )
-                )]]></imageExpression>
-            </image>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16"/>
+                </textElement>
+                <text><![CDATA[-]]></text>
+            </staticText>
 
             <textField isStretchWithOverflow="true">
                 <reportElement x="110" y="0" width="120" height="50"/>
@@ -220,7 +226,7 @@
 
             <textField>
                 <reportElement x="370" y="0" width="45" height="50">
-                    <printWhenExpression><![CDATA[$F{stockDisponible} <= $F{stockMinimo}]]></printWhenExpression>
+                    <printWhenExpression><![CDATA[$F{stockReal} <= $F{stockMinimo}]]></printWhenExpression>
                 </reportElement>
                 <box>
                     <pen lineWidth="0.5"/>
@@ -228,12 +234,12 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{stockDisponible}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{stockReal}]]></textFieldExpression>
             </textField>
 
             <textField>
                 <reportElement x="370" y="0" width="45" height="50" forecolor="#000000">
-                    <printWhenExpression><![CDATA[$F{stockDisponible} > $F{stockMinimo}]]></printWhenExpression>
+                    <printWhenExpression><![CDATA[$F{stockReal} > $F{stockMinimo}]]></printWhenExpression>
                 </reportElement>
                 <box>
                     <pen lineWidth="0.5"/>
@@ -241,7 +247,7 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="8"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{stockDisponible}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{stockReal}]]></textFieldExpression>
             </textField>
 
             <textField isStretchWithOverflow="true">
@@ -282,7 +288,7 @@
 
     <!-- Resumen final -->
     <summary>
-        <band height="60" splitType="Stretch">
+        <band height="70" splitType="Stretch">
             <staticText>
                 <reportElement mode="Opaque" x="0" y="10" width="370" height="25" backcolor="#EEEEEE"/>
                 <box>

@@ -34,6 +34,7 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignD;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignE;
 
 import org.kordamp.ikonli.materialdesign2.MaterialDesignM;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
 
 import java.net.URL;
 import java.sql.*;
@@ -57,6 +58,8 @@ public class ListadoMaestroController implements Initializable {
     private MenuItem MenuInventario;
     @FXML
     private MenuItem menuEstadisticas;
+    @FXML
+    private MenuItem menuInformes;
     @FXML
     private MenuItem menuAcercaDe;
 
@@ -83,6 +86,8 @@ public class ListadoMaestroController implements Initializable {
     private Button btnNavInventario;
     @FXML
     private Button btnNavEstadisticas;
+    @FXML
+    private Button btnNavInformes;
 
     // StackPane y TableViews
     @FXML
@@ -97,6 +102,10 @@ public class ListadoMaestroController implements Initializable {
     // Vista de estadísticas
     private Parent vistaEstadisticas;
     private EstadisticasController controllerEstadisticas;
+
+    // Vista de informes
+    private Parent vistaInformes;
+    private InformesController controllerInformes;
 
     // Columnas TableView Vehiculos
     @FXML
@@ -435,6 +444,12 @@ public class ListadoMaestroController implements Initializable {
         iconEstadisticas.setIconColor(javafx.scene.paint.Color.WHITE);
         btnNavEstadisticas.setGraphic(iconEstadisticas);
         btnNavEstadisticas.setText("Estadísticas");
+
+        FontIcon iconInformes = new FontIcon(MaterialDesignF.FILE_DOCUMENT);
+        iconInformes.setIconSize(18);
+        iconInformes.setIconColor(javafx.scene.paint.Color.WHITE);
+        btnNavInformes.setGraphic(iconInformes);
+        btnNavInformes.setText("Informes");
     }
 
     /**
@@ -947,6 +962,8 @@ public class ListadoMaestroController implements Initializable {
         tableInventario.setVisible(false);
         if (vistaEstadisticas != null)
             vistaEstadisticas.setVisible(false);
+        if (vistaInformes != null)
+            vistaInformes.setVisible(false);
         // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
         listaVehiculosFiltrada.setAll(listaVehiculos);
@@ -971,6 +988,11 @@ public class ListadoMaestroController implements Initializable {
             btnNavEstadisticas.getStyleClass().clear();
             btnNavEstadisticas.getStyleClass().add("button");
         }
+
+        if (btnNavInformes != null) {
+            btnNavInformes.getStyleClass().clear();
+            btnNavInformes.getStyleClass().add("button");
+        }
     }
 
     /**
@@ -983,6 +1005,8 @@ public class ListadoMaestroController implements Initializable {
         tableInventario.setVisible(false);
         if (vistaEstadisticas != null)
             vistaEstadisticas.setVisible(false);
+        if (vistaInformes != null)
+            vistaInformes.setVisible(false);
 
         // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
@@ -1003,6 +1027,11 @@ public class ListadoMaestroController implements Initializable {
 
         btnNavInventario.getStyleClass().clear();
         btnNavInventario.getStyleClass().add("button");
+
+        if (btnNavInformes != null) {
+            btnNavInformes.getStyleClass().clear();
+            btnNavInformes.getStyleClass().add("button");
+        }
     }
 
     /**
@@ -1015,6 +1044,8 @@ public class ListadoMaestroController implements Initializable {
         tableInventario.setVisible(true);
         if (vistaEstadisticas != null)
             vistaEstadisticas.setVisible(false);
+        if (vistaInformes != null)
+            vistaInformes.setVisible(false);
 
         // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
@@ -1040,6 +1071,11 @@ public class ListadoMaestroController implements Initializable {
             btnNavEstadisticas.getStyleClass().clear();
             btnNavEstadisticas.getStyleClass().add("button");
         }
+
+        if (btnNavInformes != null) {
+            btnNavInformes.getStyleClass().clear();
+            btnNavInformes.getStyleClass().add("button");
+        }
     }
 
     /**
@@ -1050,6 +1086,8 @@ public class ListadoMaestroController implements Initializable {
         tableVehiculos.setVisible(false);
         tablePiezas.setVisible(false);
         tableInventario.setVisible(false);
+        if (vistaInformes != null)
+            vistaInformes.setVisible(false);
 
         try {
             // Cargar la vista si aún no existe
@@ -1085,6 +1123,67 @@ public class ListadoMaestroController implements Initializable {
         if (btnNavEstadisticas != null) {
             btnNavEstadisticas.getStyleClass().clear();
             btnNavEstadisticas.getStyleClass().addAll("button", "button-primary");
+        }
+
+        if (btnNavInformes != null) {
+            btnNavInformes.getStyleClass().clear();
+            btnNavInformes.getStyleClass().add("button");
+        }
+    }
+
+    /**
+     * Muestra la vista de informes JasperReports
+     */
+    @FXML
+    public void mostrarInformes() {
+        tableVehiculos.setVisible(false);
+        tablePiezas.setVisible(false);
+        tableInventario.setVisible(false);
+
+        // Ocultar vista de estadísticas si está visible
+        if (vistaEstadisticas != null) {
+            vistaEstadisticas.setVisible(false);
+        }
+
+        try {
+            // Cargar la vista si aún no existe
+            if (vistaInformes == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Informes.fxml"));
+                vistaInformes = loader.load();
+                controllerInformes = loader.getController();
+                stackPaneContenido.getChildren().add(vistaInformes);
+            } else {
+                // Si ya existe, refrescar
+                if (controllerInformes != null) {
+                    controllerInformes.refrescar();
+                }
+            }
+
+            vistaInformes.setVisible(true);
+            aplicarFadeTransition(vistaInformes);
+        } catch (Exception e) {
+            LoggerUtil.error("Error al cargar vista de informes", e);
+            ValidationUtils.showError("Error", "No se pudieron cargar los informes: " + e.getMessage());
+        }
+
+        // Estilos de botones
+        btnNavVehiculos.getStyleClass().clear();
+        btnNavVehiculos.getStyleClass().add("button");
+
+        btnNavPiezas.getStyleClass().clear();
+        btnNavPiezas.getStyleClass().add("button");
+
+        btnNavInventario.getStyleClass().clear();
+        btnNavInventario.getStyleClass().add("button");
+
+        if (btnNavEstadisticas != null) {
+            btnNavEstadisticas.getStyleClass().clear();
+            btnNavEstadisticas.getStyleClass().add("button");
+        }
+
+        if (btnNavInformes != null) {
+            btnNavInformes.getStyleClass().clear();
+            btnNavInformes.getStyleClass().addAll("button", "button-primary");
         }
     }
 

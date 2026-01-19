@@ -30,23 +30,23 @@
     <!-- Consulta SQL con parámetros -->
     <queryString>
         <![CDATA[SELECT
-            idVehiculo,
+            id_vehiculo as idVehiculo,
             matricula,
             marca,
             modelo,
             anio,
             color,
-            DATE_FORMAT(fechaEntrada, '%d/%m/%Y') as fechaEntrada,
+            DATE_FORMAT(fecha_entrada, '%d/%m/%Y') as fechaEntrada,
             estado,
-            precioCompra,
+            precio_compra as precioCompra,
             kilometraje,
-            ubicacionGps,
+            ubicacion_gps as ubicacionGps,
             observaciones
         FROM VEHICULOS
         WHERE estado LIKE $P{P_ESTADO}
           AND marca LIKE $P{P_MARCA}
           AND anio BETWEEN $P{P_ANIO_MIN} AND $P{P_ANIO_MAX}
-        ORDER BY fechaEntrada DESC, marca, modelo]]>
+        ORDER BY fecha_entrada DESC, marca, modelo]]>
     </queryString>
 
     <!-- Campos del informe -->
@@ -292,10 +292,10 @@
                 <textFieldExpression><![CDATA[$F{fechaEntrada}]]></textFieldExpression>
             </textField>
 
-            <!-- Estado con color condicional -->
+            <!-- Estado con color condicional - COMPLETO (verde) -->
             <textField>
-                <reportElement mode="Opaque" x="355" y="0" width="70" height="25" forecolor="#FFFFFF">
-                    <printWhenExpression><![CDATA[$F{estado}.equals("Disponible")]]></printWhenExpression>
+                <reportElement mode="Opaque" x="355" y="0" width="70" height="25" backcolor="#4CAF50" forecolor="#FFFFFF">
+                    <printWhenExpression><![CDATA[$F{estado}.equals("completo")]]></printWhenExpression>
                 </reportElement>
                 <box>
                     <pen lineWidth="0.5"/>
@@ -303,12 +303,13 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{estado}.toUpperCase()]]></textFieldExpression>
             </textField>
 
+            <!-- Estado DESGUAZANDO (naranja) -->
             <textField>
                 <reportElement mode="Opaque" x="355" y="0" width="70" height="25" backcolor="#FFA726" forecolor="#FFFFFF">
-                    <printWhenExpression><![CDATA[$F{estado}.equals("Procesando")]]></printWhenExpression>
+                    <printWhenExpression><![CDATA[$F{estado}.equals("desguazando")]]></printWhenExpression>
                 </reportElement>
                 <box>
                     <pen lineWidth="0.5"/>
@@ -316,18 +317,33 @@
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{estado}.toUpperCase()]]></textFieldExpression>
             </textField>
 
+            <!-- Estado DESGUAZADO (rojo) -->
             <textField>
                 <reportElement mode="Opaque" x="355" y="0" width="70" height="25" backcolor="#E57373" forecolor="#FFFFFF">
-                    <printWhenExpression><![CDATA[$F{estado}.equals("Vendido")]]></printWhenExpression>
+                    <printWhenExpression><![CDATA[$F{estado}.equals("desguazado")]]></printWhenExpression>
                 </reportElement>
                 <box>
                     <pen lineWidth="0.5"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="8" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{estado}.toUpperCase()]]></textFieldExpression>
+            </textField>
+
+            <!-- Estado por defecto para cualquier otro valor -->
+            <textField>
+                <reportElement x="355" y="0" width="70" height="25">
+                    <printWhenExpression><![CDATA[!$F{estado}.equals("completo") && !$F{estado}.equals("desguazando") && !$F{estado}.equals("desguazado")]]></printWhenExpression>
+                </reportElement>
+                <box>
+                    <pen lineWidth="0.5"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="8"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
             </textField>
@@ -381,7 +397,7 @@
 
     <!-- Resumen final -->
     <summary>
-        <band height="90" splitType="Stretch">
+        <band height="95" splitType="Stretch">
             <rectangle>
                 <reportElement x="0" y="10" width="555" height="75" backcolor="#F5F5F5"/>
             </rectangle>
