@@ -47,6 +47,27 @@ java { //Se indica la versión de JDK que ha de utilizar
 
 application { //Definimos clase principal del proyecto
     mainClass = 'com.autociclo.Main'
+    
+    // Agregar JVM args para permitir acceso de javafx.web a clases internas
+    applicationDefaultJvmArgs = [
+        // JavaFX Graphics exports
+        '--add-exports', 'javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.javafx.sg.prism.web=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.prism=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.glass.ui=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.glass.utils=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED',
+        '--add-exports', 'javafx.graphics/com.sun.javafx.geom.transform=ALL-UNNAMED',
+        // JavaFX Base exports
+        '--add-exports', 'javafx.base/com.sun.javafx.logging=ALL-UNNAMED',
+        // JavaFX Web exports
+        '--add-exports', 'javafx.web/com.sun.webkit=ALL-UNNAMED',
+        '--add-exports', 'javafx.web/com.sun.javafx.webkit.prism=ALL-UNNAMED',
+        '--add-exports', 'javafx.web/com.sun.javafx.webkit.theme=ALL-UNNAMED'
+    ]
 }
 
 // Tarea personalizada para compilar informes JasperReports
