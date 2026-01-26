@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.BorderPane?>
@@ -27,23 +28,35 @@
 
             <HBox spacing="15" alignment="CENTER_LEFT">
                 <Label text="Seleccionar informe:" style="-fx-font-size: 14px;"/>
-                <ComboBox fx:id="cmbTipoInforme" prefWidth="200" promptText="Elige un tipo de informe"/>
+                <ComboBox fx:id="cmbTipoInforme" prefWidth="200" promptText="Elige un tipo de informe">
+                    <tooltip><Tooltip text="Selecciona el tipo de informe a generar (Vehículos, Piezas o Inventario)" /></tooltip>
+                </ComboBox>
                 <Label fx:id="lblFiltro" text="Filtrar por:" style="-fx-font-size: 14px;" visible="false"/>
-                <ComboBox fx:id="cmbFiltro" prefWidth="150" visible="false" promptText="Todos"/>
-                <CheckBox fx:id="chkIncrustado" text="Incrustado" selected="true"
-                         style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;"/>
-                <Button fx:id="btnGenerarInforme" text="Generar Informe"
-                        styleClass="button-success" prefHeight="35"/>
+                <ComboBox fx:id="cmbFiltro" prefWidth="150" visible="false" promptText="Todos">
+                    <tooltip><Tooltip text="Filtra los datos del informe por categoría" /></tooltip>
+                </ComboBox>
+                <CheckBox fx:id="chkIncrustado" text="_Incrustado" mnemonicParsing="true" selected="true"
+                         style="-fx-font-size: 13px; -fx-text-fill: #2c3e50;">
+                    <tooltip><Tooltip text="Muestra el informe dentro de la aplicación (Alt+I)" /></tooltip>
+                </CheckBox>
+                <Button fx:id="btnGenerarInforme" text="_Generar Informe" mnemonicParsing="true"
+                        styleClass="button-success" prefHeight="35">
+                    <tooltip><Tooltip text="Genera el informe seleccionado (Alt+G)" /></tooltip>
+                </Button>
             </HBox>
 
             <Separator/>
 
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Button fx:id="btnAbrirModal" text="Abrir Informe"
-                        styleClass="button-primary" prefHeight="35" visible="false"/>
-                <Button fx:id="btnExportarPDF" text="Exportar PDF"
+                <Button fx:id="btnAbrirModal" text="_Abrir Informe" mnemonicParsing="true"
+                        styleClass="button-primary" prefHeight="35" visible="false">
+                    <tooltip><Tooltip text="Abre el informe en una ventana nueva (Alt+A)" /></tooltip>
+                </Button>
+                <Button fx:id="btnExportarPDF" text="E_xportar PDF" mnemonicParsing="true"
                         styleClass="button-warning" prefHeight="35" visible="false"
-                        style="-fx-background-color: #e67e22; -fx-text-fill: white;"/>
+                        style="-fx-background-color: #e67e22; -fx-text-fill: white;">
+                    <tooltip><Tooltip text="Exporta el informe a un archivo PDF (Alt+X)" /></tooltip>
+                </Button>
                 <Label fx:id="lblEstado" text="" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
             </HBox>
 

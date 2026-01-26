@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Tooltip?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="750.0" prefWidth="850.0"
@@ -89,7 +90,9 @@
 
             <HBox styleClass="form-actions">
                <children>
-                  <Button fx:id="btnCerrar" mnemonicParsing="false" styleClass="button, button-primary" text="Cerrar" />
+                  <Button fx:id="btnCerrar" mnemonicParsing="true" styleClass="button, button-primary" text="_Cerrar">
+                      <tooltip><Tooltip text="Cerrar ventana de detalles (Alt+C)" /></tooltip>
+                  </Button>
                </children>
             </HBox>
          </children>

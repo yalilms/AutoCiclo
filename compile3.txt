@@ -1,0 +1,5 @@
+> Task :app:clean
+> Task :app:compileJava
+
+BUILD SUCCESSFUL in 44s
+2 actionable tasks: 2 executed

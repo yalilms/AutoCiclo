@@ -64,6 +64,14 @@ public class Main extends Application {
                     getClass().getResource("/css/styles.css").toExternalForm());
             alert.getDialogPane().getStyleClass().add("glass-pane");
 
+            // Añadir icono a la ventana del Alert (FALLO 1 corregido)
+            alert.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null && newScene.getWindow() != null) {
+                    Stage alertStage = (Stage) newScene.getWindow();
+                    alertStage.getIcons().add(appIcon);
+                }
+            });
+
             // Mostrar y esperar respuesta
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {

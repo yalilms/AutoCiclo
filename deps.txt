@@ -1,0 +1,295 @@
+
+> Task :app:dependencies
+
+------------------------------------------------------------
+Project ':app'
+------------------------------------------------------------
+
+annotationProcessor - Annotation processors and their dependencies for source set 'main'.
+No dependencies
+
+compileClasspath - Compile classpath for source set 'main'.
++--- com.mysql:mysql-connector-j:8.2.0
+|    \--- com.google.protobuf:protobuf-java:3.21.9
++--- com.zaxxer:HikariCP:5.1.0
+|    \--- org.slf4j:slf4j-api:1.7.36
++--- org.kordamp.ikonli:ikonli-javafx:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- com.google.code.gson:gson:2.10.1
++--- net.sf.jasperreports:jasperreports:6.20.6
+|    +--- commons-beanutils:commons-beanutils:1.9.4
+|    |    +--- commons-logging:commons-logging:1.2
+|    |    \--- commons-collections:commons-collections:3.2.2
+|    +--- commons-digester:commons-digester:2.1
+|    |    +--- commons-beanutils:commons-beanutils:1.8.3 -> 1.9.4 (*)
+|    |    \--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- org.apache.commons:commons-collections4:4.2
+|    +--- com.github.librepdf:openpdf:1.3.30.jaspersoft.3
+|    +--- org.jfree:jcommon:1.0.23
+|    +--- org.jfree:jfreechart:1.0.19
+|    |    \--- org.jfree:jcommon:1.0.23
+|    +--- org.eclipse.jdt:ecj:3.21.0
+|    +--- com.fasterxml.jackson.core:jackson-core:2.14.1
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1
+|    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (c)
+|    |         \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1 (c)
+|    +--- com.fasterxml.jackson.core:jackson-databind:2.14.1
+|    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1
+|    |    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    |    +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|    \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1
+|         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (*)
+|         +--- org.codehaus.woodstox:stax2-api:4.2.1
+|         +--- com.fasterxml.woodstox:woodstox-core:6.4.0
+|         |    \--- org.codehaus.woodstox:stax2-api:4.2.1
+|         \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
++--- org.openjfx:javafx-web:25
+|    +--- org.openjfx:javafx-controls:25
+|    |    \--- org.openjfx:javafx-graphics:25
+|    |         \--- org.openjfx:javafx-base:25
+|    +--- org.openjfx:javafx-media:25
+|    |    \--- org.openjfx:javafx-graphics:25 (*)
+|    \--- org.openjfx:jdk-jsobject:25
++--- org.openjfx:javafx-base:25
++--- org.openjfx:javafx-graphics:25 (*)
++--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-fxml:25
+|    \--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-media:25 (*)
+\--- org.openjfx:javafx-swing:25
+     \--- org.openjfx:javafx-graphics:25 (*)
+
+compileOnly - Compile-only dependencies for the 'main' feature. (n)
+No dependencies
+
+default - Configuration for default artifacts. (n)
+No dependencies
+
+implementation - Implementation dependencies for the 'main' feature. (n)
++--- com.mysql:mysql-connector-j:8.2.0 (n)
++--- com.zaxxer:HikariCP:5.1.0 (n)
++--- org.kordamp.ikonli:ikonli-javafx:12.3.1 (n)
++--- org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1 (n)
++--- com.google.code.gson:gson:2.10.1 (n)
++--- net.sf.jasperreports:jasperreports:6.20.6 (n)
+\--- org.openjfx:javafx-web:25 (n)
+
+mainSourceElements - List of source directories contained in the Main SourceSet. (n)
+No dependencies
+
+runtimeClasspath - Runtime classpath of source set 'main'.
++--- com.mysql:mysql-connector-j:8.2.0
+|    \--- com.google.protobuf:protobuf-java:3.21.9
++--- com.zaxxer:HikariCP:5.1.0
+|    \--- org.slf4j:slf4j-api:1.7.36
++--- org.kordamp.ikonli:ikonli-javafx:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- com.google.code.gson:gson:2.10.1
++--- net.sf.jasperreports:jasperreports:6.20.6
+|    +--- commons-beanutils:commons-beanutils:1.9.4
+|    |    +--- commons-logging:commons-logging:1.2
+|    |    \--- commons-collections:commons-collections:3.2.2
+|    +--- commons-digester:commons-digester:2.1
+|    |    +--- commons-beanutils:commons-beanutils:1.8.3 -> 1.9.4 (*)
+|    |    \--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- org.apache.commons:commons-collections4:4.2
+|    +--- com.github.librepdf:openpdf:1.3.30.jaspersoft.3
+|    +--- org.jfree:jcommon:1.0.23
+|    +--- org.jfree:jfreechart:1.0.19
+|    |    \--- org.jfree:jcommon:1.0.23
+|    +--- org.eclipse.jdt:ecj:3.21.0
+|    +--- com.fasterxml.jackson.core:jackson-core:2.14.1
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1
+|    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (c)
+|    |         \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1 (c)
+|    +--- com.fasterxml.jackson.core:jackson-databind:2.14.1
+|    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1
+|    |    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    |    +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|    \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1
+|         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (*)
+|         +--- org.codehaus.woodstox:stax2-api:4.2.1
+|         +--- com.fasterxml.woodstox:woodstox-core:6.4.0
+|         |    \--- org.codehaus.woodstox:stax2-api:4.2.1
+|         \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
++--- org.openjfx:javafx-web:25
+|    +--- org.openjfx:javafx-controls:25
+|    |    \--- org.openjfx:javafx-graphics:25
+|    |         \--- org.openjfx:javafx-base:25
+|    +--- org.openjfx:javafx-media:25
+|    |    \--- org.openjfx:javafx-graphics:25 (*)
+|    \--- org.openjfx:jdk-jsobject:25
++--- org.openjfx:javafx-base:25
++--- org.openjfx:javafx-graphics:25 (*)
++--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-fxml:25
+|    \--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-media:25 (*)
+\--- org.openjfx:javafx-swing:25
+     \--- org.openjfx:javafx-graphics:25 (*)
+
+runtimeElements - Runtime elements for the 'main' feature. (n)
+No dependencies
+
+runtimeOnly - Runtime-only dependencies for the 'main' feature. (n)
+No dependencies
+
+testAnnotationProcessor - Annotation processors and their dependencies for source set 'test'.
+No dependencies
+
+testCompileClasspath - Compile classpath for source set 'test'.
++--- com.mysql:mysql-connector-j:8.2.0
+|    \--- com.google.protobuf:protobuf-java:3.21.9
++--- com.zaxxer:HikariCP:5.1.0
+|    \--- org.slf4j:slf4j-api:1.7.36
++--- org.kordamp.ikonli:ikonli-javafx:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- com.google.code.gson:gson:2.10.1
++--- net.sf.jasperreports:jasperreports:6.20.6
+|    +--- commons-beanutils:commons-beanutils:1.9.4
+|    |    +--- commons-logging:commons-logging:1.2
+|    |    \--- commons-collections:commons-collections:3.2.2
+|    +--- commons-digester:commons-digester:2.1
+|    |    +--- commons-beanutils:commons-beanutils:1.8.3 -> 1.9.4 (*)
+|    |    \--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- org.apache.commons:commons-collections4:4.2
+|    +--- com.github.librepdf:openpdf:1.3.30.jaspersoft.3
+|    +--- org.jfree:jcommon:1.0.23
+|    +--- org.jfree:jfreechart:1.0.19
+|    |    \--- org.jfree:jcommon:1.0.23
+|    +--- org.eclipse.jdt:ecj:3.21.0
+|    +--- com.fasterxml.jackson.core:jackson-core:2.14.1
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1
+|    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (c)
+|    |         \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1 (c)
+|    +--- com.fasterxml.jackson.core:jackson-databind:2.14.1
+|    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1
+|    |    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    |    +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|    \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1
+|         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (*)
+|         +--- org.codehaus.woodstox:stax2-api:4.2.1
+|         +--- com.fasterxml.woodstox:woodstox-core:6.4.0
+|         |    \--- org.codehaus.woodstox:stax2-api:4.2.1
+|         \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
++--- org.openjfx:javafx-web:25
+|    +--- org.openjfx:javafx-controls:25
+|    |    \--- org.openjfx:javafx-graphics:25
+|    |         \--- org.openjfx:javafx-base:25
+|    +--- org.openjfx:javafx-media:25
+|    |    \--- org.openjfx:javafx-graphics:25 (*)
+|    \--- org.openjfx:jdk-jsobject:25
++--- org.openjfx:javafx-base:25
++--- org.openjfx:javafx-graphics:25 (*)
++--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-fxml:25
+|    \--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-media:25 (*)
+\--- org.openjfx:javafx-swing:25
+     \--- org.openjfx:javafx-graphics:25 (*)
+
+testCompileOnly - Compile only dependencies for source set 'test'. (n)
+No dependencies
+
+testImplementation - Implementation only dependencies for source set 'test'. (n)
+No dependencies
+
+testRuntimeClasspath - Runtime classpath of source set 'test'.
++--- com.mysql:mysql-connector-j:8.2.0
+|    \--- com.google.protobuf:protobuf-java:3.21.9
++--- com.zaxxer:HikariCP:5.1.0
+|    \--- org.slf4j:slf4j-api:1.7.36
++--- org.kordamp.ikonli:ikonli-javafx:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1
+|    \--- org.kordamp.ikonli:ikonli-core:12.3.1
++--- com.google.code.gson:gson:2.10.1
++--- net.sf.jasperreports:jasperreports:6.20.6
+|    +--- commons-beanutils:commons-beanutils:1.9.4
+|    |    +--- commons-logging:commons-logging:1.2
+|    |    \--- commons-collections:commons-collections:3.2.2
+|    +--- commons-digester:commons-digester:2.1
+|    |    +--- commons-beanutils:commons-beanutils:1.8.3 -> 1.9.4 (*)
+|    |    \--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- commons-logging:commons-logging:1.1.1 -> 1.2
+|    +--- org.apache.commons:commons-collections4:4.2
+|    +--- com.github.librepdf:openpdf:1.3.30.jaspersoft.3
+|    +--- org.jfree:jcommon:1.0.23
+|    +--- org.jfree:jfreechart:1.0.19
+|    |    \--- org.jfree:jcommon:1.0.23
+|    +--- org.eclipse.jdt:ecj:3.21.0
+|    +--- com.fasterxml.jackson.core:jackson-core:2.14.1
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1
+|    |         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (c)
+|    |         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (c)
+|    |         \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1 (c)
+|    +--- com.fasterxml.jackson.core:jackson-databind:2.14.1
+|    |    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1
+|    |    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    |    +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|    |    \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
+|    +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|    \--- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1
+|         +--- com.fasterxml.jackson.core:jackson-core:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-annotations:2.14.1 (*)
+|         +--- com.fasterxml.jackson.core:jackson-databind:2.14.1 (*)
+|         +--- org.codehaus.woodstox:stax2-api:4.2.1
+|         +--- com.fasterxml.woodstox:woodstox-core:6.4.0
+|         |    \--- org.codehaus.woodstox:stax2-api:4.2.1
+|         \--- com.fasterxml.jackson:jackson-bom:2.14.1 (*)
++--- org.openjfx:javafx-web:25
+|    +--- org.openjfx:javafx-controls:25
+|    |    \--- org.openjfx:javafx-graphics:25
+|    |         \--- org.openjfx:javafx-base:25
+|    +--- org.openjfx:javafx-media:25
+|    |    \--- org.openjfx:javafx-graphics:25 (*)
+|    \--- org.openjfx:jdk-jsobject:25
++--- org.openjfx:javafx-base:25
++--- org.openjfx:javafx-graphics:25 (*)
++--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-fxml:25
+|    \--- org.openjfx:javafx-controls:25 (*)
++--- org.openjfx:javafx-media:25 (*)
+\--- org.openjfx:javafx-swing:25
+     \--- org.openjfx:javafx-graphics:25 (*)
+
+testRuntimeOnly - Runtime only dependencies for source set 'test'. (n)
+No dependencies
+
+(c) - A dependency constraint, not a dependency. The dependency affected by the constraint occurs elsewhere in the tree.
+(*) - Indicates repeated occurrences of a transitive dependency subtree. Gradle expands transitive dependency subtrees only once per project; repeat occurrences only display the root of the subtree, followed by this annotation.
+
+(n) - A dependency or dependency configuration that cannot be resolved.
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+BUILD SUCCESSFUL in 530ms
+1 actionable task: 1 executed

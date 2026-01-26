@@ -2,6 +2,8 @@ package com.autociclo.utils;
 
 import javafx.scene.control.*;
 import javafx.scene.control.DialogPane;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  * Utilidad para validación de campos según PDF DI-TEMA 2-4
@@ -245,6 +247,7 @@ public class ValidationUtils {
 
     /**
      * Aplica el estilo personalizado de AutoCiclo a un Alert
+     * Incluye icono de la aplicación en la ventana del Alert
      */
     private static void applyCustomStyle(Alert alert) {
         // Aplicar la hoja de estilos CSS de la aplicación
@@ -252,6 +255,16 @@ public class ValidationUtils {
         dialogPane.getStylesheets().add(
                 ValidationUtils.class.getResource("/css/styles.css").toExternalForm());
         dialogPane.getStyleClass().add("glass-pane");
+
+        // Añadir icono de la aplicación a la ventana del Alert (FALLO 1 corregido)
+        // Usamos listener porque getScene() es null antes de mostrar el Alert
+        dialogPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null && newScene.getWindow() != null) {
+                Stage stage = (Stage) newScene.getWindow();
+                stage.getIcons().add(new Image(
+                        ValidationUtils.class.getResourceAsStream("/imagenes/logo_autociclo.png")));
+            }
+        });
     }
 
     /**

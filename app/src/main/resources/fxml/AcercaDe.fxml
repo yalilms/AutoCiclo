@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.control.Tooltip?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.autociclo.controllers.AcercaDeController"
@@ -167,7 +168,9 @@
     </ScrollPane>
 
     <HBox styleClass="acerca-footer" alignment="CENTER">
-        <Button text="Cerrar" onAction="#cerrarVentana" styleClass="btn-cerrar"/>
+        <Button text="_Cerrar" mnemonicParsing="true" onAction="#cerrarVentana" styleClass="btn-cerrar">
+            <tooltip><Tooltip text="Cerrar ventana de información (Alt+C)" /></tooltip>
+        </Button>
     </HBox>
 
 </VBox>
