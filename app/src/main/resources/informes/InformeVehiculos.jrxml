@@ -10,7 +10,6 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
 
-    <!-- Parámetros del informe -->
     <parameter name="P_ESTADO" class="java.lang.String">
         <defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
     </parameter>
@@ -27,7 +26,6 @@
         <defaultValueExpression><![CDATA[2100]]></defaultValueExpression>
     </parameter>
 
-    <!-- Consulta SQL con parámetros -->
     <queryString>
         <![CDATA[SELECT
             id_vehiculo as idVehiculo,
@@ -49,7 +47,6 @@
         ORDER BY fecha_entrada DESC, marca, modelo]]>
     </queryString>
 
-    <!-- Campos del informe -->
     <field name="idVehiculo" class="java.lang.Integer"/>
     <field name="matricula" class="java.lang.String"/>
     <field name="marca" class="java.lang.String"/>
@@ -63,7 +60,6 @@
     <field name="ubicacionGps" class="java.lang.String"/>
     <field name="observaciones" class="java.lang.String"/>
 
-    <!-- Variables -->
     <variable name="TotalVehiculos" class="java.lang.Integer" calculation="Count">
         <variableExpression><![CDATA[$F{idVehiculo}]]></variableExpression>
     </variable>
@@ -76,7 +72,6 @@
         <variableExpression><![CDATA[$F{precioCompra}]]></variableExpression>
     </variable>
 
-    <!-- Título del informe -->
     <title>
         <band height="120" splitType="Stretch">
             <staticText>
@@ -95,7 +90,6 @@
                 <text><![CDATA[Filtros aplicados:]]></text>
             </staticText>
 
-            <!-- Mostrar filtros aplicados -->
             <textField isBlankWhenNull="true">
                 <reportElement x="0" y="55" width="270" height="15">
                     <printWhenExpression><![CDATA[!$P{P_ESTADO}.equals("%")]]></printWhenExpression>
@@ -148,7 +142,6 @@
         </band>
     </title>
 
-    <!-- Encabezado de columnas -->
     <columnHeader>
         <band height="30" splitType="Stretch">
             <staticText>
@@ -234,7 +227,6 @@
         </band>
     </columnHeader>
 
-    <!-- Detalle (cada fila de datos) -->
     <detail>
         <band height="25" splitType="Stretch">
             <textField>
@@ -292,7 +284,6 @@
                 <textFieldExpression><![CDATA[$F{fechaEntrada}]]></textFieldExpression>
             </textField>
 
-            <!-- Estado con color condicional - COMPLETO (verde) -->
             <textField>
                 <reportElement mode="Opaque" x="355" y="0" width="70" height="25" backcolor="#4CAF50" forecolor="#FFFFFF">
                     <printWhenExpression><![CDATA[$F{estado}.equals("completo")]]></printWhenExpression>
@@ -306,7 +297,6 @@
                 <textFieldExpression><![CDATA[$F{estado}.toUpperCase()]]></textFieldExpression>
             </textField>
 
-            <!-- Estado DESGUAZANDO (naranja) -->
             <textField>
                 <reportElement mode="Opaque" x="355" y="0" width="70" height="25" backcolor="#FFA726" forecolor="#FFFFFF">
                     <printWhenExpression><![CDATA[$F{estado}.equals("desguazando")]]></printWhenExpression>
@@ -320,7 +310,6 @@
                 <textFieldExpression><![CDATA[$F{estado}.toUpperCase()]]></textFieldExpression>
             </textField>
 
-            <!-- Estado DESGUAZADO (rojo) -->
             <textField>
                 <reportElement mode="Opaque" x="355" y="0" width="70" height="25" backcolor="#E57373" forecolor="#FFFFFF">
                     <printWhenExpression><![CDATA[$F{estado}.equals("desguazado")]]></printWhenExpression>
@@ -372,7 +361,6 @@
         </band>
     </detail>
 
-    <!-- Pie de página -->
     <pageFooter>
         <band height="30" splitType="Stretch">
             <textField>
@@ -395,7 +383,6 @@
         </band>
     </pageFooter>
 
-    <!-- Resumen final -->
     <summary>
         <band height="95" splitType="Stretch">
             <rectangle>

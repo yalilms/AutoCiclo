@@ -10,12 +10,10 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
 
-    <!-- Parámetro para filtrar por categoría -->
     <parameter name="P_CATEGORIA" class="java.lang.String">
         <defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
     </parameter>
 
-    <!-- Consulta SQL con JOIN para obtener stock real del inventario -->
     <queryString>
         <![CDATA[SELECT
             p.id_pieza as idPieza,
@@ -37,7 +35,6 @@
         ORDER BY p.categoria, p.nombre]]>
     </queryString>
 
-    <!-- Campos del informe -->
     <field name="idPieza" class="java.lang.Integer"/>
     <field name="codigoPieza" class="java.lang.String"/>
     <field name="nombre" class="java.lang.String"/>
@@ -50,7 +47,6 @@
     <field name="imagen" class="java.lang.String"/>
     <field name="descripcion" class="java.lang.String"/>
 
-    <!-- Variables -->
     <variable name="TotalPiezas" class="java.lang.Integer" calculation="Count">
         <variableExpression><![CDATA[$F{idPieza}]]></variableExpression>
     </variable>
@@ -59,7 +55,6 @@
         <variableExpression><![CDATA[$F{precioVenta} * $F{stockReal}]]></variableExpression>
     </variable>
 
-    <!-- Título del informe -->
     <title>
         <band height="79" splitType="Stretch">
             <staticText>
@@ -89,7 +84,6 @@
         </band>
     </title>
 
-    <!-- Encabezado de columnas -->
     <columnHeader>
         <band height="30" splitType="Stretch">
             <staticText>
@@ -165,7 +159,6 @@
         </band>
     </columnHeader>
 
-    <!-- Detalle (cada fila de datos) -->
     <detail>
         <band height="50" splitType="Stretch">
             <textField>
@@ -179,7 +172,6 @@
                 <textFieldExpression><![CDATA[$F{codigoPieza}]]></textFieldExpression>
             </textField>
 
-            <!-- Celda para imagen (placeholder visual) -->
             <staticText>
                 <reportElement x="60" y="0" width="50" height="50"/>
                 <box>
@@ -263,7 +255,6 @@
         </band>
     </detail>
 
-    <!-- Pie de página -->
     <pageFooter>
         <band height="30" splitType="Stretch">
             <textField>
@@ -286,7 +277,6 @@
         </band>
     </pageFooter>
 
-    <!-- Resumen final -->
     <summary>
         <band height="70" splitType="Stretch">
             <staticText>

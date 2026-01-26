@@ -10,12 +10,10 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
 
-    <!-- Parámetro para filtrar por estado de pieza -->
     <parameter name="P_ESTADO_PIEZA" class="java.lang.String">
         <defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
     </parameter>
 
-    <!-- Consulta SQL con JOIN de tres tablas -->
     <queryString>
         <![CDATA[SELECT
             v.matricula,
@@ -37,7 +35,6 @@
         ORDER BY v.matricula, p.categoria, p.nombre]]>
     </queryString>
 
-    <!-- Campos del informe -->
     <field name="matricula" class="java.lang.String"/>
     <field name="marcaVehiculo" class="java.lang.String"/>
     <field name="modelo" class="java.lang.String"/>
@@ -51,7 +48,6 @@
     <field name="estadoPieza" class="java.lang.String"/>
     <field name="valorTotal" class="java.lang.Double"/>
 
-    <!-- Variables para totales -->
     <variable name="TotalPiezasVehiculo" class="java.lang.Integer" resetType="Group" resetGroup="GrupoVehiculo" calculation="Sum">
         <variableExpression><![CDATA[$F{cantidad}]]></variableExpression>
     </variable>
@@ -72,7 +68,6 @@
         <variableExpression><![CDATA[$F{matricula}]]></variableExpression>
     </variable>
 
-    <!-- Agrupación por vehículo -->
     <group name="GrupoVehiculo" isStartNewPage="false">
         <groupExpression><![CDATA[$F{matricula}]]></groupExpression>
         <groupHeader>
@@ -112,7 +107,6 @@
                     <textFieldExpression><![CDATA[$F{estadoVehiculo}]]></textFieldExpression>
                 </textField>
 
-                <!-- Encabezado de piezas -->
                 <staticText>
                     <reportElement mode="Opaque" x="10" y="25" width="80" height="15" backcolor="#BBDEFB"/>
                     <box><pen lineWidth="0.5"/></box>
@@ -201,7 +195,6 @@
         </groupFooter>
     </group>
 
-    <!-- Título del informe -->
     <title>
         <band height="80" splitType="Stretch">
             <staticText>
@@ -231,7 +224,6 @@
         </band>
     </title>
 
-    <!-- Detalle -->
     <detail>
         <band height="20" splitType="Stretch">
             <textField>
@@ -299,7 +291,6 @@
         </band>
     </detail>
 
-    <!-- Pie de página -->
     <pageFooter>
         <band height="30" splitType="Stretch">
             <line>
@@ -322,7 +313,6 @@
         </band>
     </pageFooter>
 
-    <!-- Resumen final -->
     <summary>
         <band height="80" splitType="Stretch">
             <rectangle>
