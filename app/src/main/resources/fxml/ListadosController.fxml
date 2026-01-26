@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.effect.BoxBlur?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -38,48 +39,70 @@
          <children>
             <MenuBar styleClass="menu-bar">
               <menus>
-                <Menu mnemonicParsing="false" text="Archivo">
+                <Menu mnemonicParsing="true" text="_Archivo">
                   <items>
-                    <MenuItem fx:id="menuSalir" mnemonicParsing="false" text="Salir" />
+                    <MenuItem fx:id="menuSalir" mnemonicParsing="true" text="_Salir" />
                   </items>
                 </Menu>
-                <Menu fx:id="Menu" mnemonicParsing="false" text="Gestión">
+                <Menu fx:id="Menu" mnemonicParsing="true" text="_Gestión">
                   <items>
-                    <MenuItem fx:id="menuvehiculos" mnemonicParsing="false" onAction="#mostrarVehiculos" text="Vehículos" />
-                        <MenuItem fx:id="menupiezas" mnemonicParsing="false" onAction="#mostrarPiezas" text="Piezas" />
-                        <MenuItem fx:id="MenuInventario" mnemonicParsing="false" onAction="#mostrarInventario" text="Inventario" />
-                        <MenuItem fx:id="menuEstadisticas" mnemonicParsing="false" onAction="#mostrarEstadisticas" text="Estadísticas" />
-                        <MenuItem fx:id="menuInformes" mnemonicParsing="false" onAction="#mostrarInformes" text="Informes" />
+                    <MenuItem fx:id="menuvehiculos" mnemonicParsing="true" onAction="#mostrarVehiculos" text="_Vehículos" />
+                        <MenuItem fx:id="menupiezas" mnemonicParsing="true" onAction="#mostrarPiezas" text="_Piezas" />
+                        <MenuItem fx:id="MenuInventario" mnemonicParsing="true" onAction="#mostrarInventario" text="_Inventario" />
+                        <MenuItem fx:id="menuEstadisticas" mnemonicParsing="true" onAction="#mostrarEstadisticas" text="_Estadísticas" />
+                        <MenuItem fx:id="menuInformes" mnemonicParsing="true" onAction="#mostrarInformes" text="Info_rmes" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Ayuda">
+                <Menu mnemonicParsing="true" text="Ay_uda">
                   <items>
-                    <MenuItem fx:id="menuAcercaDe" mnemonicParsing="false" text="Acerca de..." />
+                    <MenuItem fx:id="menuAcercaDe" mnemonicParsing="true" text="_Acerca de..." />
                   </items>
                 </Menu>
               </menus>
             </MenuBar>
-            
+
             <ToolBar styleClass="tool-bar" prefHeight="45.0">
               <items>
-                <Button fx:id="btnNuevo" mnemonicParsing="false" styleClass="button-success" prefWidth="100.0"/>
-                  <Button fx:id="btnVer" mnemonicParsing="false" styleClass="button-primary" prefWidth="90.0"/>
-                  <Button fx:id="btnEditar" mnemonicParsing="false" styleClass="button-primary" prefWidth="100.0"/>
-                  <Button fx:id="btnEliminar" mnemonicParsing="false" styleClass="button-danger" prefWidth="100.0"/>
+                <Button fx:id="btnNuevo" mnemonicParsing="true" text="_Nuevo" styleClass="button-success" prefWidth="100.0">
+                    <tooltip><Tooltip text="Crear nuevo registro (Alt+N)" /></tooltip>
+                </Button>
+                  <Button fx:id="btnVer" mnemonicParsing="true" text="_Ver" styleClass="button-primary" prefWidth="90.0">
+                      <tooltip><Tooltip text="Ver detalles del elemento seleccionado (Alt+V)" /></tooltip>
+                  </Button>
+                  <Button fx:id="btnEditar" mnemonicParsing="true" text="E_ditar" styleClass="button-primary" prefWidth="100.0">
+                      <tooltip><Tooltip text="Editar elemento seleccionado (Alt+D)" /></tooltip>
+                  </Button>
+                  <Button fx:id="btnEliminar" mnemonicParsing="true" text="E_liminar" styleClass="button-danger" prefWidth="100.0">
+                      <tooltip><Tooltip text="Eliminar elemento seleccionado (Alt+L)" /></tooltip>
+                  </Button>
                   <Separator orientation="VERTICAL" prefHeight="35.0" prefWidth="15.0" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="txtBuscar" alignment="CENTER_LEFT" prefWidth="300.0" prefHeight="32.0" promptText="Buscar..." />
-                  <Button fx:id="btnBuscar" mnemonicParsing="false" styleClass="button-primary" prefWidth="45.0" prefHeight="32.0"/>
+                  <TextField fx:id="txtBuscar" alignment="CENTER_LEFT" prefWidth="300.0" prefHeight="32.0" promptText="Buscar por marca, modelo o código...">
+                      <tooltip><Tooltip text="Escribe para filtrar por marca, modelo, código o nombre" /></tooltip>
+                  </TextField>
+                  <Button fx:id="btnBuscar" mnemonicParsing="true" text="_Buscar" styleClass="button-primary" prefWidth="80.0" prefHeight="32.0">
+                      <tooltip><Tooltip text="Ejecutar búsqueda (Alt+B)" /></tooltip>
+                  </Button>
               </items>
             </ToolBar>
-            
+
             <HBox alignment="CENTER" prefHeight="80.0" prefWidth="200.0" spacing="20.0" style="-fx-padding: 10;">
                <children>
-                  <Button fx:id="btnNavVehiculos" mnemonicParsing="false" onAction="#mostrarVehiculos" prefHeight="45.0" prefWidth="160.0" styleClass="button-primary" text="🚗  Vehículos" />
-                  <Button fx:id="btnNavPiezas" mnemonicParsing="false" onAction="#mostrarPiezas" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="🔩  Piezas" />
-                  <Button fx:id="btnNavInventario" mnemonicParsing="false" onAction="#mostrarInventario" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📋  Inventario" />
-                  <Button fx:id="btnNavEstadisticas" mnemonicParsing="false" onAction="#mostrarEstadisticas" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📊  Estadísticas" />
-                  <Button fx:id="btnNavInformes" mnemonicParsing="false" onAction="#mostrarInformes" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📄  Informes" />
+                  <Button fx:id="btnNavVehiculos" mnemonicParsing="true" onAction="#mostrarVehiculos" prefHeight="45.0" prefWidth="160.0" styleClass="button-primary" text="🚗  _Vehículos">
+                      <tooltip><Tooltip text="Gestionar vehículos del desguace (Alt+V)" /></tooltip>
+                  </Button>
+                  <Button fx:id="btnNavPiezas" mnemonicParsing="true" onAction="#mostrarPiezas" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="🔩  _Piezas">
+                      <tooltip><Tooltip text="Gestionar piezas disponibles (Alt+P)" /></tooltip>
+                  </Button>
+                  <Button fx:id="btnNavInventario" mnemonicParsing="true" onAction="#mostrarInventario" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📋  _Inventario">
+                      <tooltip><Tooltip text="Ver inventario de piezas por vehículo (Alt+I)" /></tooltip>
+                  </Button>
+                  <Button fx:id="btnNavEstadisticas" mnemonicParsing="true" onAction="#mostrarEstadisticas" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📊  _Estadísticas">
+                      <tooltip><Tooltip text="Ver estadísticas y gráficos (Alt+E)" /></tooltip>
+                  </Button>
+                  <Button fx:id="btnNavInformes" mnemonicParsing="true" onAction="#mostrarInformes" prefHeight="45.0" prefWidth="160.0" styleClass="button" text="📄  Info_rmes">
+                      <tooltip><Tooltip text="Generar informes en PDF (Alt+R)" /></tooltip>
+                  </Button>
                </children>
             </HBox>
          </children>
@@ -132,10 +155,10 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            
-            <Label fx:id="lblErrorConexion" 
-                   text="⚠ Error al conectar con la base de datos" 
-                   visible="false" 
+
+            <Label fx:id="lblErrorConexion"
+                   text="⚠ Error al conectar con la base de datos"
+                   visible="false"
                    styleClass="error-label"
                    style="-fx-font-size: 18px; -fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-padding: 20px;"
                    alignment="CENTER"/>
@@ -148,8 +171,12 @@
             <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
          </padding>
          <children>
-            <Button fx:id="btnAnterior" mnemonicParsing="false" prefWidth="120.0" text="◀ Anterior" styleClass="button-primary"/>
-            <Button fx:id="btnSiguiente" mnemonicParsing="false" prefWidth="120.0" text="Siguiente ▶" styleClass="button-primary"/>
+            <Button fx:id="btnAnterior" mnemonicParsing="true" prefWidth="120.0" text="◀ _Anterior" styleClass="button-primary">
+                <tooltip><Tooltip text="Ir a la página anterior (Alt+A)" /></tooltip>
+            </Button>
+            <Button fx:id="btnSiguiente" mnemonicParsing="true" prefWidth="120.0" text="_Siguiente ▶" styleClass="button-primary">
+                <tooltip><Tooltip text="Ir a la página siguiente (Alt+S)" /></tooltip>
+            </Button>
          </children>
       </HBox>
    </bottom>

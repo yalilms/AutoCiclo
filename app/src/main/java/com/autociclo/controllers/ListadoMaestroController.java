@@ -1191,7 +1191,7 @@ public class ListadoMaestroController implements Initializable {
      * Método auxiliar para aplicar FadeTransition a cualquier nodo
      */
     private void aplicarFadeTransition(javafx.scene.Node nodo) {
-        FadeTransition fade = new FadeTransition(Duration.millis(400), nodo);
+        FadeTransition fade = new FadeTransition(Duration.millis(200), nodo);
         fade.setFromValue(0.0);
         fade.setToValue(1.0);
         fade.play();
@@ -1597,6 +1597,18 @@ public class ListadoMaestroController implements Initializable {
         alert.setTitle("Salir de AutoCiclo");
         alert.setHeaderText("¿Está seguro que desea salir?");
         alert.setContentText("Se cerrará la aplicación AutoCiclo - Gestión de Desguace");
+
+        // Aplicar estilos y añadir icono (FALLO 1 corregido)
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/styles.css").toExternalForm());
+        alert.getDialogPane().getStyleClass().add("glass-pane");
+        alert.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null && newScene.getWindow() != null) {
+                Stage alertStage = (Stage) newScene.getWindow();
+                alertStage.getIcons().add(new Image(
+                        getClass().getResourceAsStream("/imagenes/logo_autociclo.png")));
+            }
+        });
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
