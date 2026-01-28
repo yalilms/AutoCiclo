@@ -1,0 +1,164 @@
+<project>
+    <shortName>autociclo</shortName>
+    <fullName>AutoCiclo</fullName>
+    <version>1.0</version>
+    <vendor>softcrown</vendor>
+    <enableRollback>1</enableRollback>
+    <enableTimestamp>1</enableTimestamp>
+
+    <componentList>
+        <component name="default">
+            <description>Default Component</description>
+            <canBeEdited>1</canBeEdited>
+            <selected>1</selected>
+            <show>1</show>
+
+            <!-- Archivos a instalar -->
+            <folderList>
+                <folder destination="${installdir}" name="programfileslinux">
+                    <description>Program Files</description>
+                    <platforms>linux-x64</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>/home/yalilms/Documentos/2ºDAM/Desarrollo_interfaces/AutoCiclo/Instaladores/CarpetaInstalacion</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+            </folderList>
+
+            <!-- Acceso directo en menu de aplicaciones Linux -->
+            <desktopShortcutList>
+                <shortcut>
+                    <comment>AutoCiclo - Gestion de Desguace</comment>
+                    <exec>${installdir}/CarpetaInstalacion/run.sh</exec>
+                    <icon>${installdir}/CarpetaInstalacion/iconos/autociclo.png</icon>
+                    <name>AutoCiclo</name>
+                    <path>${installdir}/CarpetaInstalacion</path>
+                    <platforms>linux</platforms>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                </shortcut>
+            </desktopShortcutList>
+        </component>
+    </componentList>
+
+    <!-- Verificacion de Java ANTES de instalar -->
+    <preInstallationActionList>
+        <!-- Detectar Java automaticamente sin preguntar al usuario -->
+        <autodetectJava>
+            <promptUser>0</promptUser>
+            <abortOnError>0</abortOnError>
+            <showMessageOnError>0</showMessageOnError>
+            <validVersionList>
+                <validVersion>
+                    <minVersion>21</minVersion>
+                </validVersion>
+            </validVersionList>
+        </autodetectJava>
+
+        <!-- Si NO se detecto Java 21+, abrir pagina de descarga y abortar -->
+        <actionGroup>
+            <actionList>
+                <showWarning>
+                    <text>AutoCiclo requiere Java 21 o superior.
+
+No se ha detectado Java 21 en su sistema.
+
+Se abrira el navegador para descargar Java 21 de Oracle.
+Una vez instalado Java, vuelva a ejecutar este instalador.
+
+En Fedora/Red Hat puede instalar Java con:
+sudo dnf install java-21-openjdk</text>
+                </showWarning>
+                <launchBrowser>
+                    <url>https://www.oracle.com/java/technologies/downloads/#java21</url>
+                </launchBrowser>
+                <throwError>
+                    <text>Instalacion cancelada: Java 21 no encontrado. Por favor instale Java 21 y vuelva a ejecutar el instalador.</text>
+                </throwError>
+            </actionList>
+            <ruleList>
+                <isFalse>
+                    <value>${java_autodetected}</value>
+                </isFalse>
+            </ruleList>
+        </actionGroup>
+    </preInstallationActionList>
+
+    <!-- Licencia -->
+    <licenseFileList>
+        <licenseFile>
+            <code>es</code>
+            <file>/home/yalilms/Documentos/2ºDAM/Desarrollo_interfaces/AutoCiclo/Instaladores/CarpetaInstalacion/LICENSE.txt</file>
+        </licenseFile>
+    </licenseFileList>
+
+    <!-- Directorio de instalacion -->
+    <parameterList>
+        <directoryParameter>
+            <name>installdir</name>
+            <description>Directorio de instalacion</description>
+            <explanation>Seleccione donde instalar AutoCiclo</explanation>
+            <default>${user_home_directory}/${product_shortname}-${product_version}</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <ask>yes</ask>
+            <cliOptionName>prefix</cliOptionName>
+            <mustBeWritable>yes</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>30</width>
+        </directoryParameter>
+
+        <!-- Pregunta si desea crear acceso directo en el escritorio -->
+        <booleanParameter>
+            <name>createdesktopshortcut</name>
+            <description>Crear acceso directo en el Escritorio</description>
+            <explanation>¿Desea crear un acceso directo en el Escritorio?</explanation>
+            <default>1</default>
+            <ask>yes</ask>
+        </booleanParameter>
+    </parameterList>
+
+    <!-- Acciones post-instalacion -->
+    <postInstallationActionList>
+        <!-- Dar permisos de ejecucion a run.sh -->
+        <changePermissions>
+            <files>${installdir}/CarpetaInstalacion/run.sh</files>
+            <permissions>755</permissions>
+        </changePermissions>
+
+        <!-- Crear archivo .desktop manualmente en el escritorio -->
+        <actionGroup>
+            <actionList>
+                <!-- Crear el archivo .desktop -->
+                <writeFile>
+                    <path>${user_home_directory}/Escritorio/AutoCiclo.desktop</path>
+                    <text>[Desktop Entry]
+Name=AutoCiclo
+Comment=AutoCiclo - Gestion de Desguace
+Exec=${installdir}/CarpetaInstalacion/run.sh
+Icon=${installdir}/CarpetaInstalacion/iconos/autociclo.png
+Terminal=false
+Type=Application
+Categories=Office;Database;Java;
+</text>
+                </writeFile>
+                <!-- Dar permisos de ejecucion al .desktop -->
+                <changePermissions>
+                    <files>${user_home_directory}/Escritorio/AutoCiclo.desktop</files>
+                    <permissions>755</permissions>
+                </changePermissions>
+                <!-- Marcar como confiable en GNOME -->
+                <runProgram>
+                    <abortOnError>0</abortOnError>
+                    <program>gio</program>
+                    <programArguments>set ${user_home_directory}/Escritorio/AutoCiclo.desktop metadata::trusted true</programArguments>
+                </runProgram>
+            </actionList>
+            <ruleList>
+                <isTrue>
+                    <value>${createdesktopshortcut}</value>
+                </isTrue>
+            </ruleList>
+        </actionGroup>
+    </postInstallationActionList>
+</project>

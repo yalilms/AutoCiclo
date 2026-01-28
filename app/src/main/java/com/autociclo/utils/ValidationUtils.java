@@ -245,6 +245,10 @@ public class ValidationUtils {
         }
     }
 
+    // Icono de la aplicación cargado una sola vez
+    private static final Image APP_ICON = new Image(
+            ValidationUtils.class.getResourceAsStream("/imagenes/logo_autociclo.png"));
+
     /**
      * Aplica el estilo personalizado de AutoCiclo a un Alert
      * Incluye icono de la aplicación en la ventana del Alert
@@ -256,14 +260,14 @@ public class ValidationUtils {
                 ValidationUtils.class.getResource("/css/styles.css").toExternalForm());
         dialogPane.getStyleClass().add("glass-pane");
 
-        // Añadir icono de la aplicación a la ventana del Alert (FALLO 1 corregido)
-        // Usamos listener porque getScene() es null antes de mostrar el Alert
-        dialogPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null && newScene.getWindow() != null) {
-                Stage stage = (Stage) newScene.getWindow();
-                stage.getIcons().add(new Image(
-                        ValidationUtils.class.getResourceAsStream("/imagenes/logo_autociclo.png")));
-            }
+        // Añadir icono usando Platform.runLater para asegurar ejecución en FX Thread
+        alert.setOnShowing(event -> {
+            javafx.application.Platform.runLater(() -> {
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                if (stage != null && stage.getIcons().isEmpty()) {
+                    stage.getIcons().add(APP_ICON);
+                }
+            });
         });
     }
 

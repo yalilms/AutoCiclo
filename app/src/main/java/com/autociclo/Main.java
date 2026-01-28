@@ -64,10 +64,10 @@ public class Main extends Application {
                     getClass().getResource("/css/styles.css").toExternalForm());
             alert.getDialogPane().getStyleClass().add("glass-pane");
 
-            // Añadir icono a la ventana del Alert (FALLO 1 corregido)
-            alert.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
-                if (newScene != null && newScene.getWindow() != null) {
-                    Stage alertStage = (Stage) newScene.getWindow();
+            // Añadir icono a la ventana del Alert usando setOnShowing
+            alert.setOnShowing(e -> {
+                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                if (alertStage != null) {
                     alertStage.getIcons().add(appIcon);
                 }
             });

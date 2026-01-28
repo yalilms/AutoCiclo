@@ -1,0 +1,148 @@
+<project>
+    <shortName>autociclo</shortName>
+    <fullName>AutoCiclo</fullName>
+    <version>1.0</version>
+    <vendor>softcrown</vendor>
+    <enableRollback>1</enableRollback>
+    <enableTimestamp>1</enableTimestamp>
+
+    <componentList>
+        <component name="default">
+            <description>Default Component</description>
+            <canBeEdited>1</canBeEdited>
+            <selected>1</selected>
+            <show>1</show>
+
+            <!-- Archivos a instalar -->
+            <folderList>
+                <folder destination="${installdir}" name="programfileswindows64">
+                    <description>Program Files</description>
+                    <platforms>windows-x64</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>/home/yalilms/Documentos/2ºDAM/Desarrollo_interfaces/AutoCiclo/Instaladores/CarpetaInstalacion</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+            </folderList>
+
+            <!-- Menu Inicio -->
+            <startMenuShortcutList>
+                <startMenuShortcut>
+                    <comment>AutoCiclo - Gestion de Desguace</comment>
+                    <name>AutoCiclo</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/CarpetaInstalacion/run.bat</windowsExec>
+                    <windowsIcon>${installdir}/CarpetaInstalacion/iconos/autociclo.ico</windowsIcon>
+                    <windowsPath>${installdir}/CarpetaInstalacion</windowsPath>
+                </startMenuShortcut>
+                <startMenuShortcut>
+                    <comment>Desinstalar AutoCiclo</comment>
+                    <name>Desinstalar AutoCiclo</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                    <windowsPath>${installdir}</windowsPath>
+                </startMenuShortcut>
+            </startMenuShortcutList>
+        </component>
+    </componentList>
+
+    <!-- Verificacion de Java ANTES de instalar -->
+    <preInstallationActionList>
+        <!-- Detectar Java automaticamente sin preguntar al usuario -->
+        <autodetectJava>
+            <promptUser>0</promptUser>
+            <abortOnError>0</abortOnError>
+            <showMessageOnError>0</showMessageOnError>
+            <validVersionList>
+                <validVersion>
+                    <minVersion>21</minVersion>
+                </validVersion>
+            </validVersionList>
+        </autodetectJava>
+
+        <!-- Si NO se detecto Java 21+, abrir pagina de descarga y abortar -->
+        <actionGroup>
+            <actionList>
+                <showWarning>
+                    <text>AutoCiclo requiere Java 21 o superior.
+
+No se ha detectado Java 21 en su sistema.
+
+Se abrira el navegador para descargar Java 21 de Oracle.
+Una vez instalado Java, vuelva a ejecutar este instalador.</text>
+                </showWarning>
+                <launchBrowser>
+                    <url>https://www.oracle.com/java/technologies/downloads/#java21</url>
+                </launchBrowser>
+                <throwError>
+                    <text>Instalacion cancelada: Java 21 no encontrado. Por favor instale Java 21 y vuelva a ejecutar el instalador.</text>
+                </throwError>
+            </actionList>
+            <ruleList>
+                <isFalse>
+                    <value>${java_autodetected}</value>
+                </isFalse>
+            </ruleList>
+        </actionGroup>
+    </preInstallationActionList>
+
+    <!-- Licencia -->
+    <licenseFileList>
+        <licenseFile>
+            <code>es</code>
+            <file>/home/yalilms/Documentos/2ºDAM/Desarrollo_interfaces/AutoCiclo/Instaladores/CarpetaInstalacion/LICENSE.txt</file>
+        </licenseFile>
+    </licenseFileList>
+
+    <!-- Directorio de instalacion y opciones -->
+    <parameterList>
+        <directoryParameter>
+            <name>installdir</name>
+            <description>Directorio de instalacion</description>
+            <explanation>Seleccione donde instalar AutoCiclo</explanation>
+            <default>${platform_install_prefix}/${product_shortname}-${product_version}</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <ask>yes</ask>
+            <cliOptionName>prefix</cliOptionName>
+            <mustBeWritable>yes</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>30</width>
+        </directoryParameter>
+
+        <!-- Pregunta si desea crear acceso directo en el escritorio -->
+        <booleanParameter>
+            <name>createdesktopshortcut</name>
+            <description>Crear acceso directo en el Escritorio</description>
+            <explanation>¿Desea crear un acceso directo en el Escritorio?</explanation>
+            <default>1</default>
+            <ask>yes</ask>
+        </booleanParameter>
+    </parameterList>
+
+    <!-- Crear acceso directo en escritorio DESPUES de instalar -->
+    <postInstallationActionList>
+        <createShortcuts>
+            <destination>${windows_folder_desktopdirectory}</destination>
+            <progressText>Creando acceso directo en el Escritorio...</progressText>
+            <shortcutList>
+                <shortcut>
+                    <comment>AutoCiclo - Gestion de Desguace</comment>
+                    <name>AutoCiclo</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/CarpetaInstalacion/run.bat</windowsExec>
+                    <windowsIcon>${installdir}/CarpetaInstalacion/iconos/autociclo.ico</windowsIcon>
+                    <windowsPath>${installdir}/CarpetaInstalacion</windowsPath>
+                </shortcut>
+            </shortcutList>
+            <ruleList>
+                <isTrue>
+                    <value>${createdesktopshortcut}</value>
+                </isTrue>
+            </ruleList>
+        </createShortcuts>
+    </postInstallationActionList>
+</project>

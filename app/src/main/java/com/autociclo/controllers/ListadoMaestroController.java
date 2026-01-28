@@ -1598,15 +1598,14 @@ public class ListadoMaestroController implements Initializable {
         alert.setHeaderText("¿Está seguro que desea salir?");
         alert.setContentText("Se cerrará la aplicación AutoCiclo - Gestión de Desguace");
 
-        // Aplicar estilos y añadir icono (FALLO 1 corregido)
+        // Aplicar estilos y añadir icono usando setOnShowing
         alert.getDialogPane().getStylesheets().add(
                 getClass().getResource("/css/styles.css").toExternalForm());
         alert.getDialogPane().getStyleClass().add("glass-pane");
-        alert.getDialogPane().sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null && newScene.getWindow() != null) {
-                Stage alertStage = (Stage) newScene.getWindow();
-                alertStage.getIcons().add(new Image(
-                        getClass().getResourceAsStream("/imagenes/logo_autociclo.png")));
+        alert.setOnShowing(e -> {
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            if (alertStage != null) {
+                alertStage.getIcons().add(appIcon);
             }
         });
 
