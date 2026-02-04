@@ -1,1 +1,0 @@
--rwxr-xr-x. 1 yalilms yalilms 8706 dic  7 17:02 gradlew

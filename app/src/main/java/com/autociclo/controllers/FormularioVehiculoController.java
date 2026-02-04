@@ -5,13 +5,17 @@ import com.autociclo.models.Vehiculo;
 import com.autociclo.utils.ValidationUtils;
 import com.autociclo.utils.LoggerUtil;
 import com.autociclo.utils.VehiculosJsonLoader;
+import com.autociclo.utils.UbicacionesJsonLoader;
+import com.autociclo.utils.AppConstants;
+import com.autociclo.utils.WindowUtils;
+import com.autociclo.utils.ErrorHandler;
+import com.autociclo.enums.VehicleStatus;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.*;
@@ -69,8 +73,8 @@ public class FormularioVehiculoController implements Initializable {
         // Configurar título por defecto (modo nuevo)
         lblTitulo.setText("NUEVO VEHÍCULO");
 
-        // Inicializar ComboBox de estado
-        cmbEstado.getItems().addAll("Completo", "Desguazando", "Desguazado");
+        // Inicializar ComboBox de estado con enum
+        cmbEstado.getItems().addAll(VehicleStatus.getDisplayNames());
 
         // Cargar ubicaciones desde el JSON
         cargarUbicaciones();
@@ -104,25 +108,8 @@ public class FormularioVehiculoController implements Initializable {
         }
     }
 
-    /**
-     * Carga las ubicaciones de vehículos desde el archivo JSON
-     */
     private void cargarUbicaciones() {
-        try {
-            java.io.InputStream is = getClass().getResourceAsStream("/ubicaciones.json");
-            if (is != null) {
-                com.google.gson.JsonObject json = com.google.gson.JsonParser.parseReader(
-                        new java.io.InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
-
-                com.google.gson.JsonArray ubicaciones = json.getAsJsonArray("vehiculos");
-                for (int i = 0; i < ubicaciones.size(); i++) {
-                    cmbUbicacion.getItems().add(ubicaciones.get(i).getAsString());
-                }
-                LoggerUtil.info("Ubicaciones de vehículos cargadas: " + ubicaciones.size());
-            }
-        } catch (Exception e) {
-            LoggerUtil.error("Error al cargar ubicaciones", e);
-        }
+        cmbUbicacion.getItems().addAll(UbicacionesJsonLoader.obtenerUbicacionesVehiculos());
     }
 
     /**
@@ -246,9 +233,11 @@ public class FormularioVehiculoController implements Initializable {
             valido = false;
         }
 
-        // Validar año (entero entre 1900 y 2025)
-        if (!ValidationUtils.validateIntegerRange(txtAnio, null, "Año", 1900, 2025)) {
-            errores.append("• Año: Debe estar entre 1900 y 2025\n");
+        // Validar año (entero entre MIN y MAX)
+        if (!ValidationUtils.validateIntegerRange(txtAnio, null, "Año",
+                AppConstants.MIN_VEHICLE_YEAR, AppConstants.MAX_VEHICLE_YEAR)) {
+            errores.append("• Año: Debe estar entre " + AppConstants.MIN_VEHICLE_YEAR +
+                    " y " + AppConstants.MAX_VEHICLE_YEAR + "\n");
             valido = false;
         }
 
@@ -261,10 +250,10 @@ public class FormularioVehiculoController implements Initializable {
         // Validar estado (obligatorio)
         if (cmbEstado.getValue() == null || cmbEstado.getValue().toString().isEmpty()) {
             errores.append("• Estado: Debe seleccionar un estado\n");
-            cmbEstado.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            cmbEstado.setStyle(AppConstants.STYLE_ERROR);
             valido = false;
         } else {
-            cmbEstado.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
+            cmbEstado.setStyle(AppConstants.STYLE_SUCCESS);
         }
 
         // Validar precio de compra (decimal >= 0)
@@ -274,22 +263,9 @@ public class FormularioVehiculoController implements Initializable {
         }
 
         // Validar kilometraje (entero >= 0)
-        String kmText = txtKilometraje.getText().trim();
-        if (!kmText.isEmpty()) {
-            try {
-                int km = Integer.parseInt(kmText);
-                if (km < 0) {
-                    errores.append("• Kilometraje: Debe ser un número positivo\n");
-                    txtKilometraje.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                    valido = false;
-                } else {
-                    txtKilometraje.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
-                }
-            } catch (NumberFormatException e) {
-                errores.append("• Kilometraje: Debe ser un número entero válido\n");
-                txtKilometraje.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                valido = false;
-            }
+        if (!ValidationUtils.validateNonNegativeInteger(txtKilometraje, null, "Kilometraje")) {
+            errores.append("• Kilometraje: Debe ser un número entero positivo\n");
+            valido = false;
         }
 
         // Si hay errores, mostrarlos en el Alert
@@ -385,13 +361,9 @@ public class FormularioVehiculoController implements Initializable {
             }
 
         } catch (SQLException e) {
-            LoggerUtil.error("Error al guardar vehículo en BD", e);
-            ValidationUtils.showError("Error de base de datos",
-                    "No se pudo guardar el vehículo: " + e.getMessage());
+            ErrorHandler.handleSaveError(e, "vehículo");
         } catch (NumberFormatException e) {
-            LoggerUtil.warning("Error de formato en campos numéricos del formulario de vehículo");
-            ValidationUtils.showError("Error de formato",
-                    "Verifique que los campos numéricos tengan el formato correcto");
+            ErrorHandler.handleNumberFormatError("formulario de vehículo");
         }
     }
 
@@ -414,11 +386,7 @@ public class FormularioVehiculoController implements Initializable {
         return false;
     }
 
-    /**
-     * Cierra la ventana del formulario
-     */
     private void cerrarVentana() {
-        Stage stage = (Stage) btnCancelar.getScene().getWindow();
-        stage.close();
+        WindowUtils.closeWindow(btnCancelar);
     }
 }

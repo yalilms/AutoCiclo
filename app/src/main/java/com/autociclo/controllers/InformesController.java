@@ -195,6 +195,11 @@ public class InformesController implements Initializable {
             return;
         }
 
+        // Limpiar WebView anterior para evitar texto superpuesto
+        if (webViewInforme != null) {
+            webViewInforme.getEngine().loadContent("");
+        }
+
         lblEstado.setText("Generando informe...");
         lblEstado.setStyle("-fx-text-fill: #f39c12;");
 

@@ -354,4 +354,59 @@ public class ValidationUtils {
             resetStyle(field, null);
         }
     }
+
+    /**
+     * Valida que un campo sea un entero >= 0 (para stock, kilometraje, etc.)
+     * Campo opcional: si está vacío se considera válido
+     */
+    public static boolean validateNonNegativeInteger(TextField field, Label errorLabel, String fieldName) {
+        String value = field.getText().trim();
+
+        if (value.isEmpty()) {
+            showSuccess(field, errorLabel);
+            return true;
+        }
+
+        try {
+            int numero = Integer.parseInt(value);
+            if (numero < 0) {
+                showError(field, errorLabel, fieldName + " debe ser un número positivo");
+                return false;
+            }
+            showSuccess(field, errorLabel);
+            return true;
+        } catch (NumberFormatException e) {
+            showError(field, errorLabel, fieldName + " debe ser un número entero válido");
+            return false;
+        }
+    }
+
+    /**
+     * Valida un entero >= 0 y devuelve el valor o un valor por defecto
+     */
+    public static int parseNonNegativeIntOrDefault(String text, int defaultValue) {
+        if (text == null || text.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            int value = Integer.parseInt(text.trim());
+            return value >= 0 ? value : defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Valida un double y devuelve el valor o un valor por defecto
+     */
+    public static double parseDoubleOrDefault(String text, double defaultValue) {
+        if (text == null || text.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(text.trim().replace(",", "."));
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 }

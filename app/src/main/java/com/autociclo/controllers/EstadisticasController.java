@@ -2,6 +2,7 @@ package com.autociclo.controllers;
 
 import com.autociclo.database.ConexionBD;
 import com.autociclo.utils.LoggerUtil;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,6 +10,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -27,15 +31,39 @@ public class EstadisticasController implements Initializable {
     @FXML
     private BarChart<String, Integer> barChartKilometraje;
 
+    @FXML
+    private VBox loadingOverlay;
+
+    @FXML
+    private ProgressIndicator progressIndicator;
+
+    @FXML
+    private ScrollPane scrollPaneContenido;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         actualizarDatos();
     }
 
     public void actualizarDatos() {
-        cargarDatosVehiculosPorMarca();
-        cargarDatosPiezasPorCategoria();
-        cargarDatosKilometraje();
+        // Mostrar indicador de carga
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisible(true);
+        }
+
+        // Cargar datos en hilo separado para no bloquear la UI
+        new Thread(() -> {
+            cargarDatosVehiculosPorMarca();
+            cargarDatosPiezasPorCategoria();
+            cargarDatosKilometraje();
+
+            // Ocultar indicador de carga en el hilo de JavaFX
+            Platform.runLater(() -> {
+                if (loadingOverlay != null) {
+                    loadingOverlay.setVisible(false);
+                }
+            });
+        }).start();
     }
 
     private void cargarDatosVehiculosPorMarca() {
@@ -54,8 +82,12 @@ public class EstadisticasController implements Initializable {
                 series.getData().add(new XYChart.Data<>(marca, cantidad));
             }
 
-            barChartVehiculos.getData().clear();
-            barChartVehiculos.getData().add(series);
+            // Actualizar UI en el hilo de JavaFX
+            final XYChart.Series<String, Integer> finalSeries = series;
+            Platform.runLater(() -> {
+                barChartVehiculos.getData().clear();
+                barChartVehiculos.getData().add(finalSeries);
+            });
 
         } catch (Exception e) {
             LoggerUtil.error("Error al cargar estadísticas de vehículos", e);
@@ -77,7 +109,12 @@ public class EstadisticasController implements Initializable {
                 pieChartData.add(new PieChart.Data(categoria, cantidad));
             }
 
-            pieChartPiezas.setData(pieChartData);
+            // Actualizar UI en el hilo de JavaFX
+            Platform.runLater(() -> {
+                // Limpiar datos anteriores para evitar texto superpuesto
+                pieChartPiezas.getData().clear();
+                pieChartPiezas.setData(pieChartData);
+            });
 
         } catch (Exception e) {
             LoggerUtil.error("Error al cargar estadísticas de piezas", e);
@@ -100,8 +137,12 @@ public class EstadisticasController implements Initializable {
                 series.getData().add(new XYChart.Data<>(label, km));
             }
 
-            barChartKilometraje.getData().clear();
-            barChartKilometraje.getData().add(series);
+            // Actualizar UI en el hilo de JavaFX
+            final XYChart.Series<String, Integer> finalSeries = series;
+            Platform.runLater(() -> {
+                barChartKilometraje.getData().clear();
+                barChartKilometraje.getData().add(finalSeries);
+            });
 
         } catch (Exception e) {
             LoggerUtil.error("Error al cargar estadísticas de kilometraje", e);

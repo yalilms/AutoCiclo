@@ -6,18 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.animation.FadeTransition;
-import javafx.animation.ScaleTransition;
 import javafx.scene.image.Image;
-import javafx.util.Duration;
 
 import com.autociclo.database.ConexionBD;
 import com.autociclo.models.Vehiculo;
@@ -26,6 +21,11 @@ import com.autociclo.models.InventarioPieza;
 
 import com.autociclo.utils.ValidationUtils;
 import com.autociclo.utils.LoggerUtil;
+import com.autociclo.utils.ModalUtils;
+import com.autociclo.utils.AppConstants;
+import com.autociclo.utils.AppResources;
+import com.autociclo.utils.AnimationFactory;
+import com.autociclo.utils.ErrorHandler;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP;
@@ -42,8 +42,8 @@ import java.util.ResourceBundle;
 
 public class ListadoMaestroController implements Initializable {
 
-    // Icono de la aplicación para las ventanas modales
-    private final Image appIcon = new Image(getClass().getResourceAsStream("/imagenes/logo_autociclo.png"));
+    // Icono de la aplicación (singleton)
+    private final Image appIcon = AppResources.getIcon();
 
     // MenuBar
     @FXML
@@ -155,12 +155,8 @@ public class ListadoMaestroController implements Initializable {
     @FXML
     private Button btnSiguiente;
 
-    // Label de error de conexión
     @FXML
     private Label lblErrorConexion;
-
-    // Variable para rastrear si hay error de conexión
-    private boolean hayErrorConexion = false;
 
     // Listas observables
     private ObservableList<Vehiculo> listaVehiculos = FXCollections.observableArrayList();
@@ -174,7 +170,6 @@ public class ListadoMaestroController implements Initializable {
 
     // Variables de paginación
     private int paginaActual = 0;
-    private static final int ELEMENTOS_POR_PAGINA = 10;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -246,85 +241,52 @@ public class ListadoMaestroController implements Initializable {
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Vehiculo v = new Vehiculo(
-                        rs.getInt("id_vehiculo"),
-                        rs.getString("matricula"),
-                        rs.getString("marca"),
-                        rs.getString("modelo"),
-                        rs.getInt("anio"),
-                        rs.getString("color"),
-                        rs.getString("fecha_entrada"),
-                        rs.getString("estado"),
-                        rs.getDouble("precio_compra"),
-                        rs.getInt("kilometraje"),
-                        rs.getString("ubicacion_gps"),
-                        rs.getString("observaciones"));
-                listaVehiculos.add(v);
+                listaVehiculos.add(new Vehiculo(
+                        rs.getInt("id_vehiculo"), rs.getString("matricula"),
+                        rs.getString("marca"), rs.getString("modelo"),
+                        rs.getInt("anio"), rs.getString("color"),
+                        rs.getString("fecha_entrada"), rs.getString("estado"),
+                        rs.getDouble("precio_compra"), rs.getInt("kilometraje"),
+                        rs.getString("ubicacion_gps"), rs.getString("observaciones")));
             }
             LoggerUtil.logDatosCargados("Vehículos", listaVehiculos.size());
-            // Ocultar el label de error si la conexión fue exitosa
-            hayErrorConexion = false;
-            if (lblErrorConexion != null) {
-                lblErrorConexion.setVisible(false);
-            }
+            if (lblErrorConexion != null) lblErrorConexion.setVisible(false);
         } catch (Exception e) {
             LoggerUtil.error("Error al cargar vehículos", e);
-            // Mostrar el label de error de conexión
-            hayErrorConexion = true;
-            if (lblErrorConexion != null) {
-                lblErrorConexion.setVisible(true);
-            }
+            if (lblErrorConexion != null) lblErrorConexion.setVisible(true);
         }
     }
 
     private void cargarPiezas() {
         listaPiezas.clear();
         String sql = "SELECT p.*, COALESCE(SUM(ip.cantidad), 0) as stock_real " +
-                "FROM PIEZAS p " +
-                "LEFT JOIN INVENTARIO_PIEZAS ip ON p.id_pieza = ip.id_pieza " +
-                "GROUP BY p.id_pieza";
+                "FROM PIEZAS p LEFT JOIN INVENTARIO_PIEZAS ip ON p.id_pieza = ip.id_pieza GROUP BY p.id_pieza";
 
         try (Connection conn = ConexionBD.getConexion();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Pieza p = new Pieza(
-                        rs.getInt("id_pieza"),
-                        rs.getString("codigo_pieza"),
-                        rs.getString("nombre"),
-                        rs.getString("categoria"),
-                        rs.getDouble("precio_venta"),
-                        rs.getInt("stock_real"),
-                        rs.getInt("stock_minimo"),
-                        rs.getString("ubicacion_almacen"),
-                        rs.getString("compatible_marcas"),
-                        rs.getString("imagen"),
-                        rs.getString("descripcion"));
-                listaPiezas.add(p);
+                listaPiezas.add(new Pieza(
+                        rs.getInt("id_pieza"), rs.getString("codigo_pieza"),
+                        rs.getString("nombre"), rs.getString("categoria"),
+                        rs.getDouble("precio_venta"), rs.getInt("stock_real"),
+                        rs.getInt("stock_minimo"), rs.getString("ubicacion_almacen"),
+                        rs.getString("compatible_marcas"), rs.getString("imagen"),
+                        rs.getString("descripcion")));
             }
             LoggerUtil.logDatosCargados("Piezas", listaPiezas.size());
-            // Ocultar el label de error si la conexión fue exitosa
-            hayErrorConexion = false;
-            if (lblErrorConexion != null) {
-                lblErrorConexion.setVisible(false);
-            }
+            if (lblErrorConexion != null) lblErrorConexion.setVisible(false);
         } catch (Exception e) {
             LoggerUtil.error("Error al cargar piezas", e);
-            // Mostrar el label de error de conexión
-            hayErrorConexion = true;
-            if (lblErrorConexion != null) {
-                lblErrorConexion.setVisible(true);
-            }
+            if (lblErrorConexion != null) lblErrorConexion.setVisible(true);
         }
     }
 
     private void cargarInventario() {
         listaInventario.clear();
-        String sql = "SELECT ip.*, " +
-                "CONCAT(v.marca, ' ', v.modelo, ' (', v.anio, ')') as vehiculo_info, " +
-                "p.nombre as pieza_nombre " +
-                "FROM INVENTARIO_PIEZAS ip " +
+        String sql = "SELECT ip.*, CONCAT(v.marca, ' ', v.modelo, ' (', v.anio, ')') as vehiculo_info, " +
+                "p.nombre as pieza_nombre FROM INVENTARIO_PIEZAS ip " +
                 "INNER JOIN VEHICULOS v ON ip.id_vehiculo = v.id_vehiculo " +
                 "INNER JOIN PIEZAS p ON ip.id_pieza = p.id_pieza";
 
@@ -333,31 +295,18 @@ public class ListadoMaestroController implements Initializable {
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                InventarioPieza inv = new InventarioPieza(
-                        rs.getInt("id_vehiculo"),
-                        rs.getInt("id_pieza"),
-                        rs.getString("vehiculo_info"),
-                        rs.getString("pieza_nombre"),
-                        rs.getInt("cantidad"),
-                        rs.getString("estado_pieza"),
-                        rs.getString("fecha_extraccion"),
-                        rs.getDouble("precio_unitario"),
-                        rs.getString("notas"));
-                listaInventario.add(inv);
+                listaInventario.add(new InventarioPieza(
+                        rs.getInt("id_vehiculo"), rs.getInt("id_pieza"),
+                        rs.getString("vehiculo_info"), rs.getString("pieza_nombre"),
+                        rs.getInt("cantidad"), rs.getString("estado_pieza"),
+                        rs.getString("fecha_extraccion"), rs.getDouble("precio_unitario"),
+                        rs.getString("notas")));
             }
             LoggerUtil.logDatosCargados("Inventario", listaInventario.size());
-            // Ocultar el label de error si la conexión fue exitosa
-            hayErrorConexion = false;
-            if (lblErrorConexion != null) {
-                lblErrorConexion.setVisible(false);
-            }
+            if (lblErrorConexion != null) lblErrorConexion.setVisible(false);
         } catch (Exception e) {
             LoggerUtil.error("Error al cargar inventario", e);
-            // Mostrar el label de error de conexión
-            hayErrorConexion = true;
-            if (lblErrorConexion != null) {
-                lblErrorConexion.setVisible(true);
-            }
+            if (lblErrorConexion != null) lblErrorConexion.setVisible(true);
         }
     }
 
@@ -388,68 +337,27 @@ public class ListadoMaestroController implements Initializable {
      * Configura los iconos de Ikonli para los botones de la aplicación
      */
     private void configurarIconos() {
-        // Iconos para botones del toolbar (colores blancos para mejor contraste con los
-        // fondos de botón)
-        FontIcon iconNuevo = new FontIcon(MaterialDesignP.PLUS_CIRCLE);
-        iconNuevo.setIconSize(16);
-        iconNuevo.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo verde
-        btnNuevo.setGraphic(iconNuevo);
-        btnNuevo.setText("Nuevo");
+        // Toolbar
+        setIcono(btnNuevo, MaterialDesignP.PLUS_CIRCLE, 16, "Nuevo");
+        setIcono(btnVer, MaterialDesignE.EYE, 16, "Ver");
+        setIcono(btnEditar, MaterialDesignP.PENCIL, 16, "Editar");
+        setIcono(btnEliminar, MaterialDesignD.DELETE, 16, "Eliminar");
+        setIcono(btnBuscar, MaterialDesignM.MAGNIFY, 18, "");
 
-        FontIcon iconVer = new FontIcon(MaterialDesignE.EYE);
-        iconVer.setIconSize(16);
-        iconVer.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo azul
-        btnVer.setGraphic(iconVer);
-        btnVer.setText("Ver");
+        // Navegación
+        setIcono(btnNavVehiculos, MaterialDesignC.CAR, 18, "Vehículos");
+        setIcono(btnNavPiezas, MaterialDesignC.COG, 18, "Piezas");
+        setIcono(btnNavInventario, MaterialDesignC.CLIPBOARD_LIST, 18, "Inventario");
+        setIcono(btnNavEstadisticas, MaterialDesignC.CHART_BAR, 18, "Estadísticas");
+        setIcono(btnNavInformes, MaterialDesignF.FILE_DOCUMENT, 18, "Informes");
+    }
 
-        FontIcon iconEditar = new FontIcon(MaterialDesignP.PENCIL);
-        iconEditar.setIconSize(16);
-        iconEditar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo azul
-        btnEditar.setGraphic(iconEditar);
-        btnEditar.setText("Editar");
-
-        FontIcon iconEliminar = new FontIcon(MaterialDesignD.DELETE);
-        iconEliminar.setIconSize(16);
-        iconEliminar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo rojo
-        btnEliminar.setGraphic(iconEliminar);
-        btnEliminar.setText("Eliminar");
-
-        FontIcon iconBuscar = new FontIcon(MaterialDesignM.MAGNIFY);
-        iconBuscar.setIconSize(18);
-        iconBuscar.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para contraste con fondo del botón
-        btnBuscar.setGraphic(iconBuscar);
-        btnBuscar.setText("");
-
-        // Iconos para botones de navegación
-        FontIcon iconVehiculos = new FontIcon(MaterialDesignC.CAR);
-        iconVehiculos.setIconSize(18);
-        iconVehiculos.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
-        btnNavVehiculos.setGraphic(iconVehiculos);
-        btnNavVehiculos.setText("Vehículos");
-
-        FontIcon iconPiezas = new FontIcon(MaterialDesignC.COG);
-        iconPiezas.setIconSize(18);
-        iconPiezas.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
-        btnNavPiezas.setGraphic(iconPiezas);
-        btnNavPiezas.setText("Piezas");
-
-        FontIcon iconInventario = new FontIcon(MaterialDesignC.CLIPBOARD_LIST);
-        iconInventario.setIconSize(18);
-        iconInventario.setIconColor(javafx.scene.paint.Color.WHITE); // Blanco para mejor contraste
-        btnNavInventario.setGraphic(iconInventario);
-        btnNavInventario.setText("Inventario");
-
-        FontIcon iconEstadisticas = new FontIcon(MaterialDesignC.CHART_BAR);
-        iconEstadisticas.setIconSize(18);
-        iconEstadisticas.setIconColor(javafx.scene.paint.Color.WHITE);
-        btnNavEstadisticas.setGraphic(iconEstadisticas);
-        btnNavEstadisticas.setText("Estadísticas");
-
-        FontIcon iconInformes = new FontIcon(MaterialDesignF.FILE_DOCUMENT);
-        iconInformes.setIconSize(18);
-        iconInformes.setIconColor(javafx.scene.paint.Color.WHITE);
-        btnNavInformes.setGraphic(iconInformes);
-        btnNavInformes.setText("Informes");
+    private void setIcono(Button btn, org.kordamp.ikonli.Ikon ikon, int size, String texto) {
+        FontIcon icon = new FontIcon(ikon);
+        icon.setIconSize(size);
+        icon.setIconColor(javafx.scene.paint.Color.WHITE);
+        btn.setGraphic(icon);
+        btn.setText(texto);
     }
 
     /**
@@ -537,8 +445,8 @@ public class ListadoMaestroController implements Initializable {
      * Actualiza la tabla de vehículos con la lista filtrada
      */
     private void actualizarTablaVehiculos() {
-        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
-        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, listaVehiculosFiltrada.size());
+        int inicio = paginaActual * AppConstants.ITEMS_PER_PAGE;
+        int fin = Math.min(inicio + AppConstants.ITEMS_PER_PAGE, listaVehiculosFiltrada.size());
 
         if (inicio < listaVehiculosFiltrada.size()) {
             tableVehiculos.setItems(FXCollections.observableArrayList(
@@ -552,8 +460,8 @@ public class ListadoMaestroController implements Initializable {
      * Actualiza la tabla de piezas con la lista filtrada
      */
     private void actualizarTablaPiezas() {
-        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
-        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, listaPiezasFiltrada.size());
+        int inicio = paginaActual * AppConstants.ITEMS_PER_PAGE;
+        int fin = Math.min(inicio + AppConstants.ITEMS_PER_PAGE, listaPiezasFiltrada.size());
 
         if (inicio < listaPiezasFiltrada.size()) {
             tablePiezas.setItems(FXCollections.observableArrayList(
@@ -567,8 +475,8 @@ public class ListadoMaestroController implements Initializable {
      * Actualiza la tabla de inventario con la lista filtrada
      */
     private void actualizarTablaInventario() {
-        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
-        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, listaInventarioFiltrada.size());
+        int inicio = paginaActual * AppConstants.ITEMS_PER_PAGE;
+        int fin = Math.min(inicio + AppConstants.ITEMS_PER_PAGE, listaInventarioFiltrada.size());
 
         if (inicio < listaInventarioFiltrada.size()) {
             tableInventario.setItems(FXCollections.observableArrayList(
@@ -578,175 +486,67 @@ public class ListadoMaestroController implements Initializable {
         }
     }
 
-    // Métodos para abrir formularios como ventanas modales
     private void abrirFormularioNuevo() {
-        try {
-            String fxmlFile = "";
-            String titulo = "";
+        FXMLLoader loader;
+        String titulo;
 
-            // Determinar qué tabla está visible y abrir el formulario correspondiente
-            if (tableVehiculos.isVisible()) {
-                fxmlFile = "/fxml/FormularioVehiculo.fxml";
-                titulo = "Nuevo Vehículo";
-            } else if (tablePiezas.isVisible()) {
-                fxmlFile = "/fxml/FormularioPieza.fxml";
-                titulo = "Nueva Pieza";
-            } else if (tableInventario.isVisible()) {
-                fxmlFile = "/fxml/AsignarPiezaVehiculo.fxml";
-                titulo = "Asignar Pieza a Vehículo";
-            }
+        if (tableVehiculos.isVisible()) {
+            loader = ModalUtils.cargarFXML("/fxml/FormularioVehiculo.fxml");
+            titulo = "Nuevo Vehículo";
+            if (loader != null) ((FormularioVehiculoController) loader.getController()).setControladorPadre(this);
+        } else if (tablePiezas.isVisible()) {
+            loader = ModalUtils.cargarFXML("/fxml/FormularioPieza.fxml");
+            titulo = "Nueva Pieza";
+            if (loader != null) ((FormularioPiezaController) loader.getController()).setControladorPadre(this);
+        } else if (tableInventario.isVisible()) {
+            loader = ModalUtils.cargarFXML("/fxml/AsignarPiezaVehiculo.fxml");
+            titulo = "Asignar Pieza a Vehículo";
+            if (loader != null) ((AsignarPiezaVehiculoController) loader.getController()).setControladorPadre(this);
+        } else {
+            return;
+        }
 
-            // Cargar el FXML del formulario
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-            Parent root = loader.load();
-
-            // Pasar referencia del controlador padre
-            if (tableVehiculos.isVisible()) {
-                FormularioVehiculoController controller = loader.getController();
-                controller.setControladorPadre(this);
-            } else if (tablePiezas.isVisible()) {
-                FormularioPiezaController controller = loader.getController();
-                controller.setControladorPadre(this);
-            } else if (tableInventario.isVisible()) {
-                AsignarPiezaVehiculoController controller = loader.getController();
-                controller.setControladorPadre(this);
-            }
-
-            // Crear una nueva ventana modal
-            Stage modalStage = new Stage();
-            modalStage.getIcons().add(appIcon);
-            modalStage.setTitle(titulo);
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnNuevo.getScene().getWindow());
-
-            Scene scene = new Scene(root);
-            modalStage.setScene(scene);
-            modalStage.setResizable(true);
-            modalStage.setMinWidth(850);
-            modalStage.setMinHeight(750);
-            modalStage.sizeToScene();
-
-            // Mostrar la ventana y esperar a que se cierre
-            modalStage.showAndWait();
-
-        } catch (Exception e) {
-            LoggerUtil.error("Error al abrir formulario", e);
-            ValidationUtils.showError("Error", "No se pudo abrir el formulario: " + e.getMessage());
+        if (loader != null) {
+            ModalUtils.mostrarDesdeLoader(loader, titulo, btnNuevo.getScene().getWindow());
         }
     }
 
-    /**
-     * Edita el registro seleccionado en la tabla visible
-     */
     private void editarRegistro() {
-        try {
-            if (tableVehiculos.isVisible()) {
-                // Editar vehículo
-                Vehiculo vehiculoSeleccionado = tableVehiculos.getSelectionModel().getSelectedItem();
+        if (tableVehiculos.isVisible()) {
+            Vehiculo seleccionado = tableVehiculos.getSelectionModel().getSelectedItem();
+            if (!validarSeleccion(seleccionado, "vehículo")) return;
 
-                if (vehiculoSeleccionado == null) {
-                    ValidationUtils.showAlert("Selección requerida",
-                            "Por favor seleccione un vehículo",
-                            "Debe seleccionar un vehículo de la tabla para editarlo",
-                            Alert.AlertType.WARNING);
-                    return;
-                }
-
-                // Cargar formulario de vehículo en modo edición
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FormularioVehiculo.fxml"));
-                Parent root = loader.load();
-
-                FormularioVehiculoController controller = loader.getController();
-                controller.setControladorPadre(this);
-                controller.setVehiculoEditar(vehiculoSeleccionado);
-
-                Stage modalStage = new Stage();
-                modalStage.getIcons().add(appIcon);
-                modalStage.setTitle("Editar Vehículo");
-                modalStage.initModality(Modality.APPLICATION_MODAL);
-                modalStage.initOwner(btnEditar.getScene().getWindow());
-
-                Scene scene = new Scene(root);
-                modalStage.setScene(scene);
-                modalStage.setResizable(true);
-                modalStage.setMinWidth(850);
-                modalStage.setMinHeight(750);
-                modalStage.sizeToScene();
-                modalStage.showAndWait();
-
-            } else if (tablePiezas.isVisible()) {
-                // Editar pieza
-                Pieza piezaSeleccionada = tablePiezas.getSelectionModel().getSelectedItem();
-
-                if (piezaSeleccionada == null) {
-                    ValidationUtils.showAlert("Selección requerida",
-                            "Por favor seleccione una pieza",
-                            "Debe seleccionar una pieza de la tabla para editarla",
-                            Alert.AlertType.WARNING);
-                    return;
-                }
-
-                // Cargar formulario de pieza en modo edición
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FormularioPieza.fxml"));
-                Parent root = loader.load();
-
-                FormularioPiezaController controller = loader.getController();
-                controller.setControladorPadre(this);
-                controller.setPiezaEditar(piezaSeleccionada);
-
-                Stage modalStage = new Stage();
-                modalStage.getIcons().add(appIcon);
-                modalStage.setTitle("Editar Pieza");
-                modalStage.initModality(Modality.APPLICATION_MODAL);
-                modalStage.initOwner(btnEditar.getScene().getWindow());
-
-                Scene scene = new Scene(root);
-                modalStage.setScene(scene);
-                modalStage.setResizable(true);
-                modalStage.setMinWidth(850);
-                modalStage.setMinHeight(750);
-                modalStage.sizeToScene();
-                modalStage.showAndWait();
-
-            } else if (tableInventario.isVisible()) {
-                // Editar asignación de inventario
-                InventarioPieza inventarioSeleccionado = tableInventario.getSelectionModel().getSelectedItem();
-
-                if (inventarioSeleccionado == null) {
-                    ValidationUtils.showAlert("Selección requerida",
-                            "Por favor seleccione una asignación",
-                            "Debe seleccionar una asignación de la tabla para editarla",
-                            Alert.AlertType.WARNING);
-                    return;
-                }
-
-                // Cargar formulario de inventario en modo edición
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AsignarPiezaVehiculo.fxml"));
-                Parent root = loader.load();
-
-                AsignarPiezaVehiculoController controller = loader.getController();
-                controller.setControladorPadre(this);
-                controller.setInventarioEditar(inventarioSeleccionado);
-
-                Stage modalStage = new Stage();
-                modalStage.getIcons().add(appIcon);
-                modalStage.setTitle("Editar Asignación");
-                modalStage.initModality(Modality.APPLICATION_MODAL);
-                modalStage.initOwner(btnEditar.getScene().getWindow());
-
-                Scene scene = new Scene(root);
-                modalStage.setScene(scene);
-                modalStage.setResizable(true);
-                modalStage.setMinWidth(850);
-                modalStage.setMinHeight(750);
-                modalStage.sizeToScene();
-                modalStage.showAndWait();
+            FXMLLoader loader = ModalUtils.cargarFXML("/fxml/FormularioVehiculo.fxml");
+            if (loader != null) {
+                FormularioVehiculoController ctrl = loader.getController();
+                ctrl.setControladorPadre(this);
+                ctrl.setVehiculoEditar(seleccionado);
+                ModalUtils.mostrarDesdeLoader(loader, "Editar Vehículo", btnEditar.getScene().getWindow());
             }
 
-        } catch (Exception e) {
-            LoggerUtil.error("Error al editar registro", e);
-            ValidationUtils.showError("Error al editar",
-                    "No se pudo abrir el formulario de edición: " + e.getMessage());
+        } else if (tablePiezas.isVisible()) {
+            Pieza seleccionada = tablePiezas.getSelectionModel().getSelectedItem();
+            if (!validarSeleccion(seleccionada, "pieza")) return;
+
+            FXMLLoader loader = ModalUtils.cargarFXML("/fxml/FormularioPieza.fxml");
+            if (loader != null) {
+                FormularioPiezaController ctrl = loader.getController();
+                ctrl.setControladorPadre(this);
+                ctrl.setPiezaEditar(seleccionada);
+                ModalUtils.mostrarDesdeLoader(loader, "Editar Pieza", btnEditar.getScene().getWindow());
+            }
+
+        } else if (tableInventario.isVisible()) {
+            InventarioPieza seleccionado = tableInventario.getSelectionModel().getSelectedItem();
+            if (!validarSeleccion(seleccionado, "asignación")) return;
+
+            FXMLLoader loader = ModalUtils.cargarFXML("/fxml/AsignarPiezaVehiculo.fxml");
+            if (loader != null) {
+                AsignarPiezaVehiculoController ctrl = loader.getController();
+                ctrl.setControladorPadre(this);
+                ctrl.setInventarioEditar(seleccionado);
+                ModalUtils.mostrarDesdeLoader(loader, "Editar Asignación", btnEditar.getScene().getWindow());
+            }
         }
     }
 
@@ -834,79 +634,35 @@ public class ListadoMaestroController implements Initializable {
         }
     }
 
-    /**
-     * Elimina un vehículo de la base de datos
-     */
     private void eliminarVehiculo(int idVehiculo) {
-        try (Connection conn = ConexionBD.getConexion()) {
-            // DELETE con PreparedStatement (antiinyección SQL)
-            String sql = "DELETE FROM VEHICULOS WHERE id_vehiculo = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, idVehiculo);
-
-            int filasAfectadas = pstmt.executeUpdate();
-
-            if (filasAfectadas > 0) {
-                ValidationUtils.showSuccess("Vehículo eliminado",
-                        "El vehículo ha sido eliminado correctamente del sistema");
-                actualizarListado();
-            }
-
-        } catch (SQLException e) {
-            LoggerUtil.error("Error al eliminar vehículo de BD", e);
-            ValidationUtils.showError("Error de base de datos",
-                    "No se pudo eliminar el vehículo: " + e.getMessage());
-        }
+        ejecutarEliminacion("DELETE FROM VEHICULOS WHERE id_vehiculo = ?",
+                new int[]{idVehiculo}, "Vehículo", "vehículo");
     }
 
-    /**
-     * Elimina una pieza de la base de datos
-     */
     private void eliminarPieza(int idPieza) {
-        try (Connection conn = ConexionBD.getConexion()) {
-            // DELETE con PreparedStatement (antiinyección SQL)
-            String sql = "DELETE FROM PIEZAS WHERE id_pieza = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, idPieza);
-
-            int filasAfectadas = pstmt.executeUpdate();
-
-            if (filasAfectadas > 0) {
-                ValidationUtils.showSuccess("Pieza eliminada",
-                        "La pieza ha sido eliminada correctamente del sistema");
-                actualizarListado();
-            }
-
-        } catch (SQLException e) {
-            LoggerUtil.error("Error al eliminar pieza de BD", e);
-            ValidationUtils.showError("Error de base de datos",
-                    "No se pudo eliminar la pieza: " + e.getMessage());
-        }
+        ejecutarEliminacion("DELETE FROM PIEZAS WHERE id_pieza = ?",
+                new int[]{idPieza}, "Pieza", "pieza");
     }
 
-    /**
-     * Elimina una asignación de inventario de la base de datos
-     */
     private void eliminarInventario(int idVehiculo, int idPieza) {
+        ejecutarEliminacion("DELETE FROM INVENTARIO_PIEZAS WHERE id_vehiculo = ? AND id_pieza = ?",
+                new int[]{idVehiculo, idPieza}, "Asignación", "asignación");
+    }
+
+    private void ejecutarEliminacion(String sql, int[] params, String tipoMayus, String tipoMinus) {
         try (Connection conn = ConexionBD.getConexion()) {
-            // DELETE con PreparedStatement (antiinyección SQL)
-            String sql = "DELETE FROM INVENTARIO_PIEZAS WHERE id_vehiculo = ? AND id_pieza = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, idVehiculo);
-            pstmt.setInt(2, idPieza);
-
-            int filasAfectadas = pstmt.executeUpdate();
-
-            if (filasAfectadas > 0) {
-                ValidationUtils.showSuccess("Asignación eliminada",
-                        "La asignación ha sido eliminada correctamente del inventario");
-                actualizarListado();
+            for (int i = 0; i < params.length; i++) {
+                pstmt.setInt(i + 1, params[i]);
             }
 
+            if (pstmt.executeUpdate() > 0) {
+                ValidationUtils.showSuccess(tipoMayus + " eliminado/a",
+                        "El/La " + tipoMinus + " ha sido eliminado/a correctamente");
+                actualizarListado();
+            }
         } catch (SQLException e) {
-            LoggerUtil.error("Error al eliminar asignación de inventario de BD", e);
-            ValidationUtils.showError("Error de base de datos",
-                    "No se pudo eliminar la asignación: " + e.getMessage());
+            ErrorHandler.handleDeleteError(e, tipoMinus);
         }
     }
 
@@ -951,156 +707,54 @@ public class ListadoMaestroController implements Initializable {
     // ENTREGA 3: ANIMACIONES
     // ==================================================================================
 
-    /**
-     * Aplica animación FadeTransition al mostrar vehículos
-     */
     @FXML
     public void mostrarVehiculos() {
-        // Hacer visible la tabla antes de animar
+        ocultarTodasLasVistas();
         tableVehiculos.setVisible(true);
-        tablePiezas.setVisible(false);
-        tableInventario.setVisible(false);
-        if (vistaEstadisticas != null)
-            vistaEstadisticas.setVisible(false);
-        if (vistaInformes != null)
-            vistaInformes.setVisible(false);
-        // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
         listaVehiculosFiltrada.setAll(listaVehiculos);
-
-        // Reiniciar paginación
         reiniciarPaginacion();
-
-        // Animación de entrada
         aplicarFadeTransition(tableVehiculos);
-
-        // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().clear();
-        btnNavVehiculos.getStyleClass().addAll("button", "button-primary");
-
-        btnNavPiezas.getStyleClass().clear();
-        btnNavPiezas.getStyleClass().add("button");
-
-        btnNavInventario.getStyleClass().clear();
-        btnNavInventario.getStyleClass().add("button");
-
-        if (btnNavEstadisticas != null) {
-            btnNavEstadisticas.getStyleClass().clear();
-            btnNavEstadisticas.getStyleClass().add("button");
-        }
-
-        if (btnNavInformes != null) {
-            btnNavInformes.getStyleClass().clear();
-            btnNavInformes.getStyleClass().add("button");
-        }
+        actualizarEstilosNavegacion(btnNavVehiculos);
+        habilitarBotonesCRUD(true);
     }
 
-    /**
-     * Aplica animación FadeTransition al mostrar piezas
-     */
     @FXML
     public void mostrarPiezas() {
-        tableVehiculos.setVisible(false);
+        ocultarTodasLasVistas();
         tablePiezas.setVisible(true);
-        tableInventario.setVisible(false);
-        if (vistaEstadisticas != null)
-            vistaEstadisticas.setVisible(false);
-        if (vistaInformes != null)
-            vistaInformes.setVisible(false);
-
-        // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
         listaPiezasFiltrada.setAll(listaPiezas);
-
-        // Reiniciar paginación
         reiniciarPaginacion();
-
-        // Animación de entrada
         aplicarFadeTransition(tablePiezas);
-
-        // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().clear();
-        btnNavVehiculos.getStyleClass().add("button");
-
-        btnNavPiezas.getStyleClass().clear();
-        btnNavPiezas.getStyleClass().addAll("button", "button-primary");
-
-        btnNavInventario.getStyleClass().clear();
-        btnNavInventario.getStyleClass().add("button");
-
-        if (btnNavInformes != null) {
-            btnNavInformes.getStyleClass().clear();
-            btnNavInformes.getStyleClass().add("button");
-        }
+        actualizarEstilosNavegacion(btnNavPiezas);
+        habilitarBotonesCRUD(true);
     }
 
-    /**
-     * Aplica animación FadeTransition al mostrar inventario
-     */
     @FXML
     public void mostrarInventario() {
-        tableVehiculos.setVisible(false);
-        tablePiezas.setVisible(false);
+        ocultarTodasLasVistas();
         tableInventario.setVisible(true);
-        if (vistaEstadisticas != null)
-            vistaEstadisticas.setVisible(false);
-        if (vistaInformes != null)
-            vistaInformes.setVisible(false);
-
-        // Limpiar búsqueda e inicializar lista filtrada
         txtBuscar.clear();
         listaInventarioFiltrada.setAll(listaInventario);
-
-        // Reiniciar paginación
         reiniciarPaginacion();
-
-        // Animación de entrada
         aplicarFadeTransition(tableInventario);
-
-        // Cambiar estilos de botones de navegación
-        btnNavVehiculos.getStyleClass().clear();
-        btnNavVehiculos.getStyleClass().add("button");
-
-        btnNavPiezas.getStyleClass().clear();
-        btnNavPiezas.getStyleClass().add("button");
-
-        btnNavInventario.getStyleClass().clear();
-        btnNavInventario.getStyleClass().addAll("button", "button-primary");
-
-        if (btnNavEstadisticas != null) {
-            btnNavEstadisticas.getStyleClass().clear();
-            btnNavEstadisticas.getStyleClass().add("button");
-        }
-
-        if (btnNavInformes != null) {
-            btnNavInformes.getStyleClass().clear();
-            btnNavInformes.getStyleClass().add("button");
-        }
+        actualizarEstilosNavegacion(btnNavInventario);
+        habilitarBotonesCRUD(true);
     }
 
-    /**
-     * Muestra la vista de estadísticas
-     */
     @FXML
     public void mostrarEstadisticas() {
-        tableVehiculos.setVisible(false);
-        tablePiezas.setVisible(false);
-        tableInventario.setVisible(false);
-        if (vistaInformes != null)
-            vistaInformes.setVisible(false);
+        ocultarTodasLasVistas();
 
         try {
-            // Cargar la vista si aún no existe
             if (vistaEstadisticas == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Estadisticas.fxml"));
                 vistaEstadisticas = loader.load();
                 controllerEstadisticas = loader.getController();
                 stackPaneContenido.getChildren().add(vistaEstadisticas);
-            } else {
-                // Si ya existe, actualizar datos
-                if (controllerEstadisticas != null) {
-                    controllerEstadisticas.actualizarDatos();
-                }
+            } else if (controllerEstadisticas != null) {
+                controllerEstadisticas.actualizarDatos();
             }
 
             vistaEstadisticas.setVisible(true);
@@ -1110,53 +764,22 @@ public class ListadoMaestroController implements Initializable {
             ValidationUtils.showError("Error", "No se pudieron cargar las estadísticas: " + e.getMessage());
         }
 
-        // Estilos de botones
-        btnNavVehiculos.getStyleClass().clear();
-        btnNavVehiculos.getStyleClass().add("button");
-
-        btnNavPiezas.getStyleClass().clear();
-        btnNavPiezas.getStyleClass().add("button");
-
-        btnNavInventario.getStyleClass().clear();
-        btnNavInventario.getStyleClass().add("button");
-
-        if (btnNavEstadisticas != null) {
-            btnNavEstadisticas.getStyleClass().clear();
-            btnNavEstadisticas.getStyleClass().addAll("button", "button-primary");
-        }
-
-        if (btnNavInformes != null) {
-            btnNavInformes.getStyleClass().clear();
-            btnNavInformes.getStyleClass().add("button");
-        }
+        actualizarEstilosNavegacion(btnNavEstadisticas);
+        habilitarBotonesCRUD(false);
     }
 
-    /**
-     * Muestra la vista de informes JasperReports
-     */
     @FXML
     public void mostrarInformes() {
-        tableVehiculos.setVisible(false);
-        tablePiezas.setVisible(false);
-        tableInventario.setVisible(false);
-
-        // Ocultar vista de estadísticas si está visible
-        if (vistaEstadisticas != null) {
-            vistaEstadisticas.setVisible(false);
-        }
+        ocultarTodasLasVistas();
 
         try {
-            // Cargar la vista si aún no existe
             if (vistaInformes == null) {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Informes.fxml"));
                 vistaInformes = loader.load();
                 controllerInformes = loader.getController();
                 stackPaneContenido.getChildren().add(vistaInformes);
-            } else {
-                // Si ya existe, refrescar
-                if (controllerInformes != null) {
-                    controllerInformes.refrescar();
-                }
+            } else if (controllerInformes != null) {
+                controllerInformes.refrescar();
             }
 
             vistaInformes.setVisible(true);
@@ -1166,89 +789,70 @@ public class ListadoMaestroController implements Initializable {
             ValidationUtils.showError("Error", "No se pudieron cargar los informes: " + e.getMessage());
         }
 
-        // Estilos de botones
-        btnNavVehiculos.getStyleClass().clear();
-        btnNavVehiculos.getStyleClass().add("button");
-
-        btnNavPiezas.getStyleClass().clear();
-        btnNavPiezas.getStyleClass().add("button");
-
-        btnNavInventario.getStyleClass().clear();
-        btnNavInventario.getStyleClass().add("button");
-
-        if (btnNavEstadisticas != null) {
-            btnNavEstadisticas.getStyleClass().clear();
-            btnNavEstadisticas.getStyleClass().add("button");
-        }
-
-        if (btnNavInformes != null) {
-            btnNavInformes.getStyleClass().clear();
-            btnNavInformes.getStyleClass().addAll("button", "button-primary");
-        }
+        actualizarEstilosNavegacion(btnNavInformes);
+        habilitarBotonesCRUD(false);
     }
 
     /**
-     * Método auxiliar para aplicar FadeTransition a cualquier nodo
+     * Habilita o deshabilita los botones CRUD del toolbar
+     * Se deshabilitan en vistas donde no tienen sentido (Estadísticas, Informes)
      */
+    private void habilitarBotonesCRUD(boolean habilitar) {
+        btnNuevo.setDisable(!habilitar);
+        btnVer.setDisable(!habilitar);
+        btnEditar.setDisable(!habilitar);
+        btnEliminar.setDisable(!habilitar);
+        txtBuscar.setDisable(!habilitar);
+        btnBuscar.setDisable(!habilitar);
+    }
+
+    private void ocultarTodasLasVistas() {
+        tableVehiculos.setVisible(false);
+        tablePiezas.setVisible(false);
+        tableInventario.setVisible(false);
+        if (vistaEstadisticas != null) vistaEstadisticas.setVisible(false);
+        if (vistaInformes != null) vistaInformes.setVisible(false);
+    }
+
+    private void actualizarEstilosNavegacion(Button botonActivo) {
+        Button[] botones = {btnNavVehiculos, btnNavPiezas, btnNavInventario, btnNavEstadisticas, btnNavInformes};
+        for (Button btn : botones) {
+            if (btn != null) {
+                btn.getStyleClass().clear();
+                btn.getStyleClass().add("button");
+                if (btn == botonActivo) {
+                    btn.getStyleClass().add("button-primary");
+                }
+            }
+        }
+    }
+
     private void aplicarFadeTransition(javafx.scene.Node nodo) {
-        FadeTransition fade = new FadeTransition(Duration.millis(200), nodo);
-        fade.setFromValue(0.0);
-        fade.setToValue(1.0);
-        fade.play();
+        AnimationFactory.playFadeIn(nodo);
     }
 
     // ==================================================================================
     // ENTREGA 3: EVENTOS DE TECLADO
     // ==================================================================================
 
-    /**
-     * Configura eventos de teclado para las tres tablas
-     */
     private void configurarEventosTeclado() {
-        // Eventos para TableView Vehículos
-        tableVehiculos.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.E) {
-                editarRegistro();
-            } else if (event.getCode() == KeyCode.DELETE) {
-                eliminarRegistro();
-            } else if (event.getCode() == KeyCode.F5) {
-                actualizarListado();
-            } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
-                abrirFormularioNuevo();
+        // Handler compartido para las tablas
+        javafx.event.EventHandler<javafx.scene.input.KeyEvent> tablaKeyHandler = event -> {
+            switch (event.getCode()) {
+                case E -> editarRegistro();
+                case DELETE -> eliminarRegistro();
+                case F5 -> actualizarListado();
+                case N -> { if (event.isControlDown()) abrirFormularioNuevo(); }
+                default -> {}
             }
-        });
+        };
 
-        // Eventos para TableView Piezas
-        tablePiezas.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.E) {
-                editarRegistro();
-            } else if (event.getCode() == KeyCode.DELETE) {
-                eliminarRegistro();
-            } else if (event.getCode() == KeyCode.F5) {
-                actualizarListado();
-            } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
-                abrirFormularioNuevo();
-            }
-        });
+        tableVehiculos.setOnKeyPressed(tablaKeyHandler);
+        tablePiezas.setOnKeyPressed(tablaKeyHandler);
+        tableInventario.setOnKeyPressed(tablaKeyHandler);
 
-        // Eventos para TableView Inventario
-        tableInventario.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.E) {
-                editarRegistro();
-            } else if (event.getCode() == KeyCode.DELETE) {
-                eliminarRegistro();
-            } else if (event.getCode() == KeyCode.F5) {
-                actualizarListado();
-            } else if (event.getCode() == KeyCode.N && event.isControlDown()) {
-                abrirFormularioNuevo();
-            }
-        });
-
-        // Evento Enter en campo de búsqueda
         txtBuscar.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                realizarBusqueda();
-            }
+            if (event.getCode() == KeyCode.ENTER) realizarBusqueda();
         });
     }
 
@@ -1300,34 +904,17 @@ public class ListadoMaestroController implements Initializable {
     // ENTREGA 3: EVENTOS DE RATÓN (DOBLE CLIC)
     // ==================================================================================
 
-    /**
-     * Configura eventos de doble clic para editar
-     */
     private void configurarEventosRaton() {
-        // Doble clic en TableView Vehículos
-        tableVehiculos.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                if (tableVehiculos.getSelectionModel().getSelectedItem() != null) {
-                    editarRegistro();
-                }
-            }
-        });
+        configurarDobleClicEditar(tableVehiculos);
+        configurarDobleClicEditar(tablePiezas);
+        configurarDobleClicEditar(tableInventario);
+    }
 
-        // Doble clic en TableView Piezas
-        tablePiezas.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                if (tablePiezas.getSelectionModel().getSelectedItem() != null) {
-                    editarRegistro();
-                }
-            }
-        });
-
-        // Doble clic en TableView Inventario
-        tableInventario.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                if (tableInventario.getSelectionModel().getSelectedItem() != null) {
-                    editarRegistro();
-                }
+    private void configurarDobleClicEditar(TableView<?> tabla) {
+        tabla.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2
+                    && tabla.getSelectionModel().getSelectedItem() != null) {
+                editarRegistro();
             }
         });
     }
@@ -1468,15 +1055,15 @@ public class ListadoMaestroController implements Initializable {
             totalElementos = listaInventarioFiltrada.size();
         }
 
-        return (int) Math.ceil((double) totalElementos / ELEMENTOS_POR_PAGINA);
+        return (int) Math.ceil((double) totalElementos / AppConstants.ITEMS_PER_PAGE);
     }
 
     /**
      * Actualiza la tabla visible con los elementos de la página actual
      */
     private void actualizarTablaPaginada() {
-        int inicio = paginaActual * ELEMENTOS_POR_PAGINA;
-        int fin = Math.min(inicio + ELEMENTOS_POR_PAGINA, obtenerTotalElementosActual());
+        int inicio = paginaActual * AppConstants.ITEMS_PER_PAGE;
+        int fin = Math.min(inicio + AppConstants.ITEMS_PER_PAGE, obtenerTotalElementosActual());
 
         if (tableVehiculos.isVisible()) {
             ObservableList<Vehiculo> paginaActualLista = FXCollections.observableArrayList(
@@ -1520,50 +1107,11 @@ public class ListadoMaestroController implements Initializable {
         btnSiguiente.setDisable(paginaActual >= totalPaginas - 1 || totalPaginas == 0);
     }
 
-    /**
-     * Aplica animación de transición al cambiar de página
-     * 
-     * @param adelante true si avanza, false si retrocede
-     */
     private void aplicarAnimacionCambioPagina(boolean adelante) {
         TableView<?> tablaVisible = obtenerTablaVisible();
-
-        if (tablaVisible == null)
-            return;
-
-        // Animación de fade out y slide
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(150), tablaVisible);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.3);
-
-        // Animación de fade in y slide
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(150), tablaVisible);
-        fadeIn.setFromValue(0.3);
-        fadeIn.setToValue(1.0);
-
-        // Animación de escala
-        ScaleTransition scaleOut = new ScaleTransition(Duration.millis(150), tablaVisible);
-        scaleOut.setFromX(1.0);
-        scaleOut.setFromY(1.0);
-        scaleOut.setToX(0.95);
-        scaleOut.setToY(0.95);
-
-        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(150), tablaVisible);
-        scaleIn.setFromX(0.95);
-        scaleIn.setFromY(0.95);
-        scaleIn.setToX(1.0);
-        scaleIn.setToY(1.0);
-
-        // Ejecutar animaciones en secuencia
-        fadeOut.setOnFinished(e -> {
-            fadeIn.play();
-        });
-        scaleOut.setOnFinished(e -> {
-            scaleIn.play();
-        });
-
-        fadeOut.play();
-        scaleOut.play();
+        if (tablaVisible != null) {
+            AnimationFactory.playPageChangeAnimation(tablaVisible, null);
+        }
     }
 
     /**
@@ -1621,39 +1169,11 @@ public class ListadoMaestroController implements Initializable {
         });
     }
 
-    /**
-     * Muestra la ventana "Acerca de" con información de la aplicación,
-     * funcionalidades, atajos de teclado y consejos de uso
-     */
     private void mostrarAcercaDe() {
-        try {
-            // Cargar el FXML de la ventana "Acerca de"
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AcercaDe.fxml"));
-            Parent root = loader.load();
-
-            // Crear y mostrar la ventana modal
-            Stage modalStage = new Stage();
-            modalStage.getIcons().add(appIcon);
-            modalStage.setTitle("Acerca de AutoCiclo");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnNuevo.getScene().getWindow());
-
-            Scene scene = new Scene(root);
-            modalStage.setScene(scene);
-            modalStage.setResizable(true);
-            modalStage.setMinWidth(750);
-            modalStage.setMinHeight(650);
-            modalStage.showAndWait();
-
-        } catch (Exception e) {
-            LoggerUtil.error("Error al abrir ventana Acerca de", e);
-            ValidationUtils.showError("Error", "No se pudo abrir la ventana Acerca de: " + e.getMessage());
-        }
+        ModalUtils.mostrarModal("/fxml/AcercaDe.fxml", "Acerca de AutoCiclo",
+                btnNuevo.getScene().getWindow(), 750, 650);
     }
 
-    /**
-     * Muestra un diálogo con los detalles del registro seleccionado
-     */
     private void verDetallesRegistro() {
         if (tableVehiculos.isVisible()) {
             verDetallesVehiculo();
@@ -1664,132 +1184,50 @@ public class ListadoMaestroController implements Initializable {
         }
     }
 
-    /**
-     * Muestra los detalles de un vehículo seleccionado
-     */
     private void verDetallesVehiculo() {
-        Vehiculo vehiculoSeleccionado = tableVehiculos.getSelectionModel().getSelectedItem();
+        Vehiculo seleccionado = tableVehiculos.getSelectionModel().getSelectedItem();
+        if (!validarSeleccion(seleccionado, "vehículo")) return;
 
-        if (vehiculoSeleccionado == null) {
-            ValidationUtils.showAlert("Selección requerida",
-                    "Por favor seleccione un vehículo",
-                    "Debe seleccionar un vehículo de la tabla para ver sus detalles",
-                    Alert.AlertType.WARNING);
-            return;
-        }
-
-        try {
-            // Cargar el FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetalleVehiculo.fxml"));
-            Parent root = loader.load();
-
-            // Obtener el controlador y pasarle los datos
+        FXMLLoader loader = ModalUtils.cargarFXML("/fxml/DetalleVehiculo.fxml");
+        if (loader != null) {
             DetalleVehiculoController controller = loader.getController();
-            controller.setVehiculo(vehiculoSeleccionado);
-
-            // Crear y mostrar la ventana modal
-            Stage modalStage = new Stage();
-            modalStage.getIcons().add(appIcon);
-            modalStage.setTitle("Detalles del Vehículo");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnVer.getScene().getWindow());
-
-            Scene scene = new Scene(root);
-            modalStage.setScene(scene);
-            modalStage.setResizable(true);
-            modalStage.setMinWidth(850);
-            modalStage.setMinHeight(750);
-            modalStage.showAndWait();
-
-        } catch (Exception e) {
-            LoggerUtil.error("Error al abrir detalles del vehículo", e);
-            ValidationUtils.showError("Error", "No se pudieron cargar los detalles del vehículo");
+            controller.setVehiculo(seleccionado);
+            ModalUtils.mostrarDesdeLoader(loader, "Detalles del Vehículo", btnVer.getScene().getWindow());
         }
     }
 
-    /**
-     * Muestra los detalles de una pieza seleccionada
-     */
     private void verDetallesPieza() {
-        Pieza piezaSeleccionada = tablePiezas.getSelectionModel().getSelectedItem();
+        Pieza seleccionada = tablePiezas.getSelectionModel().getSelectedItem();
+        if (!validarSeleccion(seleccionada, "pieza")) return;
 
-        if (piezaSeleccionada == null) {
-            ValidationUtils.showAlert("Selección requerida",
-                    "Por favor seleccione una pieza",
-                    "Debe seleccionar una pieza de la tabla para ver sus detalles",
-                    Alert.AlertType.WARNING);
-            return;
-        }
-
-        try {
-            // Cargar el FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetallePieza.fxml"));
-            Parent root = loader.load();
-
-            // Obtener el controlador y pasarle los datos
+        FXMLLoader loader = ModalUtils.cargarFXML("/fxml/DetallePieza.fxml");
+        if (loader != null) {
             DetallePiezaController controller = loader.getController();
-            controller.setPieza(piezaSeleccionada);
-
-            // Crear y mostrar la ventana modal
-            Stage modalStage = new Stage();
-            modalStage.getIcons().add(appIcon);
-            modalStage.setTitle("Detalles de la Pieza");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnVer.getScene().getWindow());
-
-            Scene scene = new Scene(root);
-            modalStage.setScene(scene);
-            modalStage.setResizable(true);
-            modalStage.setMinWidth(850);
-            modalStage.setMinHeight(750);
-            modalStage.showAndWait();
-
-        } catch (Exception e) {
-            LoggerUtil.error("Error al abrir detalles de la pieza", e);
-            ValidationUtils.showError("Error", "No se pudieron cargar los detalles de la pieza");
+            controller.setPieza(seleccionada);
+            ModalUtils.mostrarDesdeLoader(loader, "Detalles de la Pieza", btnVer.getScene().getWindow());
         }
     }
 
-    /**
-     * Muestra los detalles de un inventario seleccionado
-     */
     private void verDetallesInventario() {
-        InventarioPieza inventarioSeleccionado = tableInventario.getSelectionModel().getSelectedItem();
+        InventarioPieza seleccionado = tableInventario.getSelectionModel().getSelectedItem();
+        if (!validarSeleccion(seleccionado, "registro de inventario")) return;
 
-        if (inventarioSeleccionado == null) {
-            ValidationUtils.showAlert("Selección requerida",
-                    "Por favor seleccione un registro",
-                    "Debe seleccionar un registro de inventario de la tabla para ver sus detalles",
-                    Alert.AlertType.WARNING);
-            return;
-        }
-
-        try {
-            // Cargar el FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DetalleInventario.fxml"));
-            Parent root = loader.load();
-
-            // Obtener el controlador y pasarle los datos
+        FXMLLoader loader = ModalUtils.cargarFXML("/fxml/DetalleInventario.fxml");
+        if (loader != null) {
             DetalleInventarioController controller = loader.getController();
-            controller.setInventario(inventarioSeleccionado);
-
-            // Crear y mostrar la ventana modal
-            Stage modalStage = new Stage();
-            modalStage.getIcons().add(appIcon);
-            modalStage.setTitle("Detalles del Inventario");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initOwner(btnVer.getScene().getWindow());
-
-            Scene scene = new Scene(root);
-            modalStage.setScene(scene);
-            modalStage.setResizable(true);
-            modalStage.setMinWidth(850);
-            modalStage.setMinHeight(750);
-            modalStage.showAndWait();
-
-        } catch (Exception e) {
-            LoggerUtil.error("Error al abrir detalles del inventario", e);
-            ValidationUtils.showError("Error", "No se pudieron cargar los detalles del inventario");
+            controller.setInventario(seleccionado);
+            ModalUtils.mostrarDesdeLoader(loader, "Detalles del Inventario", btnVer.getScene().getWindow());
         }
+    }
+
+    private boolean validarSeleccion(Object seleccionado, String tipo) {
+        if (seleccionado == null) {
+            ValidationUtils.showAlert("Selección requerida",
+                    "Por favor seleccione un " + tipo,
+                    "Debe seleccionar un " + tipo + " de la tabla",
+                    Alert.AlertType.WARNING);
+            return false;
+        }
+        return true;
     }
 }

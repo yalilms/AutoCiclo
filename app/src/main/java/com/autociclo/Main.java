@@ -1,15 +1,23 @@
 package com.autociclo;
 
+import com.autociclo.utils.AnimationFactory;
+import com.autociclo.utils.AppConstants;
+import com.autociclo.utils.AppResources;
+
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
+ * Clase principal de la aplicación AutoCiclo.
+ *
  * @author Yalil Musa Talhaoui
  */
 public class Main extends Application {
@@ -19,98 +27,82 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primeraEscena) throws Exception {
-        // Establecer icono de la aplicación
-        javafx.scene.image.Image appIcon = new javafx.scene.image.Image(
-                getClass().getResourceAsStream("/imagenes/logo_autociclo.png"));
-        primeraEscena.getIcons().add(appIcon);
+    public void start(Stage primaryStage) throws Exception {
+        // Configurar icono de la aplicación
+        primaryStage.getIcons().add(AppResources.getIcon());
 
-        // Cargar AMBAS pantallas desde el inicio
-        FXMLLoader loaderCarga = new FXMLLoader(getClass().getResource("/fxml/PantallaDeCarga.fxml"));
-        Parent pantallaCarga = loaderCarga.load();
+        // Cargar ambas pantallas desde el inicio
+        Parent pantallaCarga = FXMLLoader.load(getClass().getResource(AppConstants.PATH_SPLASH_FXML));
+        Parent listado = FXMLLoader.load(getClass().getResource(AppConstants.PATH_MAIN_FXML));
+        listado.setOpacity(0.0);
 
-        FXMLLoader listadoLoader = new FXMLLoader(getClass().getResource("/fxml/ListadosController.fxml"));
-        Parent listado = listadoLoader.load();
-        listado.setOpacity(0.0); // Inicialmente invisible
+        // Contenedor con ambas pantallas superpuestas
+        StackPane contenedor = new StackPane(listado, pantallaCarga);
 
-        // Usar StackPane para superponer las dos pantallas
-        javafx.scene.layout.StackPane contenedor = new javafx.scene.layout.StackPane();
-        contenedor.getChildren().addAll(listado, pantallaCarga);
+        // Configurar escena
+        Scene escena = new Scene(contenedor, AppConstants.DEFAULT_WINDOW_WIDTH, AppConstants.DEFAULT_WINDOW_HEIGHT);
+        primaryStage.setScene(escena);
+        primaryStage.setTitle("AutoCiclo - Gestión de Desguace");
+        primaryStage.setResizable(true);
+        primaryStage.setMinWidth(AppConstants.MIN_WINDOW_WIDTH);
+        primaryStage.setMinHeight(AppConstants.MIN_WINDOW_HEIGHT);
 
-        Scene escena = new Scene(contenedor, 1150, 750);
-        primeraEscena.setScene(escena);
-        primeraEscena.setTitle("AutoCiclo - Gestión de Desguace");
+        primaryStage.show();
+        primaryStage.centerOnScreen();
 
-        // Hacer la ventana redimensionable y establecer tamaños mínimos
-        primeraEscena.setResizable(true);
-        primeraEscena.setMinWidth(900);
-        primeraEscena.setMinHeight(600);
+        // Configurar confirmación al cerrar
+        configurarCierreVentana(primaryStage);
 
-        primeraEscena.show();
-        primeraEscena.centerOnScreen();
+        // Animación de splash screen
+        iniciarAnimacionSplash(contenedor, pantallaCarga, listado, primaryStage);
+    }
 
-        // Configurar confirmación al cerrar la ventana
-        primeraEscena.setOnCloseRequest(event -> {
-            event.consume(); // Prevenir el cierre automático
+    private void configurarCierreVentana(Stage stage) {
+        stage.setOnCloseRequest(event -> {
+            event.consume();
 
-            // Crear alerta de confirmación
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Salir de AutoCiclo");
             alert.setHeaderText("¿Está seguro que desea salir?");
             alert.setContentText("Se cerrará la aplicación AutoCiclo - Gestión de Desguace");
 
-            // Aplicar estilos personalizados
             alert.getDialogPane().getStylesheets().add(
-                    getClass().getResource("/css/styles.css").toExternalForm());
+                    getClass().getResource(AppConstants.PATH_STYLES_CSS).toExternalForm());
             alert.getDialogPane().getStyleClass().add("glass-pane");
 
-            // Añadir icono a la ventana del Alert usando setOnShowing
             alert.setOnShowing(e -> {
                 Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
                 if (alertStage != null) {
-                    alertStage.getIcons().add(appIcon);
+                    alertStage.getIcons().add(AppResources.getIcon());
                 }
             });
 
-            // Mostrar y esperar respuesta
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    // Usuario confirmó, cerrar la aplicación
-                    primeraEscena.close();
+                    stage.close();
                     System.exit(0);
                 }
-                // Si cancela, no hacer nada (la ventana permanece abierta)
             });
         });
+    }
 
-        // Simular tiempo de carga (2.5 segundos) con el indicador girando
-        // Usamos PauseTransition en lugar de animar una propiedad de progreso
-        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2.5));
+    private void iniciarAnimacionSplash(StackPane contenedor, Parent pantallaCarga,
+                                         Parent listado, Stage stage) {
+        PauseTransition pause = AnimationFactory.createPause(AppConstants.SPLASH_DURATION_SECONDS);
+
         pause.setOnFinished(event -> {
-            // Transición: Fade out de pantalla de carga y fade in de listado al mismo
-            // tiempo
-            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(Duration.millis(500),
-                    pantallaCarga);
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
+            FadeTransition fadeOut = AnimationFactory.createFade(pantallaCarga, 1.0, 0.0, 500);
+            FadeTransition fadeIn = AnimationFactory.createFade(listado, 0.0, 1.0, 500);
 
-            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(Duration.millis(500),
-                    listado);
-            fadeIn.setFromValue(0.0);
-            fadeIn.setToValue(1.0);
-
-            // Ejecutar ambas transiciones al mismo tiempo
-            fadeOut.play();
-            fadeIn.play();
-
-            // Cuando terminen las transiciones, remover la pantalla de carga del contenedor
             fadeOut.setOnFinished(e -> {
                 contenedor.getChildren().remove(pantallaCarga);
-                primeraEscena.centerOnScreen();
+                stage.centerOnScreen();
             });
+
+            fadeOut.play();
+            fadeIn.play();
         });
 
-        // Iniciar la espera
         pause.play();
     }
 }

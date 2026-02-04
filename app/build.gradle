@@ -112,7 +112,55 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+// Tarea para regenerar la carpeta de instalación
+task regenerarCarpetaInstalacion(type: Copy) {
+    group = 'distribution'
+    description = 'Regenera la carpeta de instalación con JAR, dependencias y scripts'
+    
+    dependsOn jar
+    
+    // Directorio de destino
+    def instalacionDir = file('../Instaladores/CarpetaInstalacion')
+    
+    // Limpiar carpeta existente excepto run.sh y run.bat (ya tienen la configuración correcta)
+    doFirst {
+        delete(instalacionDir.listFiles().findAll { 
+            it.name != 'run.sh' && it.name != 'run.bat' && it.name != 'iconos'
+        })
+    }
+    
+    // Copiar JAR principal
+    from(jar.archiveFile) {
+        rename { 'AutoCiclo.jar' }
+        into instalacionDir
+    }
+    
+    // Copiar dependencias a lib/
+    from(configurations.runtimeClasspath) {
+        into "${instalacionDir}/lib"
+    }
+    
+    // Copiar LICENSE.txt si existe
+    from(projectDir) {
+        include 'LICENSE.txt'
+        into instalacionDir
+    }
+    
+    // Si no existe LICENSE.txt, crear uno genérico
+    doLast {
+        def licenseFile = new File(instalacionDir, 'LICENSE.txt')
+        if (!licenseFile.exists()) {
+            licenseFile.text = """AutoCiclo - Sistema de Gestión de Desguace
+Copyright (c) 2026 SoftCrown
 
+Todos los derechos reservados.
+"""
+        }
+        
+        println "Carpeta de instalación regenerada en: ${instalacionDir.absolutePath}"
+        println "Ahora puedes usar InstallBuilder para generar el instalador .run"
+    }
+}
 
 
 

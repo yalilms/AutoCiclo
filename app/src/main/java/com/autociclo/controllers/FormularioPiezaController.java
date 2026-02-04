@@ -4,6 +4,11 @@ import com.autociclo.database.ConexionBD;
 import com.autociclo.models.Pieza;
 import com.autociclo.utils.ValidationUtils;
 import com.autociclo.utils.LoggerUtil;
+import com.autociclo.utils.UbicacionesJsonLoader;
+import com.autociclo.utils.AppConstants;
+import com.autociclo.utils.WindowUtils;
+import com.autociclo.utils.ErrorHandler;
+import com.autociclo.enums.PieceCategory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -69,32 +74,15 @@ public class FormularioPiezaController implements Initializable {
         btnCancelar.setOnAction(event -> cerrarVentana());
         btnSeleccionarImagen.setOnAction(event -> seleccionarImagen());
 
-        // Inicializar ComboBox de categoría
-        cmbCategoria.getItems().addAll("motor", "carroceria", "interior", "electronica", "ruedas", "otros");
+        // Inicializar ComboBox de categoría con enum
+        cmbCategoria.getItems().addAll(PieceCategory.getCodes());
 
         // Cargar ubicaciones desde el JSON
         cargarUbicaciones();
     }
 
-    /**
-     * Carga las ubicaciones de piezas desde el archivo JSON
-     */
     private void cargarUbicaciones() {
-        try {
-            java.io.InputStream is = getClass().getResourceAsStream("/ubicaciones.json");
-            if (is != null) {
-                com.google.gson.JsonObject json = com.google.gson.JsonParser.parseReader(
-                        new java.io.InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
-
-                com.google.gson.JsonArray ubicaciones = json.getAsJsonArray("piezas");
-                for (int i = 0; i < ubicaciones.size(); i++) {
-                    cmbUbicacion.getItems().add(ubicaciones.get(i).getAsString());
-                }
-                LoggerUtil.info("Ubicaciones de piezas cargadas: " + ubicaciones.size());
-            }
-        } catch (Exception e) {
-            LoggerUtil.error("Error al cargar ubicaciones", e);
-        }
+        cmbUbicacion.getItems().addAll(UbicacionesJsonLoader.obtenerUbicacionesPiezas());
     }
 
     /**
@@ -217,10 +205,10 @@ public class FormularioPiezaController implements Initializable {
         // Validar categoría (obligatorio)
         if (cmbCategoria.getValue() == null || cmbCategoria.getValue().isEmpty()) {
             errores.append("• Categoría: Debe seleccionar una categoría\n");
-            cmbCategoria.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            cmbCategoria.setStyle(AppConstants.STYLE_ERROR);
             valido = false;
         } else {
-            cmbCategoria.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
+            cmbCategoria.setStyle(AppConstants.STYLE_SUCCESS);
         }
 
         // Validar precio de venta (decimal >= 0)
@@ -230,51 +218,24 @@ public class FormularioPiezaController implements Initializable {
         }
 
         // Validar stock disponible (entero >= 0)
-        String stockText = txtStockDisponible.getText().trim();
-        if (!stockText.isEmpty()) {
-            try {
-                int stock = Integer.parseInt(stockText);
-                if (stock < 0) {
-                    errores.append("• Stock disponible: Debe ser un número positivo\n");
-                    txtStockDisponible.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                    valido = false;
-                } else {
-                    txtStockDisponible.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
-                }
-            } catch (NumberFormatException e) {
-                errores.append("• Stock disponible: Debe ser un número entero válido\n");
-                txtStockDisponible.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                valido = false;
-            }
+        if (!ValidationUtils.validateNonNegativeInteger(txtStockDisponible, null, "Stock disponible")) {
+            errores.append("• Stock disponible: Debe ser un número entero positivo\n");
+            valido = false;
         }
 
         // Validar stock mínimo (entero >= 0)
-        String stockMinText = txtStockMinimo.getText().trim();
-        if (!stockMinText.isEmpty()) {
-            try {
-                int stockMin = Integer.parseInt(stockMinText);
-                if (stockMin < 0) {
-                    errores.append("• Stock mínimo: Debe ser un número positivo\n");
-                    txtStockMinimo.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                    valido = false;
-                } else {
-                    txtStockMinimo.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
-                }
-            } catch (NumberFormatException e) {
-                errores.append("• Stock mínimo: Debe ser un número entero válido\n");
-                txtStockMinimo.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                valido = false;
-            }
+        if (!ValidationUtils.validateNonNegativeInteger(txtStockMinimo, null, "Stock mínimo")) {
+            errores.append("• Stock mínimo: Debe ser un número entero positivo\n");
+            valido = false;
         }
 
         // Validar ubicación (obligatorio)
-        // Validar ubicación (obligatorio)
         if (cmbUbicacion.getValue() == null || cmbUbicacion.getValue().isEmpty()) {
             errores.append("• Ubicación: Debe seleccionar una ubicación\n");
-            cmbUbicacion.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+            cmbUbicacion.setStyle(AppConstants.STYLE_ERROR);
             valido = false;
         } else {
-            cmbUbicacion.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
+            cmbUbicacion.setStyle(AppConstants.STYLE_SUCCESS);
         }
 
         // Si hay errores, mostrarlos en el Alert
@@ -375,13 +336,9 @@ public class FormularioPiezaController implements Initializable {
             }
 
         } catch (SQLException e) {
-            LoggerUtil.error("Error al guardar pieza en BD", e);
-            ValidationUtils.showError("Error de base de datos",
-                    "No se pudo guardar la pieza: " + e.getMessage());
+            ErrorHandler.handleSaveError(e, "pieza");
         } catch (NumberFormatException e) {
-            LoggerUtil.warning("Error de formato en campos numéricos del formulario de pieza");
-            ValidationUtils.showError("Error de formato",
-                    "Verifique que los campos numéricos tengan el formato correcto");
+            ErrorHandler.handleNumberFormatError("formulario de pieza");
         }
     }
 
@@ -404,11 +361,7 @@ public class FormularioPiezaController implements Initializable {
         return false;
     }
 
-    /**
-     * Cierra la ventana del formulario
-     */
     private void cerrarVentana() {
-        Stage stage = (Stage) btnCancelar.getScene().getWindow();
-        stage.close();
+        WindowUtils.closeWindow(btnCancelar);
     }
 }
