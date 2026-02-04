@@ -3,7 +3,11 @@
 
 # Ignore Gradle build output directory
 build
-.claude
+
+# IDE and system files
+.idea
+*.iml
+.DS_Store
 
 # Instaladores grandes (se entregan por Moodle)
 *.exe
